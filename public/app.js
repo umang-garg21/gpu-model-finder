@@ -48,6 +48,8 @@ const USE_CASE_BENCHMARKS = {
     { key: 'gsm8k',         label: 'GSM8K',      desc: 'Grade school math word problems (%)' },
     { key: 'arc',           label: 'Reasoning',  desc: 'ARC-Challenge — science reasoning (%)' },
     { key: 'ifeval',        label: 'Instruct',   desc: 'IFEval — instruction-following accuracy (%)' },
+    { key: 'swebench',      label: '🤖 Agentic', desc: 'SWE-bench Verified — % of real GitHub issues resolved autonomously by the model acting as an agent (%)' },
+    { key: 'gaia',          label: 'GAIA',       desc: 'GAIA — general agentic AI benchmark: web browsing, tool use, multi-step reasoning (%)' },
   ],
   image: [
     { key: 'image_quality', label: 'Quality',    desc: 'Human preference quality score 0–100' },
@@ -67,6 +69,216 @@ const USE_CASE_BENCHMARKS = {
 
 // Benchmarks where lower score = better rank
 const LOWER_IS_BETTER = new Set(['wer']);
+
+// ── License registry ───────────────────────────────────────────
+// Maps HuggingFace license tag values → display info
+const LICENSE_INFO = {
+  'apache-2.0':            { label: 'Apache 2.0',           cls: 'license-open',        commercial: 'Commercial use OK' },
+  'mit':                   { label: 'MIT',                   cls: 'license-open',        commercial: 'Commercial use OK' },
+  'bsd-3-clause':          { label: 'BSD-3',                 cls: 'license-open',        commercial: 'Commercial use OK' },
+  'llama3':                { label: 'Llama 3 Community',     cls: 'license-community',   commercial: 'Commercial OK · must accept usage policy' },
+  'llama3.1':              { label: 'Llama 3.1 Community',   cls: 'license-community',   commercial: 'Commercial OK · must accept usage policy' },
+  'llama3.2':              { label: 'Llama 3.2 Community',   cls: 'license-community',   commercial: 'Commercial OK · must accept usage policy' },
+  'llama3.3':              { label: 'Llama 3.3 Community',   cls: 'license-community',   commercial: 'Commercial OK · must accept usage policy' },
+  'gemma':                 { label: 'Gemma TOS',             cls: 'license-conditional', commercial: 'Commercial OK with Google TOS restrictions' },
+  'qwen':                  { label: 'Qwen License',          cls: 'license-conditional', commercial: 'Commercial OK for ≤72B; restricted for larger' },
+  'cc-by-4.0':             { label: 'CC BY 4.0',             cls: 'license-open',        commercial: 'Commercial OK (attribution required)' },
+  'cc-by-nc-4.0':          { label: 'CC BY-NC 4.0',          cls: 'license-restricted',  commercial: 'Non-commercial only' },
+  'cc-by-nc-nd-4.0':       { label: 'CC BY-NC-ND 4.0',       cls: 'license-restricted',  commercial: 'Non-commercial, no derivatives' },
+  'cc-by-nc-sa-4.0':       { label: 'CC BY-NC-SA 4.0',       cls: 'license-restricted',  commercial: 'Non-commercial + share-alike' },
+  'gpl-3.0':               { label: 'GPL-3.0',               cls: 'license-conditional', commercial: 'Copyleft — derivatives must also be GPL' },
+  'agpl-3.0':              { label: 'AGPL-3.0',              cls: 'license-conditional', commercial: 'Copyleft — network use triggers copyleft' },
+  'deepseek':              { label: 'DeepSeek License',      cls: 'license-community',   commercial: 'Commercial OK (review terms)' },
+  'flux-1-dev':            { label: 'FLUX.1-dev',            cls: 'license-restricted',  commercial: 'Non-commercial for this variant' },
+  'openrail':              { label: 'OpenRAIL',              cls: 'license-community',   commercial: 'Commercial OK with use-case restrictions' },
+  'openrail-m':            { label: 'OpenRAIL-M',            cls: 'license-community',   commercial: 'Commercial OK with use-case restrictions' },
+  'creativeml-openrail-m': { label: 'CreativeML OpenRAIL-M', cls: 'license-community',   commercial: 'Commercial OK with use-case restrictions' },
+  'bigscience-openrail-m': { label: 'BigScience RAIL',       cls: 'license-community',   commercial: 'Research-first; commercial with approval' },
+  'other':                 { label: 'Other',                 cls: 'license-conditional', commercial: 'Check model card' },
+};
+
+function getLicenseInfo(model) {
+  const lic = (model.license ?? '').toLowerCase();
+  if (!lic) return { label: 'Not specified', cls: 'license-conditional', commercial: 'Check model card for terms' };
+  if (LICENSE_INFO[lic]) return LICENSE_INFO[lic];
+  // Partial/prefix match (longer keys first for specificity)
+  const key = Object.keys(LICENSE_INFO)
+    .sort((a, b) => b.length - a.length)
+    .find(k => lic.startsWith(k) || lic.includes(k));
+  if (key) return LICENSE_INFO[key];
+  const label = lic.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).slice(0, 30);
+  return { label, cls: 'license-conditional', commercial: 'Check model card for terms' };
+}
+
+// ── Safety information registry ────────────────────────────────
+// Sources: official model cards, published safety/alignment papers, transparency reports.
+// safetyLevel: 1 = minimal · 2 = basic · 3 = moderate · 4 = thorough · 5 = comprehensive
+const SAFETY_INFO = {
+  'meta-llama/Llama-3': {
+    alignment: "SFT \u2192 RLHF \u2192 DPO (Meta's multi-stage Llama 3 alignment pipeline)",
+    redTeam: 'Internal + third-party red-teaming; Llama Guard classifier; CyberSec Eval; Purple Llama safety suite',
+    safetyLevel: 4,
+    knownRisks: "Can produce harmful content if the system prompt is removed. Training data is sourced from the public web. Requires acceptance of the Llama 3 Community License and Meta's usage policy.",
+  },
+  'Qwen/Qwen2.5': {
+    alignment: "SFT + RLHF (Alibaba's Tongyi Qianwen alignment pipeline)",
+    redTeam: 'Internal safety evaluations aligned with Alibaba Cloud content policies; limited external disclosure',
+    safetyLevel: 3,
+    knownRisks: "Safety alignment reflects Alibaba's guidelines, which may differ from Western regulatory standards. Commercial restrictions apply to variants larger than 72B under the Qwen License.",
+  },
+  'Qwen/QwQ': {
+    alignment: 'RL-based reasoning (GRPO; minimal safety RLHF \u2014 reasoning performance prioritized)',
+    redTeam: 'Limited documented safety testing; evaluation focused on reasoning benchmarks',
+    safetyLevel: 2,
+    knownRisks: 'Reasoning models can "think through" harmful content as part of chain-of-thought. Safety guardrails are thinner than standard instruct-tuned chat models.',
+  },
+  'deepseek-ai/DeepSeek-R1': {
+    alignment: 'RL-based reasoning (Group Relative Policy Optimization \u2014 GRPO; minimal safety RLHF)',
+    redTeam: 'Limited documented third-party red-teaming; primarily evaluated on reasoning benchmarks',
+    safetyLevel: 2,
+    knownRisks: 'Chain-of-thought reasoning may surface dangerous content mid-inference. Fewer independent safety evaluations published than comparable Western models. Safety filter quality varies across distilled variants.',
+  },
+  'deepseek-ai/DeepSeek-V': {
+    alignment: "SFT + RLHF (DeepSeek's internal alignment pipeline)",
+    redTeam: 'Internal red-teaming; limited external disclosure of evaluation methodology',
+    safetyLevel: 2,
+    knownRisks: "Limited public safety audit trail. Content policies reflect DeepSeek's guidelines. Evaluate carefully against your jurisdiction's AI compliance requirements before deployment.",
+  },
+  'mistralai/Mistral': {
+    alignment: 'SFT only (deliberately permissive \u2014 Mistral intentionally avoids heavy content filtering)',
+    redTeam: 'Minimal safety training; no documented external red-teaming; permissive by design philosophy',
+    safetyLevel: 2,
+    knownRisks: "Highly susceptible to jailbreaks; not suitable for applications requiring strong content moderation. Mistral's design philosophy explicitly favors developer freedom over built-in restrictions.",
+  },
+  'mistralai/Mixtral': {
+    alignment: 'SFT only (same permissive philosophy as Mistral 7B; mixture-of-experts architecture)',
+    redTeam: 'Minimal documented safety testing; same design philosophy as base Mistral models',
+    safetyLevel: 2,
+    knownRisks: 'Higher capability than Mistral 7B amplifies misuse risk given the permissive alignment. Strongly consider adding an external safety layer (e.g., Llama Guard, Perspective API) for production deployments.',
+  },
+  'google/gemma-2': {
+    alignment: "SFT + RLHF (Google's Responsible AI pipeline)",
+    redTeam: "Google's internal safety team + external red-teaming; ShieldGemma companion classifier model publicly available for content filtering",
+    safetyLevel: 4,
+    knownRisks: "Bound by Google's Gemma Terms of Use. Prohibited uses include CSAM, weapons instructions, and election disinformation. ShieldGemma is recommended for production safety filtering.",
+  },
+  'microsoft/Phi': {
+    alignment: "SFT + DPO (Microsoft's Responsible AI guidelines; safety evaluated in Phi technical reports)",
+    redTeam: "Microsoft's Responsible AI (RAI) team red-teaming documented in Phi-3 and Phi-4 technical reports",
+    safetyLevel: 4,
+    knownRisks: "Small model size means uneven safety coverage compared to larger models. Safety fine-tuning can be overridden by downstream fine-tuning. Review Microsoft's Acceptable Use Policy before deployment.",
+  },
+  'CohereForAI/': {
+    alignment: "SFT + RLHF (Cohere's alignment pipeline; optimized for enterprise and RAG use cases)",
+    redTeam: "Cohere's internal safety evaluations with RAG-specific attack vector testing",
+    safetyLevel: 4,
+    knownRisks: 'Optimized for retrieval-augmented generation (RAG) and structured enterprise tasks. May exhibit unexpected behavior in highly open-ended creative or unconstrained generation tasks.',
+  },
+  'black-forest-labs/FLUX': {
+    alignment: 'N/A — image generation model (no language alignment applicable)',
+    redTeam: 'NSFW filter integrated; evaluated on harmful imagery generation; FLUX.1-dev is non-commercial which reduces but does not eliminate misuse risk',
+    safetyLevel: 3,
+    knownRisks: 'Capable of generating NSFW imagery. FLUX.1-dev (this variant) is for non-commercial research; FLUX.1-schnell uses Apache 2.0. No mandatory watermarking. Apply content-filtering middleware for any public-facing deployment.',
+  },
+  'openai/whisper': {
+    alignment: 'N/A — automatic speech recognition (ASR); no text generation capability',
+    redTeam: 'No adversarial safety testing required for read-only transcription models',
+    safetyLevel: 5,
+    knownRisks: 'Cannot generate harmful content (transcription only). Known to hallucinate plausible-sounding text during silence or non-speech audio segments. Surveillance use may carry legal/privacy implications in many jurisdictions.',
+  },
+  'BAAI/bge': {
+    alignment: 'N/A — text embedding model (no text generation capability)',
+    redTeam: 'Standard embedding bias evaluation; no harmful-output risk applicable',
+    safetyLevel: 5,
+    knownRisks: 'Cannot generate harmful content. Training data may encode social biases into embedding space. Independent bias audits are recommended for high-stakes retrieval or ranking systems.',
+  },
+  'stabilityai/stable-diffusion': {
+    alignment: 'N/A — latent diffusion image generation model',
+    redTeam: 'NSFW concept filtering integrated in SD v2+; Safety Image Classifier available; community fine-tunes frequently remove filters',
+    safetyLevel: 3,
+    knownRisks: 'Community checkpoints often bypass safety filters entirely. Base model can generate NSFW/harmful imagery. Deepfake and non-consensual intimate image (NCII) generation is a documented misuse vector.',
+  },
+  // Zhipu AI — GLM
+  'THUDM/': {
+    alignment: 'SFT + RLHF (Zhipu AI alignment pipeline)',
+    redTeam: "Zhipu AI's internal safety evaluations; aligned with Chinese AI regulations and content standards",
+    safetyLevel: 3,
+    knownRisks: "Safety alignment reflects Chinese regulatory standards which differ from Western norms. GLM models include content filtering for politically sensitive topics. Evaluate against your jurisdiction's requirements before deployment.",
+  },
+  // 01.ai — Yi
+  '01-ai/': {
+    alignment: 'SFT + RLHF (01.ai alignment pipeline)',
+    redTeam: "01.ai's internal safety evaluations; limited external disclosure",
+    safetyLevel: 3,
+    knownRisks: "Safety alignment reflects 01.ai's guidelines. Yi models are capable but have fewer published safety audits than Western equivalents. Additional safety filtering recommended for production use.",
+  },
+  // Shanghai AI Lab — InternLM
+  'internlm/': {
+    alignment: 'SFT + RLHF (Shanghai AI Lab alignment)',
+    redTeam: "Internal safety evaluations by Shanghai AI Lab; limited external red-teaming disclosure",
+    safetyLevel: 3,
+    knownRisks: "InternLM models include content moderation aligned with Chinese regulatory standards. Evaluate for your specific jurisdiction and use case before deployment.",
+  },
+  // Databricks — DBRX
+  'databricks/': {
+    alignment: 'SFT + RLHF (Databricks alignment; enterprise-focused)',
+    redTeam: "Databricks internal safety testing; focused on enterprise data and coding use cases",
+    safetyLevel: 3,
+    knownRisks: "DBRX is designed for enterprise coding and data tasks. Safety guardrails are less extensive than consumer-facing models. Review Databricks license terms for commercial deployment.",
+  },
+  // TII — Falcon
+  'tiiuae/': {
+    alignment: 'SFT (limited; TII alignment pipeline)',
+    redTeam: "TII's internal safety evaluation; limited external red-teaming disclosure",
+    safetyLevel: 2,
+    knownRisks: "Falcon models have limited safety alignment. The Apache 2.0 license allows broad use but does not guarantee safety properties. Additional safety filtering is strongly recommended for public-facing deployments.",
+  },
+  // NousResearch
+  'NousResearch/': {
+    alignment: 'Merging/fine-tuning on top of base models (Hermes DPO fine-tune)',
+    redTeam: "Community-driven evaluation; no formal red-teaming disclosure",
+    safetyLevel: 2,
+    knownRisks: "Hermes models are designed to be less restricted than their base models. Explicit content generation may be possible. Not suitable for applications requiring strong content moderation.",
+  },
+  // NVIDIA — Nemotron
+  'nvidia/': {
+    alignment: 'SFT + RLHF (NVIDIA alignment; reward-model-trained on HelpSteer dataset)',
+    redTeam: "NVIDIA's internal safety evaluations; tested against NeMo Guardrails framework",
+    safetyLevel: 4,
+    knownRisks: "Nemotron models are enterprise-focused and well-aligned. Available under a custom NVIDIA Open Model License — commercial use permitted with restrictions. Review terms for high-volume deployments.",
+  },
+  // AI2 — OLMo
+  'allenai/': {
+    alignment: 'SFT + DPO (AI2 Tulu alignment pipeline; fully open research model)',
+    redTeam: "AI2 internal safety evaluations; fully open research model with transparency reports",
+    safetyLevel: 3,
+    knownRisks: "OLMo is a fully open research model (weights, data, training code). Safety alignment is research-quality rather than production-hardened. Apache 2.0 license — commercial use OK.",
+  },
+};
+
+const SAFETY_LABELS = ['', 'Minimal', 'Basic', 'Moderate', 'Thorough', 'Comprehensive'];
+const SAFETY_COLORS = ['', '#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4'];
+
+function inferSafety(model) {
+  // Match by longest-prefix first for specificity
+  const prefixes = Object.keys(SAFETY_INFO).sort((a, b) => b.length - a.length);
+  for (const prefix of prefixes) {
+    if (model.id.startsWith(prefix)) return { ...SAFETY_INFO[prefix] };
+  }
+  // Generic fallback: infer from model id patterns
+  const idLower = model.id.toLowerCase();
+  const isInstruct = /instruct|chat|sft|rlhf|-it$|-chat$/.test(idLower);
+  return {
+    alignment: isInstruct
+      ? 'Instruction fine-tuned (alignment details not publicly disclosed)'
+      : 'Base model — no safety alignment applied',
+    redTeam: 'No documented red-teaming or safety evaluation found for this model',
+    safetyLevel: isInstruct ? 2 : 1,
+    knownRisks: isInstruct
+      ? 'Safety training details not publicly disclosed. Evaluate carefully before deployment in sensitive applications.'
+      : 'Base models can reproduce harmful training data verbatim. Not suitable for production without an additional safety layer.',
+  };
+}
 
 // ── Deployment options ─────────────────────────────────────────
 const DEPLOYMENT_OPTIONS = [
@@ -167,7 +379,7 @@ const state = {
   vram: 8,
   usecase: 'llm',
   quantization: 'fp16',
-  sort: 'downloads',
+  sort: 'newest',
   loading: false,
   models: [],
   selectedGpu: null,
@@ -549,6 +761,14 @@ function renderModalContent(model) {
       <div class="deploy-tags">${opt.tags.map(t => `<span class="deploy-tag">${t}</span>`).join('')}</div>
     </a>`).join('');
 
+  // Security & safety section
+  const safety  = inferSafety(model);
+  const licInfo = getLicenseInfo(model);
+  const safetyColor = SAFETY_COLORS[safety.safetyLevel];
+  const safetySegs  = Array.from({ length: 5 }, (_, i) =>
+    `<div class="safety-seg${i < safety.safetyLevel ? ' filled' : ''}" ${i < safety.safetyLevel ? `style="background:${safetyColor}"` : ''}></div>`
+  ).join('');
+
   const gatedNote = model.gated
     ? `<span class="chip" style="background:#f59e0b18;border-color:#f59e0b;color:#f59e0b">🔒 Gated — access request required</span>`
     : '';
@@ -628,6 +848,41 @@ function renderModalContent(model) {
     </div>` : ''}
 
     <div class="modal-section">
+      <div class="modal-section-title">Security &amp; Safety Profile</div>
+      <div class="safety-meter">
+        <div class="safety-track">${safetySegs}</div>
+        <div class="safety-meter-label" style="color:${safetyColor}">
+          ${SAFETY_LABELS[safety.safetyLevel]}
+          <span style="color:var(--text-muted);font-weight:400">(${safety.safetyLevel}/5)</span>
+        </div>
+      </div>
+      <div class="security-items">
+        <div class="security-item">
+          <div class="security-item-label">License</div>
+          <div class="security-item-value">
+            <span class="license-badge ${licInfo.cls}">${licInfo.label}</span>
+            <span class="security-commercial">${licInfo.commercial}</span>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="security-item-label">Alignment Method</div>
+          <div class="security-item-value">${safety.alignment}</div>
+        </div>
+        <div class="security-item">
+          <div class="security-item-label">Safety Testing &amp; Red-Teaming</div>
+          <div class="security-item-value">${safety.redTeam}</div>
+        </div>
+        <div class="security-item">
+          <div class="security-item-label">Known Risks &amp; Limitations</div>
+          <div class="security-item-value" style="color:var(--text-muted)">${safety.knownRisks}</div>
+        </div>
+      </div>
+      <div class="security-disclaimer">
+        ⚠ Safety ratings are approximate and based on public disclosures. Always review the full model card and conduct your own red-teaming before production deployment in sensitive applications.
+      </div>
+    </div>
+
+    <div class="modal-section">
       <div class="modal-section-title">Similar Models</div>
       <div class="competitor-list">${competitorHtml}</div>
     </div>
@@ -658,7 +913,7 @@ async function fetchModels() {
   try {
     const params = new URLSearchParams({
       vram: state.vram, usecase: state.usecase,
-      quantization: state.quantization, sort: state.sort, limit: 24,
+      quantization: state.quantization, sort: state.sort, limit: 100,
     });
 
     const res = await fetch(`/api/models?${params}`);
