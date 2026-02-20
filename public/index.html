@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GPU Model Finder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0f14;
+      --surface:   #161920;
+      --surface2:  #1e222d;
+      --border:    #2a2f3d;
+      --accent:    #6366f1;
+      --accent-h:  #818cf8;
+      --accent-low:#6366f120;
+      --text:      #e2e8f0;
+      --text-muted:#8892a4;
+      --green:     #22c55e;
+      --yellow:    #eab308;
+      --red:       #ef4444;
+      --radius:    12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Header ────────────────────────────────────────────── */
+    header {
+      padding: 28px 32px 0;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-sub { font-size: 13px; color: var(--text-muted); }
+
+    /* ── Main Layout ─────────────────────────────────────── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 32px 60px;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      main { grid-template-columns: 1fr; padding: 16px; }
+      header { padding: 20px 16px 0; }
+    }
+
+    /* ── Sidebar / Filters ──────────────────────────────── */
+    .sidebar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      position: sticky;
+      top: 20px;
+    }
+
+    .sidebar h2 {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .field { margin-bottom: 22px; }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text-muted);
+    }
+
+    /* VRAM Slider */
+    .vram-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+
+    .vram-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-h);
+    }
+
+    .vram-unit { font-size: 14px; color: var(--text-muted); }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 0 3px var(--accent-low);
+      transition: box-shadow .15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 0 6px var(--accent-low);
+    }
+
+    .vram-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .preset-btn {
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent-low);
+      border-color: var(--accent);
+      color: var(--accent-h);
+    }
+
+    /* Tab-style selectors */
+    .tab-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tab-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all .15s;
+      text-align: left;
+    }
+
+    .tab-item:hover { background: var(--surface2); color: var(--text); }
+
+    .tab-item.active {
+      background: var(--accent-low);
+      border-color: var(--accent);
+      color: var(--accent-h);
+    }
+
+    .tab-icon { font-size: 16px; width: 20px; text-align: center; }
+
+    /* Select dropdown */
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238892a4' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    select:focus { border-color: var(--accent); }
+
+    .search-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      margin-top: 4px;
+    }
+
+    .search-btn:hover { background: var(--accent-h); }
+    .search-btn:active { transform: scale(0.98); }
+    .search-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Results Panel ──────────────────────────────────── */
+    .results-panel { min-width: 0; }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .results-count {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .results-count strong { color: var(--text); }
+
+    .sort-bar {
+      display: flex;
+      gap: 6px;
+    }
+
+    .sort-btn {
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all .15s;
+      font-family: inherit;
+    }
+
+    .sort-btn:hover { color: var(--text); }
+    .sort-btn.active { background: var(--accent-low); border-color: var(--accent); color: var(--accent-h); }
+
+    /* ── Model Grid ─────────────────────────────────────── */
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .model-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color .2s, transform .2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .model-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+
+    .card-author {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .card-badge {
+      flex-shrink: 0;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .badge-green  { background: #22c55e20; color: var(--green); }
+    .badge-yellow { background: #eab30820; color: var(--yellow); }
+    .badge-red    { background: #ef444420; color: var(--red); }
+    .badge-gray   { background: var(--surface2); color: var(--text-muted); }
+
+    /* VRAM bar */
+    .vram-bar-wrap { }
+
+    .vram-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .vram-bar-label span { font-family: 'JetBrains Mono', monospace; }
+
+    .vram-bar {
+      height: 5px;
+      background: var(--surface2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .vram-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width .4s ease;
+    }
+
+    /* Task chip + tags */
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .chip {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: var(--surface2);
+    }
+
+    .chip.task {
+      border-color: var(--accent);
+      color: var(--accent-h);
+      background: var(--accent-low);
+    }
+
+    /* Stats row */
+    .card-stats {
+      display: flex;
+      gap: 14px;
+      font-size: 11px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+
+    .stat { display: flex; align-items: center; gap: 4px; }
+
+    /* ── States ─────────────────────────────────────────── */
+    .state-box {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .state-icon { font-size: 48px; margin-bottom: 12px; }
+    .state-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .state-desc  { font-size: 14px; }
+
+    /* Spinner */
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Gated warning */
+    .gated-icon { font-size: 10px; }
+
+    /* ── Skeleton loading ───────────────────────────────── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+    }
+
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    .skeleton-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ── Footer ─────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+
+    footer a { color: var(--accent-h); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <h1>GPU Model Finder</h1>
+      <div class="logo-sub">Find AI models that fit your hardware</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <h2>Your Setup</h2>
+
+    <!-- VRAM Slider -->
+    <div class="field">
+      <label>GPU VRAM</label>
+      <div class="vram-display">
+        <span class="vram-value" id="vramDisplay">8</span>
+        <span class="vram-unit">GB</span>
+      </div>
+      <input type="range" id="vramSlider" min="2" max="80" value="8" step="1" />
+      <div class="vram-presets" id="vramPresets">
+        <button class="preset-btn" data-v="4">4 GB</button>
+        <button class="preset-btn active" data-v="8">8 GB</button>
+        <button class="preset-btn" data-v="12">12 GB</button>
+        <button class="preset-btn" data-v="16">16 GB</button>
+        <button class="preset-btn" data-v="24">24 GB</button>
+        <button class="preset-btn" data-v="40">40 GB</button>
+        <button class="preset-btn" data-v="80">80 GB</button>
+      </div>
+    </div>
+
+    <!-- Use Case -->
+    <div class="field">
+      <label>Use Case</label>
+      <div class="tab-group" id="usecaseTabs">
+        <button class="tab-item active" data-uc="llm">
+          <span class="tab-icon">🧠</span> LLM / Chat
+        </button>
+        <button class="tab-item" data-uc="image">
+          <span class="tab-icon">🎨</span> Image Generation
+        </button>
+        <button class="tab-item" data-uc="audio">
+          <span class="tab-icon">🎵</span> Audio / Speech
+        </button>
+        <button class="tab-item" data-uc="vision">
+          <span class="tab-icon">👁️</span> Computer Vision
+        </button>
+        <button class="tab-item" data-uc="video">
+          <span class="tab-icon">🎬</span> Video
+        </button>
+        <button class="tab-item" data-uc="embed">
+          <span class="tab-icon">🔢</span> Embeddings
+        </button>
+      </div>
+    </div>
+
+    <!-- Quantization -->
+    <div class="field">
+      <label>Quantization / Precision</label>
+      <select id="quantization">
+        <option value="fp16">FP16 — Full precision (best quality)</option>
+        <option value="bf16">BF16 — Brain float (similar to FP16)</option>
+        <option value="int8">INT8 — 8-bit (good balance)</option>
+        <option value="int4">INT4 — 4-bit (most compact)</option>
+        <option value="gguf_q4">GGUF Q4 — CPU/GPU hybrid</option>
+        <option value="gguf_q8">GGUF Q8 — CPU/GPU hybrid HD</option>
+      </select>
+    </div>
+
+    <!-- Sort -->
+    <div class="field">
+      <label>Sort Results By</label>
+      <select id="sortBy">
+        <option value="downloads">Most Downloaded</option>
+        <option value="likes">Most Liked</option>
+        <option value="newest">Newest</option>
+      </select>
+    </div>
+
+    <button class="search-btn" id="searchBtn" onclick="fetchModels()">
+      Find Models →
+    </button>
+  </aside>
+
+  <!-- ── Results ── -->
+  <section class="results-panel">
+    <div class="results-header">
+      <div class="results-count" id="resultsCount">
+        Configure your GPU and click <strong>Find Models</strong>
+      </div>
+      <div class="sort-bar" id="sortBar" style="display:none">
+        <button class="sort-btn active" data-s="downloads">Downloads</button>
+        <button class="sort-btn" data-s="likes">Likes</button>
+        <button class="sort-btn" data-s="newest">Newest</button>
+      </div>
+    </div>
+
+    <div class="model-grid" id="modelGrid">
+      <div class="state-box">
+        <div class="state-icon">⚡</div>
+        <div class="state-title">Ready to search</div>
+        <div class="state-desc">Select your GPU VRAM, use case, and quantization,<br/>then click <strong>Find Models</strong> to get recommendations.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Model data sourced from <a href="https://huggingface.co" target="_blank">HuggingFace</a>.
+  VRAM estimates are approximate — actual usage depends on context length, batch size, and framework.
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
