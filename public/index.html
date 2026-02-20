@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GPU Model Finder</title>
+  <title>Fit to Metal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
@@ -419,8 +419,8 @@
       color: var(--text-muted);
     }
 
-    .state-icon { font-size: 48px; margin-bottom: 12px; }
-    .state-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .state-icon { font-size: 48px; margin-bottom: 12px; filter: drop-shadow(0 0 16px #06b6d460); }
+    .state-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: -0.3px; }
     .state-desc  { font-size: 14px; }
 
     /* Spinner */
@@ -458,6 +458,171 @@
       gap: 12px;
     }
 
+    /* ── GPU Picker ──────────────────────────────────────────── */
+    .gpu-tier-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .gpu-tier-btn {
+      flex: 1;
+      min-width: 0;
+      padding: 5px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all .15s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .gpu-tier-btn:hover { color: var(--text); }
+    .gpu-tier-btn.active {
+      background: var(--accent-low);
+      border-color: var(--accent);
+      color: var(--accent-h);
+    }
+
+    .gpu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .gpu-btn {
+      padding: 7px 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+      font-family: inherit;
+    }
+
+    .gpu-btn:hover { border-color: var(--accent); }
+    .gpu-btn.active {
+      background: var(--accent-low);
+      border-color: var(--accent);
+    }
+
+    .gpu-btn-name {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gpu-btn.active .gpu-btn-name { color: var(--accent-h); }
+
+    .gpu-btn-vram {
+      display: block;
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+
+    .gpu-btn.active .gpu-btn-vram { color: var(--accent); }
+
+    .selected-gpu-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: var(--accent-low);
+      border: 1px solid var(--accent);
+      border-radius: 7px;
+      font-size: 12px;
+      color: var(--accent-h);
+    }
+
+    .clear-gpu-btn {
+      background: none;
+      border: none;
+      color: var(--accent-h);
+      cursor: pointer;
+      font-size: 11px;
+      opacity: 0.7;
+      padding: 0;
+      font-family: inherit;
+    }
+
+    .clear-gpu-btn:hover { opacity: 1; }
+
+    /* ── Multi-GPU ───────────────────────────────────────────── */
+    .gpu-count-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .count-btn {
+      flex: 1;
+      padding: 8px 4px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .count-btn:hover { color: var(--text); }
+    .count-btn.active {
+      background: var(--accent-low);
+      border-color: var(--accent);
+      color: var(--accent-h);
+    }
+
+    .multi-gpu-info {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      background: var(--surface2);
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      line-height: 1.5;
+    }
+
+    .multi-gpu-info strong { color: var(--text); }
+
+    .sidebar-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0 18px;
+    }
+
+    /* ── Latency chip ────────────────────────────────────────── */
+    .latency-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      width: fit-content;
+    }
+
+    .latency-chip.fast   { color: var(--green);  border-color: #22c55e40; background: #22c55e12; }
+    .latency-chip.medium { color: var(--yellow); border-color: #eab30840; background: #eab30812; }
+    .latency-chip.slow   { color: var(--red);    border-color: #ef444440; background: #ef444412; }
+
     /* ── Footer ─────────────────────────────────────────── */
     footer {
       text-align: center;
@@ -468,16 +633,142 @@
     }
 
     footer a { color: var(--accent-h); text-decoration: none; }
+
+    /* ════════════════════════════════════════════════════
+       Fit to Metal — Visual Language
+       Steel cyan palette · Blueprint grid · Glow accents
+       ════════════════════════════════════════════════════ */
+
+    :root {
+      --accent:    #06b6d4;
+      --accent-h:  #22d3ee;
+      --accent-low:#06b6d418;
+      --bg:        #080b10;
+      --surface:   #0d1118;
+      --surface2:  #141924;
+      --border:    #1e2538;
+    }
+
+    /* Blueprint dot-grid texture */
+    body {
+      background-image: radial-gradient(circle, rgba(6,182,212,0.07) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* Glowing accent stripe at top of viewport */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg,
+        transparent 5%,
+        var(--accent) 30%,
+        var(--accent-h) 50%,
+        var(--accent) 70%,
+        transparent 95%);
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    /* Header: position context + bottom gradient rule */
+    header {
+      position: relative;
+      padding-bottom: 24px;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 5%; right: 5%;
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent,
+        var(--accent) 30%,
+        var(--accent-h) 50%,
+        var(--accent) 70%,
+        transparent);
+      opacity: 0.35;
+    }
+
+    /* Logo icon: cyan gradient + ambient glow */
+    .logo-icon {
+      background: linear-gradient(135deg, var(--accent) 0%, #0369a1 100%);
+      box-shadow: 0 0 22px #06b6d455, 0 0 6px #06b6d430;
+      border-radius: 8px;
+    }
+
+    /* Logo title: metallic gradient sheen */
+    .logo h1 {
+      background: linear-gradient(100deg, var(--text) 5%, var(--accent-h) 42%, var(--text) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Sidebar: steel-cyan top rail */
+    .sidebar {
+      border-top: 2px solid var(--accent);
+      box-shadow: 0 0 40px rgba(6,182,212,0.04) inset;
+    }
+
+    /* Sidebar section label: mono, cyan-tinted */
+    .sidebar h2 {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      letter-spacing: 1.8px;
+      font-size: 11px;
+      opacity: 0.85;
+    }
+
+    /* VRAM readout number: cyan glow */
+    .vram-value {
+      filter: drop-shadow(0 0 14px #06b6d455);
+    }
+
+    /* Search button: gradient fill */
+    .search-btn {
+      background: linear-gradient(135deg, var(--accent) 0%, #0369a1 100%);
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 18px #06b6d430;
+    }
+
+    .search-btn:hover {
+      background: linear-gradient(135deg, var(--accent-h) 0%, var(--accent) 100%);
+      box-shadow: 0 4px 24px #06b6d450;
+    }
+
+    /* Model card: glow aura on hover */
+    .model-card:hover {
+      box-shadow:
+        0 0 0 1px #06b6d435,
+        0 8px 28px rgba(0,0,0,0.45),
+        0 0 36px #06b6d410;
+    }
+
+    /* Results count numbers: mono + accent */
+    .results-count strong {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-h);
+    }
+
+    /* VRAM bar: slightly taller, cleaner */
+    .vram-bar { height: 6px; }
+
+    /* Sort/preset buttons: sharper glow when active */
+    .sort-btn.active, .preset-btn.active {
+      box-shadow: 0 0 8px var(--accent-low);
+    }
   </style>
 </head>
 <body>
 
 <header>
   <div class="logo">
-    <div class="logo-icon">⚡</div>
+    <div class="logo-icon">◈</div>
     <div>
-      <h1>GPU Model Finder</h1>
-      <div class="logo-sub">Find AI models that fit your hardware</div>
+      <h1>Fit to Metal</h1>
+      <div class="logo-sub">Match open-source AI models to your exact GPU setup</div>
     </div>
   </div>
 </header>
@@ -486,6 +777,36 @@
   <!-- ── Sidebar ── -->
   <aside class="sidebar">
     <h2>Your Setup</h2>
+
+    <!-- GPU Quick Select -->
+    <div class="field">
+      <label>GPU Model <span style="font-size:10px;font-weight:400;color:var(--text-muted)">(auto-sets VRAM)</span></label>
+      <div class="gpu-tier-tabs" id="gpuTierTabs">
+        <button class="gpu-tier-btn active" data-tier="50-series">RTX 50</button>
+        <button class="gpu-tier-btn" data-tier="40-series">RTX 40</button>
+        <button class="gpu-tier-btn" data-tier="workstation">Pro</button>
+        <button class="gpu-tier-btn" data-tier="datacenter">Data Center</button>
+      </div>
+      <div class="gpu-grid" id="gpuGrid"></div>
+      <div class="selected-gpu-row" id="selectedGpuRow" style="display:none">
+        <span id="selectedGpuText"></span>
+        <button class="clear-gpu-btn" id="clearGpuBtn">✕ clear</button>
+      </div>
+    </div>
+
+    <!-- Multi-GPU -->
+    <div class="field" id="multiGpuSection" style="display:none">
+      <label>How many GPUs?</label>
+      <div class="gpu-count-row" id="gpuCountRow">
+        <button class="count-btn active" data-c="1">1×</button>
+        <button class="count-btn" data-c="2">2×</button>
+        <button class="count-btn" data-c="4">4×</button>
+        <button class="count-btn" data-c="8">8×</button>
+      </div>
+      <div class="multi-gpu-info" id="multiGpuInfo" style="display:none"></div>
+    </div>
+
+    <div class="sidebar-divider"></div>
 
     <!-- VRAM Slider -->
     <div class="field">
@@ -574,17 +895,17 @@
 
     <div class="model-grid" id="modelGrid">
       <div class="state-box">
-        <div class="state-icon">⚡</div>
-        <div class="state-title">Ready to search</div>
-        <div class="state-desc">Select your GPU VRAM, use case, and quantization,<br/>then click <strong>Find Models</strong> to get recommendations.</div>
+        <div class="state-icon">◈</div>
+        <div class="state-title">Fit to Metal</div>
+        <div class="state-desc">Pick your GPU (or set VRAM manually), choose a use case,<br/>then click <strong>Find Models</strong> to see what fits.</div>
       </div>
     </div>
   </section>
 </main>
 
 <footer>
-  Model data sourced from <a href="https://huggingface.co" target="_blank">HuggingFace</a>.
-  VRAM estimates are approximate — actual usage depends on context length, batch size, and framework.
+  Model data from <a href="https://huggingface.co" target="_blank">HuggingFace</a>.
+  VRAM &amp; latency estimates are approximate — actual performance varies by context length, batch size, and driver.
 </footer>
 
 <script src="app.js"></script>

@@ -1,6 +1,43 @@
 /* ─────────────────────────────────────────────────────────────
-   GPU Model Finder — Frontend
+   Bring Your Own Hardware — Frontend
    ───────────────────────────────────────────────────────────── */
+
+// ── NVIDIA GPU data ────────────────────────────────────────────
+// bw = memory bandwidth in GB/s (key metric for inference latency)
+const NVIDIA_GPUS = {
+  '50-series': [
+    { name: 'RTX 5090',    vram: 32, bw: 1792 },
+    { name: 'RTX 5080',    vram: 16, bw: 960  },
+    { name: 'RTX 5070 Ti', vram: 16, bw: 896  },
+    { name: 'RTX 5070',    vram: 12, bw: 672  },
+  ],
+  '40-series': [
+    { name: 'RTX 4090',          vram: 24, bw: 1008 },
+    { name: 'RTX 4080 Super',    vram: 16, bw: 736  },
+    { name: 'RTX 4080',          vram: 16, bw: 717  },
+    { name: 'RTX 4070 Ti Super', vram: 16, bw: 672  },
+    { name: 'RTX 4070 Ti',       vram: 12, bw: 504  },
+    { name: 'RTX 4070 Super',    vram: 12, bw: 504  },
+    { name: 'RTX 4070',          vram: 12, bw: 504  },
+    { name: 'RTX 4060 Ti 16G',   vram: 16, bw: 288  },
+    { name: 'RTX 4060 Ti',       vram: 8,  bw: 288  },
+    { name: 'RTX 4060',          vram: 8,  bw: 272  },
+  ],
+  'workstation': [
+    { name: 'RTX 6000 Ada', vram: 48, bw: 960 },
+    { name: 'RTX 5000 Ada', vram: 32, bw: 576 },
+    { name: 'RTX 4500 Ada', vram: 24, bw: 432 },
+    { name: 'RTX 4000 Ada', vram: 20, bw: 360 },
+  ],
+  'datacenter': [
+    { name: 'H200 SXM',  vram: 141, bw: 4800 },
+    { name: 'H100 SXM',  vram: 80,  bw: 3350 },
+    { name: 'H100 PCIe', vram: 80,  bw: 2000 },
+    { name: 'A100 80G',  vram: 80,  bw: 2000 },
+    { name: 'A100 40G',  vram: 40,  bw: 1600 },
+    { name: 'L40S',      vram: 48,  bw: 864  },
+  ],
+};
 
 // ── State ──────────────────────────────────────────────────────
 const state = {
@@ -10,19 +47,129 @@ const state = {
   sort: 'downloads',
   loading: false,
   models: [],
+  selectedGpu: null,   // { name, vram, bw }
+  gpuCount: 1,
+  gpuTier: '50-series',
 };
 
 // ── DOM refs ───────────────────────────────────────────────────
-const vramSlider    = document.getElementById('vramSlider');
-const vramDisplay   = document.getElementById('vramDisplay');
-const vramPresets   = document.getElementById('vramPresets');
-const usecaseTabs   = document.getElementById('usecaseTabs');
-const quantSel      = document.getElementById('quantization');
-const sortSel       = document.getElementById('sortBy');
-const searchBtn     = document.getElementById('searchBtn');
-const modelGrid     = document.getElementById('modelGrid');
-const resultsCount  = document.getElementById('resultsCount');
-const sortBar       = document.getElementById('sortBar');
+const vramSlider      = document.getElementById('vramSlider');
+const vramDisplay     = document.getElementById('vramDisplay');
+const vramPresets     = document.getElementById('vramPresets');
+const usecaseTabs     = document.getElementById('usecaseTabs');
+const quantSel        = document.getElementById('quantization');
+const sortSel         = document.getElementById('sortBy');
+const searchBtn       = document.getElementById('searchBtn');
+const modelGrid       = document.getElementById('modelGrid');
+const resultsCount    = document.getElementById('resultsCount');
+const sortBar         = document.getElementById('sortBar');
+const gpuTierTabs     = document.getElementById('gpuTierTabs');
+const gpuGrid         = document.getElementById('gpuGrid');
+const selectedGpuRow  = document.getElementById('selectedGpuRow');
+const selectedGpuText = document.getElementById('selectedGpuText');
+const clearGpuBtn     = document.getElementById('clearGpuBtn');
+const multiGpuSection = document.getElementById('multiGpuSection');
+const gpuCountRow     = document.getElementById('gpuCountRow');
+const multiGpuInfo    = document.getElementById('multiGpuInfo');
+
+// ── GPU Picker ─────────────────────────────────────────────────
+function renderGpuGrid() {
+  const gpus = NVIDIA_GPUS[state.gpuTier] ?? [];
+  gpuGrid.innerHTML = gpus.map(g => `
+    <button class="gpu-btn${state.selectedGpu?.name === g.name ? ' active' : ''}"
+            data-name="${escapeHtml(g.name)}" data-vram="${g.vram}" data-bw="${g.bw}">
+      <span class="gpu-btn-name">${escapeHtml(g.name)}</span>
+      <span class="gpu-btn-vram">${g.vram} GB</span>
+    </button>
+  `).join('');
+}
+
+gpuTierTabs.addEventListener('click', e => {
+  const btn = e.target.closest('.gpu-tier-btn');
+  if (!btn) return;
+  state.gpuTier = btn.dataset.tier;
+  gpuTierTabs.querySelectorAll('.gpu-tier-btn').forEach(b =>
+    b.classList.toggle('active', b === btn)
+  );
+  renderGpuGrid();
+});
+
+gpuGrid.addEventListener('click', e => {
+  const btn = e.target.closest('.gpu-btn');
+  if (!btn) return;
+  const name = btn.dataset.name;
+  const vram = parseInt(btn.dataset.vram);
+  const bw   = parseInt(btn.dataset.bw);
+
+  if (state.selectedGpu?.name === name) {
+    clearGpu();
+  } else {
+    state.selectedGpu = { name, vram, bw };
+    state.gpuCount = 1;
+    updateVramFromGpu();
+    updateGpuUI();
+  }
+});
+
+clearGpuBtn.addEventListener('click', () => clearGpu());
+
+function clearGpu() {
+  state.selectedGpu = null;
+  state.gpuCount = 1;
+  vramSlider.max = 80;
+  updateGpuUI();
+  renderGpuGrid();
+}
+
+function updateVramFromGpu() {
+  if (!state.selectedGpu) return;
+  const totalVram = state.selectedGpu.vram * state.gpuCount;
+  state.vram = totalVram;
+  vramSlider.max = Math.max(320, totalVram + 40);
+  vramSlider.value = totalVram;
+  vramDisplay.textContent = totalVram;
+  syncPresets();
+}
+
+function updateGpuUI() {
+  if (state.selectedGpu) {
+    const total = state.selectedGpu.vram * state.gpuCount;
+    selectedGpuText.textContent = state.gpuCount > 1
+      ? `${state.gpuCount}× ${state.selectedGpu.name} = ${total} GB`
+      : `${state.selectedGpu.name} — ${total} GB`;
+    selectedGpuRow.style.display = 'flex';
+    multiGpuSection.style.display = 'block';
+
+    gpuCountRow.querySelectorAll('.count-btn').forEach(b =>
+      b.classList.toggle('active', parseInt(b.dataset.c) === state.gpuCount)
+    );
+
+    if (state.gpuCount > 1) {
+      const totalBW = Math.round(state.selectedGpu.bw * state.gpuCount * 0.80);
+      multiGpuInfo.style.display = 'block';
+      multiGpuInfo.innerHTML =
+        `<strong>${state.gpuCount}×</strong> ${escapeHtml(state.selectedGpu.name)} · ` +
+        `<strong>${total} GB</strong> VRAM · ` +
+        `~<strong>${totalBW} GB/s</strong> combined bandwidth`;
+    } else {
+      multiGpuInfo.style.display = 'none';
+    }
+  } else {
+    selectedGpuRow.style.display = 'none';
+    multiGpuSection.style.display = 'none';
+    vramSlider.max = 80;
+  }
+  renderGpuGrid();
+}
+
+// ── Multi-GPU count ────────────────────────────────────────────
+gpuCountRow.addEventListener('click', e => {
+  const btn = e.target.closest('.count-btn');
+  if (!btn) return;
+  state.gpuCount = parseInt(btn.dataset.c);
+  updateVramFromGpu();
+  updateGpuUI();
+});
 
 // ── VRAM slider + presets ──────────────────────────────────────
 vramSlider.addEventListener('input', () => {
@@ -68,7 +215,6 @@ sortBar.addEventListener('click', e => {
   fetchModels();
 });
 
-// Sync select → state
 quantSel.addEventListener('change', () => { state.quantization = quantSel.value; });
 sortSel.addEventListener('change',  () => {
   state.sort = sortSel.value;
@@ -79,6 +225,47 @@ function syncSortBar() {
   sortBar.querySelectorAll('.sort-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.s === state.sort)
   );
+}
+
+// ── Latency estimation ─────────────────────────────────────────
+// Memory-bandwidth-bound formula: throughput ≈ bandwidth / model_size
+// This is the dominant bottleneck during transformer autoregressive inference.
+function estimateLatency(model, gpu, gpuCount, usecase) {
+  if (!model.estimatedVRAM || !gpu) return null;
+
+  // Effective bandwidth with multi-GPU efficiency discount
+  const eff = gpu.bw * gpuCount * (gpuCount > 1 ? 0.80 : 0.85);
+
+  if (usecase === 'llm') {
+    const tokPerSec = Math.round(eff / model.estimatedVRAM);
+    const tier = tokPerSec >= 50 ? 'fast' : tokPerSec >= 15 ? 'medium' : 'slow';
+    return { label: `~${tokPerSec} tok/s`, tier };
+
+  } else if (usecase === 'image') {
+    // Typical 20 denoising steps
+    const sec = (20 * model.estimatedVRAM) / eff;
+    const label = sec < 1
+      ? `~${(sec * 1000).toFixed(0)}ms/img`
+      : `~${sec.toFixed(1)}s/img`;
+    const tier = sec < 3 ? 'fast' : sec < 10 ? 'medium' : 'slow';
+    return { label, tier };
+
+  } else if (usecase === 'video') {
+    // ~50 steps for video diffusion
+    const sec = (50 * model.estimatedVRAM) / eff;
+    const label = sec < 10 ? `~${sec.toFixed(1)}s` : `~${sec.toFixed(0)}s/clip`;
+    const tier = sec < 20 ? 'fast' : sec < 60 ? 'medium' : 'slow';
+    return { label, tier };
+
+  } else {
+    // Audio, vision, embed — single forward pass
+    const ms = (1000 * model.estimatedVRAM) / eff;
+    const label = ms < 10 ? `<10ms` : ms < 1000
+      ? `~${ms.toFixed(0)}ms`
+      : `~${(ms / 1000).toFixed(1)}s`;
+    const tier = ms < 50 ? 'fast' : ms < 200 ? 'medium' : 'slow';
+    return { label: `${label}/run`, tier };
+  }
 }
 
 // ── Fetch models ───────────────────────────────────────────────
@@ -108,9 +295,14 @@ async function fetchModels() {
     state.models = data.models ?? [];
     renderModels(state.models, state.vram);
 
-    const count = state.models.length;
+    const count  = state.models.length;
     const qLabel = quantSel.options[quantSel.selectedIndex].text.split('—')[0].trim();
-    resultsCount.innerHTML = `Found <strong>${count}</strong> model${count !== 1 ? 's' : ''} that fit in <strong>${state.vram} GB</strong> at <strong>${qLabel}</strong>`;
+    const gpuLabel = state.selectedGpu
+      ? ` on <strong>${state.gpuCount > 1 ? `${state.gpuCount}× ` : ''}${escapeHtml(state.selectedGpu.name)}</strong>`
+      : '';
+    resultsCount.innerHTML =
+      `Found <strong>${count}</strong> model${count !== 1 ? 's' : ''} ` +
+      `that fit in <strong>${state.vram} GB</strong> at <strong>${qLabel}</strong>${gpuLabel}`;
     sortBar.style.display = count ? 'flex' : 'none';
     syncSortBar();
   } catch (err) {
@@ -143,7 +335,6 @@ function renderModels(models, maxVram) {
       </div>`;
     return;
   }
-
   modelGrid.innerHTML = models.map(m => modelCardHTML(m, maxVram)).join('');
 }
 
@@ -158,7 +349,6 @@ function modelCardHTML(m, maxVram) {
     const pct = Math.min((m.estimatedVRAM / maxVram) * 100, 100);
     barPct = pct;
     badgeLabel = `~${m.estimatedVRAM} GB`;
-
     if (pct <= 50) { badgeClass = 'badge-green'; barColor = '#22c55e'; }
     else if (pct <= 80) { badgeClass = 'badge-yellow'; barColor = '#eab308'; }
     else { badgeClass = 'badge-red'; barColor = '#ef4444'; }
@@ -175,14 +365,19 @@ function modelCardHTML(m, maxVram) {
     ? `${(m.likes / 1e3).toFixed(0)}K`
     : `${m.likes}`;
 
-  const paramStr = m.paramLabel ? `<span class="chip">${m.paramLabel} params</span>` : '';
+  const paramStr  = m.paramLabel ? `<span class="chip">${m.paramLabel} params</span>` : '';
   const gatedIcon = m.gated ? `<span title="Requires access request" style="font-size:12px">🔒</span>` : '';
 
-  // Render at most 4 non-trivial tags
+  // Latency estimate (only when a GPU is selected)
+  const latency = estimateLatency(m, state.selectedGpu, state.gpuCount, state.usecase);
+  const latencyHtml = latency
+    ? `<div class="latency-chip ${latency.tier}">⚡ ${latency.label}</div>`
+    : '';
+
+  // Tags — at most 4 non-trivial ones
   const interestingTags = m.tags
     .filter(t => !['transformers','pytorch','safetensors','gguf','en'].includes(t))
     .slice(0, 4);
-
   const tagChips = interestingTags.map(t => `<span class="chip">${t}</span>`).join('');
 
   return `
@@ -211,6 +406,8 @@ function modelCardHTML(m, maxVram) {
       ${paramStr}
       ${tagChips}
     </div>
+
+    ${latencyHtml}
 
     <div class="card-stats">
       <div class="stat">⬇️ ${dlStr} downloads</div>
@@ -247,6 +444,5 @@ function escapeHtml(str = '') {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Auto-search on load (optional) ────────────────────────────
-// Uncomment to fetch immediately on page load:
-// window.addEventListener('DOMContentLoaded', fetchModels);
+// ── Initialize ─────────────────────────────────────────────────
+renderGpuGrid();
