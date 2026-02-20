@@ -160,6 +160,14 @@ const BENCHMARK_DATA = {
   'nvidia/Llama-3.1-Nemotron-51B-Instruct':    { mmlu:80.2, humaneval:72.0, math:68.0, gsm8k:90.0, arc:65.0, ifeval:78.0 },
   // Apple — OpenELM
   'apple/OpenELM-3B-Instruct':                 { mmlu:28.0, humaneval:16.0, math:4.0,  gsm8k:8.0,  arc:36.0, ifeval:24.0 },
+  // Google — Gemma 3 (March 2025)
+  'google/gemma-3-1b-it':                      { mmlu:45.2, humaneval:35.4, math:39.6, gsm8k:49.8, arc:42.1, ifeval:41.8 },
+  'google/gemma-3-4b-it':                      { mmlu:59.6, humaneval:60.4, math:62.1, gsm8k:68.0, arc:54.3, ifeval:52.2 },
+  'google/gemma-3-12b-it':                     { mmlu:74.5, humaneval:79.2, math:79.5, gsm8k:89.2, arc:64.5, ifeval:73.0 },
+  // Mistral — Small 3.1 (March 2025)
+  'mistralai/Mistral-Small-3.1-24B-Instruct-2503': { mmlu:81.5, humaneval:71.2, math:57.8, gsm8k:92.5, arc:66.2, ifeval:74.8 },
+  // Microsoft — Phi-4-mini (April 2025, 3.8B)
+  'microsoft/Phi-4-mini-instruct':             { mmlu:67.1, humaneval:75.4, math:71.3, gsm8k:83.0, arc:60.2, ifeval:67.5 },
   // ── Embeddings: mteb ──────────────────────────────────────────
   'BAAI/bge-large-en-v1.5':                     { mteb: 64.2 },
   'BAAI/bge-m3':                                { mteb: 62.8 },
@@ -206,16 +214,21 @@ const FLAGSHIP_VRAM_FP16 = {
   'deepseek-ai/DeepSeek-R1':                    1342,  // 671B dense
   'deepseek-ai/DeepSeek-V3':                    1342,
   'deepseek-ai/DeepSeek-V2.5':                  1342,
+  'deepseek-ai/DeepSeek-V3.2':                  1342,  // ~671B, successor to V3
+  'deepseek-ai/DeepSeek-V3.2-Speciale':         1342,
   // ── 400B ──────────────────────────────────────────────────────
   'meta-llama/Llama-3.1-405B-Instruct':          810,
   // ── 200B MoE ──────────────────────────────────────────────────
   'Qwen/Qwen3-235B-A22B':                        470,  // all weights loaded; ~22B active
+  'Qwen/Qwen3-Coder-Next':                       240,  // ~100B MoE (40 shards × ~5 GB)
   'mistralai/Mixtral-8x22B-Instruct-v0.1':       281,
   'databricks/dbrx-instruct':                    281,  // 132B MoE
   'mistralai/Mistral-Large-Instruct-2411':        250,  // 123B
+  'mistralai/Mistral-Small-3.1-24B-Instruct-2503': 49, // 24B
   'WizardLMTeam/WizardLM-2-8x22B':              281,
   // ── 100B ──────────────────────────────────────────────────────
   'CohereForAI/c4ai-command-r-plus-08-2024':     210,  // 104B
+  'CohereForAI/c4ai-command-a-03-2025':          210,  // 111B MoE
   'meta-llama/Llama-3.2-90B-Vision-Instruct':    181,
   // ── 70B ───────────────────────────────────────────────────────
   'meta-llama/Llama-3.3-70B-Instruct':           141,
@@ -240,8 +253,28 @@ const FLAGSHIP_VRAM_FP16 = {
   'internlm/internlm3-8b-instruct':               16,
   'google/gemma-2-27b-it':                        55,
   'google/gemma-3-27b-it':                        55,
+  'google/gemma-3-12b-it':                        24,
   'microsoft/Phi-4':                              16,
+  'microsoft/Phi-4-mini-instruct':                 8,  // 3.8B
   'nvidia/Llama-3.1-Nemotron-51B-Instruct':      102,
+};
+
+// Known parameter counts for models whose names don't embed a size token.
+// Used to show correct paramLabel when safetensors metadata is missing.
+const FLAGSHIP_PARAMS = {
+  'deepseek-ai/DeepSeek-R1':                   671e9,
+  'deepseek-ai/DeepSeek-V3':                   671e9,
+  'deepseek-ai/DeepSeek-V2.5':                 236e9,
+  'deepseek-ai/DeepSeek-V3.2':                 671e9,
+  'deepseek-ai/DeepSeek-V3.2-Speciale':        671e9,
+  'Qwen/Qwen3-Coder-Next':                     100e9,  // ~100B MoE (estimated)
+  'mistralai/Mistral-Large-Instruct-2411':      123e9,
+  'mistralai/Mistral-Small-3.1-24B-Instruct-2503': 24e9,
+  'CohereForAI/c4ai-command-r-plus-08-2024':   104e9,
+  'CohereForAI/c4ai-command-a-03-2025':        111e9,
+  'nvidia/Llama-3.1-Nemotron-51B-Instruct':     51e9,
+  'deepseek-ai/DeepSeek-Coder-V2-Instruct':    236e9,
+  'databricks/dbrx-instruct':                  132e9,
 };
 
 const USECASE_PIPELINES = {
@@ -258,10 +291,14 @@ const USECASE_PIPELINES = {
 // author-targeted "newest" fetch for each so brand-new releases
 // surface immediately — without waiting for downloads/likes to
 // accumulate. Only orgs that respond correctly to HF's author= filter.
+// Verified working with HF author= filter. Orgs that return 0 results
+// (THUDM, CohereForAI, AI21Labs) are excluded — their flagship models
+// are still surfaced via FLAGSHIP_VRAM_FP16 injection and BENCHMARK_DATA.
 const PRIORITY_AUTHORS = {
   llm:    ['Qwen', 'deepseek-ai', 'meta-llama', 'mistralai', 'google',
-           'microsoft', 'CohereForAI', 'nvidia', 'internlm', 'AI21Labs',
-           'EleutherAI', 'allenai', 'tiiuae', 'NousResearch'],
+           'microsoft', 'nvidia', 'internlm', 'EleutherAI', 'allenai',
+           'tiiuae', 'NousResearch', '01-ai', 'baichuan-inc', 'open-thoughts',
+           'HuggingFaceTB', 'bigcode'],
   image:  ['black-forest-labs', 'stabilityai', 'ByteDance', 'Tencent-Hunyuan', 'shuttleai'],
   audio:  ['openai', 'speechbrain', 'facebook', 'suno-ai'],
   vision: ['google', 'microsoft', 'facebook', 'openai', 'Salesforce'],
@@ -497,13 +534,16 @@ app.get('/api/models', async (req, res) => {
       const curatedFp16 = FLAGSHIP_VRAM_FP16[m.id];
       if (curatedFp16 !== undefined) {
         const estimatedVRAM = parseFloat((curatedFp16 * quantScale).toFixed(2));
-        return { raw: m, totalParams: paramsFromName(m.id), estimatedVRAM };
+        const knownParams = FLAGSHIP_PARAMS[m.id] ?? paramsFromName(m.id);
+        // curatedVRAM=true prevents batchFetchDetails from overwriting this value
+        return { raw: m, totalParams: knownParams, estimatedVRAM, curatedVRAM: true };
       }
       const nameParams = paramsFromName(m.id);
       return {
         raw: m,
         totalParams: nameParams,
         estimatedVRAM: estimateVRAM(nameParams, quantization),
+        curatedVRAM: false,
       };
     });
 
@@ -524,17 +564,26 @@ app.get('/api/models', async (req, res) => {
 
     // 4. Merge detail data, build final model objects
     const processed = candidates
-      .map(({ raw: m, totalParams: nameParams, estimatedVRAM: nameVRAM }) => {
+      .map(({ raw: m, totalParams: nameParams, estimatedVRAM: nameVRAM, curatedVRAM }) => {
         let totalParams = nameParams;
         let estimatedVRAM = nameVRAM;
 
+        let approxParams = false;
         if (!totalParams && details[m.id]) {
           const detailed = details[m.id];
           // Prefer exact safetensors count; fall back to shard-count heuristic for
           // brand-new models where HF hasn't yet computed the metadata (e.g. Qwen3-Coder-Next).
-          totalParams   = paramsFromSafetensors(detailed.safetensors)
-                       ?? paramsFromShards(detailed.siblings);
-          estimatedVRAM = estimateVRAM(totalParams, quantization);
+          const exact = paramsFromSafetensors(detailed.safetensors)
+                     ?? FLAGSHIP_PARAMS[m.id];
+          if (exact) {
+            totalParams = exact;
+          } else {
+            totalParams = paramsFromShards(detailed.siblings);
+            approxParams = !!totalParams;
+          }
+          // Only update estimatedVRAM if it wasn't set from the curated FLAGSHIP map.
+          // Without this guard, shard-count heuristics overwrite the precise curated value.
+          if (!curatedVRAM) estimatedVRAM = estimateVRAM(totalParams, quantization);
         }
 
         // Merge benchmark data: hardcoded lookup + model-card extraction
@@ -556,7 +605,7 @@ app.get('/api/models', async (req, res) => {
           likes:        m.likes ?? 0,
           lastModified: m.lastModified,
           estimatedVRAM,
-          paramLabel:   paramLabel(totalParams),
+          paramLabel:   approxParams ? `~${paramLabel(totalParams)}` : paramLabel(totalParams),
           benchmarks,
           overallScore,
           tags: (m.tags ?? [])
