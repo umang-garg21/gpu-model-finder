@@ -375,6 +375,8 @@ const TASK_DESCRIPTIONS = {
 };
 
 // ── State ──────────────────────────────────────────────────────
+const PAGE_SIZE = 20;
+
 const state = {
   vram: 8,
   usecase: 'llm',
@@ -385,7 +387,8 @@ const state = {
   selectedGpu: null,
   gpuCount: 1,
   gpuTier: '50-series',
-  activeBenchmark: null,
+  activeBenchmark: 'overall',
+  page: 1,
 };
 
 // ── DOM refs ───────────────────────────────────────────────────
@@ -536,7 +539,8 @@ usecaseTabs.addEventListener('click', e => {
   const btn = e.target.closest('.tab-item');
   if (!btn) return;
   state.usecase = btn.dataset.uc;
-  state.activeBenchmark = null;  // reset benchmark when use case changes
+  state.activeBenchmark = 'overall';  // reset to overall when use case changes
+  state.page = 1;
   usecaseTabs.querySelectorAll('.tab-item').forEach(b =>
     b.classList.toggle('active', b === btn)
   );
@@ -600,19 +604,17 @@ function renderBenchmarkTabs() {
     return;
   }
   benchmarkBar.style.display = 'flex';
-  benchmarkTabs.innerHTML = [
-    `<button class="bm-tab${!state.activeBenchmark ? ' active' : ''}" data-bm="">— none —</button>`,
-    ...available.map(b =>
-      `<button class="bm-tab${state.activeBenchmark === b.key ? ' active' : ''}"
-               data-bm="${b.key}" title="${b.desc}">${b.label}</button>`
-    ),
-  ].join('');
+  benchmarkTabs.innerHTML = available.map(b =>
+    `<button class="bm-tab${state.activeBenchmark === b.key ? ' active' : ''}"
+             data-bm="${b.key}" title="${b.desc}">${b.label}</button>`
+  ).join('');
 }
 
 benchmarkBar.addEventListener('click', e => {
   const btn = e.target.closest('.bm-tab');
   if (!btn) return;
-  state.activeBenchmark = btn.dataset.bm || null;
+  state.activeBenchmark = btn.dataset.bm || 'overall';
+  state.page = 1;
   renderBenchmarkTabs();
   if (state.models.length) renderModels(state.models, state.vram);
 });
@@ -901,9 +903,10 @@ function renderModalContent(model) {
 async function fetchModels() {
   if (state.loading) return;
   state.loading = true;
+  state.page = 1;
   searchBtn.disabled = true;
   searchBtn.textContent = 'Searching…';
-  state.activeBenchmark = null;
+  // Keep activeBenchmark — re-apply ranking after fetch completes
 
   showSkeletons();
   resultsCount.innerHTML = 'Fetching models from HuggingFace…';
@@ -975,8 +978,41 @@ function renderModels(models, maxVram) {
     });
   }
 
-  modelGrid.innerHTML = sorted.map((m, i) => modelCardHTML(m, maxVram, i + 1)).join('');
+  const showing = Math.min(state.page * PAGE_SIZE, sorted.length);
+  modelGrid.innerHTML = sorted.slice(0, showing).map((m, i) => modelCardHTML(m, maxVram, i + 1)).join('');
+  updateLoadMoreBar(showing, sorted.length);
 }
+
+function updateLoadMoreBar(showing, total) {
+  const bar = document.getElementById('loadMoreBar');
+  if (!bar) return;
+  if (total === 0) { bar.innerHTML = ''; return; }
+
+  const pct = Math.round((showing / total) * 100);
+  const remaining = total - showing;
+
+  if (showing >= total) {
+    bar.innerHTML = `<div class="load-more-wrap">
+      <div class="load-more-track"><div class="load-more-fill" style="width:100%"></div></div>
+      <div class="load-more-done">Showing all ${total} model${total !== 1 ? 's' : ''}</div>
+    </div>`;
+  } else {
+    bar.innerHTML = `<div class="load-more-wrap">
+      <div class="load-more-track"><div class="load-more-fill" style="width:${pct}%"></div></div>
+      <div class="load-more-info">Showing ${showing} of ${total} models</div>
+      <button class="load-more-btn" onclick="loadMore()">Show ${Math.min(remaining, PAGE_SIZE)} more &darr;</button>
+    </div>`;
+  }
+}
+
+window.loadMore = function loadMore() {
+  state.page += 1;
+  renderModels(state.models, state.vram);
+  // Scroll to the first newly visible card
+  const cards = modelGrid.querySelectorAll('.model-card');
+  const firstNew = cards[(state.page - 1) * PAGE_SIZE];
+  if (firstNew) firstNew.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
 
 function modelCardHTML(m, maxVram, rank) {
   // VRAM badge

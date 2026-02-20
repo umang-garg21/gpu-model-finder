@@ -198,6 +198,52 @@ const BENCHMARK_DATA = {
   'facebook/deit-base-distilled-patch16-224':   { imagenet_top1: 83.4 },
 };
 
+// ── Flagship model VRAM map (fp16 GB) ─────────────────────────
+// For models whose names don't embed a size token — ensures they surface
+// when the user has enough VRAM, regardless of download rank.
+const FLAGSHIP_VRAM_FP16 = {
+  // ── 600B+ ──────────────────────────────────────────────────────
+  'deepseek-ai/DeepSeek-R1':                    1342,  // 671B dense
+  'deepseek-ai/DeepSeek-V3':                    1342,
+  'deepseek-ai/DeepSeek-V2.5':                  1342,
+  // ── 400B ──────────────────────────────────────────────────────
+  'meta-llama/Llama-3.1-405B-Instruct':          810,
+  // ── 200B MoE ──────────────────────────────────────────────────
+  'Qwen/Qwen3-235B-A22B':                        470,  // all weights loaded; ~22B active
+  'mistralai/Mixtral-8x22B-Instruct-v0.1':       281,
+  'databricks/dbrx-instruct':                    281,  // 132B MoE
+  'mistralai/Mistral-Large-Instruct-2411':        250,  // 123B
+  'WizardLMTeam/WizardLM-2-8x22B':              281,
+  // ── 100B ──────────────────────────────────────────────────────
+  'CohereForAI/c4ai-command-r-plus-08-2024':     210,  // 104B
+  'meta-llama/Llama-3.2-90B-Vision-Instruct':    181,
+  // ── 70B ───────────────────────────────────────────────────────
+  'meta-llama/Llama-3.3-70B-Instruct':           141,
+  'meta-llama/Llama-3.1-70B-Instruct':           141,
+  'meta-llama/Llama-3.2-11B-Vision-Instruct':     22,
+  'deepseek-ai/DeepSeek-R1-Distill-Llama-70B':   141,
+  'nvidia/Llama-3.1-Nemotron-70B-Instruct-HF':   141,
+  'Qwen/Qwen2.5-72B-Instruct':                   145,
+  '01-ai/Yi-1.5-34B-Chat':                        68,
+  // ── 20-32B ────────────────────────────────────────────────────
+  'Qwen/Qwen3-32B':                               65,
+  'Qwen/Qwen3-30B-A3B':                           32,  // MoE: 30B total, 3B active
+  'Qwen/Qwen2.5-32B-Instruct':                    65,
+  'Qwen/Qwen2.5-Coder-32B-Instruct':              65,
+  'Qwen/QwQ-32B':                                 65,
+  'THUDM/GLM-4-32B-0414':                         65,
+  'THUDM/GLM-Z1-32B-0414':                        65,
+  'THUDM/GLM-Z1-Rumination-32B-0414':             65,
+  'deepseek-ai/DeepSeek-R1-Distill-Qwen-32B':     65,
+  'deepseek-ai/DeepSeek-Coder-V2-Instruct':      140,  // 236B MoE
+  'internlm/internlm2_5-20b-chat':                41,
+  'internlm/internlm3-8b-instruct':               16,
+  'google/gemma-2-27b-it':                        55,
+  'google/gemma-3-27b-it':                        55,
+  'microsoft/Phi-4':                              16,
+  'nvidia/Llama-3.1-Nemotron-51B-Instruct':      102,
+};
+
 const USECASE_PIPELINES = {
   llm:    ['text-generation', 'text2text-generation'],
   image:  ['text-to-image', 'image-to-image'],
@@ -272,6 +318,27 @@ function extractBenchmarks(cardData) {
   return Object.keys(results).length ? results : null;
 }
 
+/**
+ * Server-side overall quality score for a model.
+ * Same weights as the frontend so pre-sorted order matches client re-sort.
+ * For audio WER (lower=better) we invert to keep "higher=better" across all usecases.
+ */
+function computeOverallScore(benchmarks, usecase) {
+  if (!benchmarks) return null;
+  if (usecase === 'llm') {
+    const weights = { mmlu: 0.25, humaneval: 0.20, math: 0.20, gsm8k: 0.15, arc: 0.10, ifeval: 0.10 };
+    let sum = 0, wSum = 0;
+    for (const [k, w] of Object.entries(weights)) {
+      if (benchmarks[k] != null) { sum += benchmarks[k] * w; wSum += w; }
+    }
+    return wSum >= 0.25 ? parseFloat((sum / wSum).toFixed(1)) : null;
+  }
+  const primary = { embed: 'mteb', vision: 'imagenet_top1', image: 'image_quality', audio: 'wer' };
+  const pk = primary[usecase];
+  if (!pk || benchmarks[pk] == null) return null;
+  return usecase === 'audio' ? 100 - benchmarks[pk] : benchmarks[pk];
+}
+
 function paramLabel(total) {
   if (!total) return null;
   const b = total / 1e9;
@@ -328,11 +395,13 @@ app.get('/api/models', async (req, res) => {
   const pipelines = USECASE_PIPELINES[usecase] ?? USECASE_PIPELINES.llm;
 
   try {
-    // 1. Fetch model lists: top by downloads AND top by newest, for every pipeline.
-    //    This ensures we cover both popular established models and the latest releases.
+    // 1. Fetch model lists by three criteria per pipeline: downloads, likes, newest.
+    //    Three passes maximises the candidate pool — top downloads surfaces established
+    //    hits, top likes surfaces community-favourite gems, and newest surfaces recent
+    //    releases. Limit per call is kept at 60 to balance coverage vs API load.
     const fetchPipeline = (pipeline, sortBy) =>
       axios.get('https://huggingface.co/api/models', {
-        params: { filter: pipeline, sort: sortBy, direction: -1, limit: 80, full: true },
+        params: { filter: pipeline, sort: sortBy, direction: -1, limit: 60, full: true },
         timeout: 12000,
         headers: { 'User-Agent': 'gpu-model-finder/1.0' },
       }).then(r => r.data).catch(err => {
@@ -343,6 +412,7 @@ app.get('/api/models', async (req, res) => {
     const listResults = await Promise.all(
       pipelines.flatMap(pipeline => [
         fetchPipeline(pipeline, 'downloads'),
+        fetchPipeline(pipeline, 'likes'),
         fetchPipeline(pipeline, 'lastModified'),
       ])
     );
@@ -355,8 +425,32 @@ app.get('/api/models', async (req, res) => {
       return true;
     });
 
-    // 2. First pass: estimate VRAM from model name heuristic
-    const candidates = allModels.map(m => {
+    // 1b. Inject flagship models that fit the VRAM budget but weren't returned by HF.
+    //     This guarantees large, important models surface when the user has the hardware,
+    //     rather than being hidden behind thousands of smaller, higher-download models.
+    const quantScale = (DTYPE_BYTES[quantization] ?? 2) / 2; // scale relative to fp16
+    const flagshipStubs = Object.entries(FLAGSHIP_VRAM_FP16)
+      .filter(([id, vramFp16]) => !seen.has(id) && vramFp16 * quantScale <= vramGB)
+      .map(([id]) => {
+        seen.add(id);
+        return {
+          id,
+          pipeline_tag: pipelines[0],
+          downloads: 0, likes: 0,
+          lastModified: new Date().toISOString(),
+          tags: [], gated: false,
+        };
+      });
+
+    // 2. First pass: estimate VRAM.
+    //    For flagships with a curated fp16 VRAM value, use that directly (scales with quant).
+    //    The heuristic adds 20% overhead which can push 70B models just over tight budgets.
+    const candidates = [...allModels, ...flagshipStubs].map(m => {
+      const curatedFp16 = FLAGSHIP_VRAM_FP16[m.id];
+      if (curatedFp16 !== undefined) {
+        const estimatedVRAM = parseFloat((curatedFp16 * quantScale).toFixed(2));
+        return { raw: m, totalParams: paramsFromName(m.id), estimatedVRAM };
+      }
       const nameParams = paramsFromName(m.id);
       return {
         raw: m,
@@ -399,6 +493,8 @@ app.get('/api/models', async (req, res) => {
           ? { ...bmLookup, ...bmCard }
           : null;
 
+        const overallScore = computeOverallScore(benchmarks, usecase);
+
         return {
           id:           m.id,
           name:         m.id.split('/').pop(),
@@ -411,6 +507,7 @@ app.get('/api/models', async (req, res) => {
           estimatedVRAM,
           paramLabel:   paramLabel(totalParams),
           benchmarks,
+          overallScore,
           tags: (m.tags ?? [])
             .filter(t => !t.startsWith('arxiv:') && !t.startsWith('base_model:') &&
                          !t.startsWith('region:') && !t.startsWith('deploy:') && t.length < 40)
@@ -422,11 +519,35 @@ app.get('/api/models', async (req, res) => {
       })
       // Keep models that fit (or have unknown VRAM)
       .filter(m => m.estimatedVRAM === null || m.estimatedVRAM <= vramGB)
-      // Sort: known VRAM first, then by user's chosen sort
+      // Sort priority:
+      //  1. Models with VRAM known before unknowns (we can confirm they fit)
+      //  2. Among those with benchmark scores: higher overall score first
+      //     (best performing models surface to the top regardless of size)
+      //  3. Large VRAM budget (≥48 GB): within the same score tier, prefer
+      //     bigger models — users with datacenter GPUs want the heavyweights
+      //  4. Fallback: user's chosen HF sort (downloads / likes / newest)
       .sort((a, b) => {
         const aK = a.estimatedVRAM !== null;
         const bK = b.estimatedVRAM !== null;
         if (aK !== bK) return aK ? -1 : 1;
+
+        // Benchmark quality: scored models first, then by score descending
+        const aS = a.overallScore;
+        const bS = b.overallScore;
+        if (aS !== null && bS === null) return -1;
+        if (aS === null && bS !== null) return 1;
+        if (aS !== null && bS !== null) {
+          const diff = bS - aS;
+          if (Math.abs(diff) > 1.5) return diff; // only separate meaningful gaps
+        }
+
+        // Large VRAM budget → prefer bigger models (flagship GPUs get flagship models)
+        if (aK && bK && vramGB >= 48) {
+          const diff = b.estimatedVRAM - a.estimatedVRAM;
+          if (Math.abs(diff) > 8) return diff;
+        }
+
+        // Fallback: user's preferred sort signal
         if (sort === 'likes')  return b.likes - a.likes;
         if (sort === 'newest') return new Date(b.lastModified) - new Date(a.lastModified);
         return b.downloads - a.downloads;
