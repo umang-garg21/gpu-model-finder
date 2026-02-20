@@ -253,6 +253,22 @@ const USECASE_PIPELINES = {
   embed:  ['feature-extraction', 'sentence-similarity'],
 };
 
+// ── Priority authors per use case ──────────────────────────────
+// These orgs consistently release high-quality models. We do an
+// author-targeted "newest" fetch for each so brand-new releases
+// surface immediately — without waiting for downloads/likes to
+// accumulate. Only orgs that respond correctly to HF's author= filter.
+const PRIORITY_AUTHORS = {
+  llm:    ['Qwen', 'deepseek-ai', 'meta-llama', 'mistralai', 'google',
+           'microsoft', 'CohereForAI', 'nvidia', 'internlm', 'AI21Labs',
+           'EleutherAI', 'allenai', 'tiiuae', 'NousResearch'],
+  image:  ['black-forest-labs', 'stabilityai', 'ByteDance', 'Tencent-Hunyuan', 'shuttleai'],
+  audio:  ['openai', 'speechbrain', 'facebook', 'suno-ai'],
+  vision: ['google', 'microsoft', 'facebook', 'openai', 'Salesforce'],
+  video:  ['Wan-AI', 'ByteDance', 'genmo', 'hpcai-tech'],
+  embed:  ['BAAI', 'sentence-transformers', 'Alibaba-NLP', 'mixedbread-ai'],
+};
+
 // ── VRAM helpers ───────────────────────────────────────────────
 
 /**
@@ -278,6 +294,18 @@ function paramsFromName(name) {
   if (mMatch) return parseFloat(mMatch[1]) * 1e6;
 
   return null;
+}
+
+/**
+ * Estimate total params from safetensors shard count.
+ * HF caps shards at ~5 GB each; at 2 bytes/param (fp16/bf16) that's ~2.5B params/shard.
+ * Used as a fallback when safetensors.total is missing (common for brand-new models).
+ */
+function paramsFromShards(siblings) {
+  if (!siblings?.length) return null;
+  const shards = siblings.filter(s => /\.safetensors$/.test(s.rfilename ?? ''));
+  if (!shards.length) return null;
+  return shards.length * 2.5e9; // ~2.5B params per 5 GB shard
 }
 
 function estimateVRAM(totalParams, quantization) {
@@ -395,13 +423,22 @@ app.get('/api/models', async (req, res) => {
   const pipelines = USECASE_PIPELINES[usecase] ?? USECASE_PIPELINES.llm;
 
   try {
-    // 1. Fetch model lists by three criteria per pipeline: downloads, likes, newest.
-    //    Three passes maximises the candidate pool — top downloads surfaces established
-    //    hits, top likes surfaces community-favourite gems, and newest surfaces recent
-    //    releases. Limit per call is kept at 60 to balance coverage vs API load.
-    const fetchPipeline = (pipeline, sortBy) =>
+    // 1. Fetch model lists.
+    //
+    //    Global fetches (per pipeline, 60 models each):
+    //      • downloads — established, battle-tested models
+    //      • likes     — community-favourite gems
+    //    The global "lastModified" sort is NOT used: it returns thousands of
+    //    zero-download community fine-tunes and never surfaces quality new
+    //    releases from major labs.
+    //
+    //    Author-targeted fetches (per priority org, 15 models each):
+    //      • newest from each org — directly captures brand-new releases
+    //        (e.g. Qwen3-Coder-Next, DeepSeek-V3.2) the moment they appear,
+    //        before they accumulate downloads.
+    const fetchPipeline = (pipeline, sortBy, extraParams = {}) =>
       axios.get('https://huggingface.co/api/models', {
-        params: { filter: pipeline, sort: sortBy, direction: -1, limit: 60, full: true },
+        params: { filter: pipeline, sort: sortBy, direction: -1, limit: 60, full: true, ...extraParams },
         timeout: 12000,
         headers: { 'User-Agent': 'gpu-model-finder/1.0' },
       }).then(r => r.data).catch(err => {
@@ -409,13 +446,24 @@ app.get('/api/models', async (req, res) => {
         return [];
       });
 
-    const listResults = await Promise.all(
-      pipelines.flatMap(pipeline => [
+    const fetchAuthor = (author, pipeline, sortBy) =>
+      axios.get('https://huggingface.co/api/models', {
+        params: { author, filter: pipeline, sort: sortBy, direction: -1, limit: 15, full: true },
+        timeout: 10000,
+        headers: { 'User-Agent': 'gpu-model-finder/1.0' },
+      }).then(r => r.data).catch(() => []);  // silently skip if org doesn't support author= filter
+
+    const priorityAuthors = PRIORITY_AUTHORS[usecase] ?? [];
+
+    const listResults = await Promise.all([
+      // Global: popular + liked
+      ...pipelines.flatMap(pipeline => [
         fetchPipeline(pipeline, 'downloads'),
         fetchPipeline(pipeline, 'likes'),
-        fetchPipeline(pipeline, 'lastModified'),
-      ])
-    );
+      ]),
+      // Author-targeted: newest releases from quality labs (primary pipeline only)
+      ...priorityAuthors.map(author => fetchAuthor(author, pipelines[0], 'lastModified')),
+    ]);
 
     // De-duplicate (preserve first occurrence, which comes from the downloads sort)
     const seen = new Set();
@@ -482,8 +530,11 @@ app.get('/api/models', async (req, res) => {
 
         if (!totalParams && details[m.id]) {
           const detailed = details[m.id];
-          totalParams    = paramsFromSafetensors(detailed.safetensors);
-          estimatedVRAM  = estimateVRAM(totalParams, quantization);
+          // Prefer exact safetensors count; fall back to shard-count heuristic for
+          // brand-new models where HF hasn't yet computed the metadata (e.g. Qwen3-Coder-Next).
+          totalParams   = paramsFromSafetensors(detailed.safetensors)
+                       ?? paramsFromShards(detailed.siblings);
+          estimatedVRAM = estimateVRAM(totalParams, quantization);
         }
 
         // Merge benchmark data: hardcoded lookup + model-card extraction
