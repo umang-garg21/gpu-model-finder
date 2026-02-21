@@ -42,14 +42,16 @@ const NVIDIA_GPUS = {
 const USE_CASE_BENCHMARKS = {
   llm: [
     { key: 'overall',       label: '★ Overall',  desc: 'Weighted avg across all available LLM benchmarks' },
-    { key: 'mmlu',          label: 'General',    desc: 'MMLU 5-shot — broad general knowledge (%)' },
-    { key: 'humaneval',     label: 'Coding',     desc: 'HumanEval — Python code generation pass@1 (%)' },
-    { key: 'math',          label: 'Math',       desc: 'MATH competition problems (%)' },
-    { key: 'gsm8k',         label: 'GSM8K',      desc: 'Grade school math word problems (%)' },
-    { key: 'arc',           label: 'Reasoning',  desc: 'ARC-Challenge — science reasoning (%)' },
-    { key: 'ifeval',        label: 'Instruct',   desc: 'IFEval — instruction-following accuracy (%)' },
+    { key: 'hle',           label: 'HLE',        desc: "Humanity's Last Exam — frontier expert-level questions, hardest public benchmark (%)" },
+    { key: 'gpqa',          label: 'GPQA',       desc: 'GPQA-Diamond — PhD-level scientific reasoning questions (%)' },
     { key: 'swebench',      label: '🤖 Agentic', desc: 'SWE-bench Verified — % of real GitHub issues resolved autonomously by the model acting as an agent (%)' },
     { key: 'gaia',          label: 'GAIA',       desc: 'GAIA — general agentic AI benchmark: web browsing, tool use, multi-step reasoning (%)' },
+    { key: 'math',          label: 'Math',       desc: 'MATH competition problems (%)' },
+    { key: 'humaneval',     label: 'Coding',     desc: 'HumanEval — Python code generation pass@1 (%)' },
+    { key: 'gsm8k',         label: 'GSM8K',      desc: 'Grade school math word problems (%)' },
+    { key: 'mmlu',          label: 'General',    desc: 'MMLU 5-shot — broad general knowledge (%)' },
+    { key: 'arc',           label: 'Reasoning',  desc: 'ARC-Challenge — science reasoning (%)' },
+    { key: 'ifeval',        label: 'Instruct',   desc: 'IFEval — instruction-following accuracy (%)' },
   ],
   image: [
     { key: 'image_quality', label: 'Quality',    desc: 'Human preference quality score 0–100' },
@@ -719,16 +721,20 @@ function renderModalContent(model) {
   const taskDesc = TASK_DESCRIPTIONS[model.pipeline] ?? `${model.task} model.`;
 
   // Format numbers
-  const dlStr = model.downloads >= 1e6 ? `${(model.downloads/1e6).toFixed(1)}M`
-    : model.downloads >= 1e3 ? `${(model.downloads/1e3).toFixed(0)}K` : `${model.downloads}`;
-  const likeStr = model.likes >= 1e3 ? `${(model.likes/1e3).toFixed(0)}K` : `${model.likes}`;
+  const dlStr   = fmtCount(model.downloads);
+  const likeStr = fmtCount(model.likes);
 
   // Benchmark grid
   const benchDefs = (USE_CASE_BENCHMARKS[state.usecase] ?? []).filter(b => b.key !== 'overall');
-  const benchCells = model.benchmarks
+  const benchCells = benchDefs.length
     ? benchDefs.map(b => {
-        const val = model.benchmarks[b.key];
-        if (val == null) return '';
+        const val = model.benchmarks?.[b.key] ?? null;
+        if (val == null) return `
+          <div class="bench-cell">
+            <div class="bench-cell-label">${b.label}</div>
+            <div class="bench-cell-score" style="color:var(--text-muted);font-size:14px">N/A</div>
+            <div class="bench-cell-bar"><div class="bench-cell-bar-fill" style="width:0"></div></div>
+          </div>`;
         const tier = benchmarkTier(val, b.key);
         const pct  = LOWER_IS_BETTER.has(b.key) ? Math.max(0, 100 - val * 5) : val;
         const label = LOWER_IS_BETTER.has(b.key) ? `${val}%` : `${val.toFixed(1)}%`;
@@ -835,12 +841,12 @@ function renderModalContent(model) {
       </div>
     </div>` : ''}
 
-    ${benchCells ? `
+    ${benchDefs.length ? `
     <div class="modal-section">
       <div class="modal-section-title">Benchmark Scores</div>
       <div class="bench-grid">${benchCells}</div>
       <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">
-        Scores are approximate and sourced from model cards and published leaderboards. Evaluation setups vary.
+        Scores are approximate and sourced from model cards and published leaderboards. Evaluation setups vary. N/A = no data published for this model.
       </div>
     </div>` : ''}
 
@@ -1049,9 +1055,8 @@ function modelCardHTML(m, maxVram, rank) {
   }
 
   // Stats
-  const dlStr = m.downloads >= 1e6 ? `${(m.downloads/1e6).toFixed(1)}M`
-    : m.downloads >= 1e3 ? `${(m.downloads/1e3).toFixed(0)}K` : `${m.downloads}`;
-  const likeStr = m.likes >= 1e3 ? `${(m.likes/1e3).toFixed(0)}K` : `${m.likes}`;
+  const dlStr   = fmtCount(m.downloads);
+  const likeStr = fmtCount(m.likes);
 
   const paramStr  = m.paramLabel ? `<span class="chip">${m.paramLabel} params</span>` : '';
   const gatedIcon = m.gated ? `<span title="Gated model">🔒</span>` : '';
@@ -1073,13 +1078,20 @@ function modelCardHTML(m, maxVram, rank) {
 
   // Benchmark scores strip
   let benchHtml = '';
-  if (m.benchmarks) {
-    const defs = (USE_CASE_BENCHMARKS[state.usecase] ?? []).filter(b => b.key !== 'overall');
-    const pills = defs.map(b => {
-      const val = m.benchmarks[b.key];
-      if (val == null) return '';
+  const cardBenchDefs = (USE_CASE_BENCHMARKS[state.usecase] ?? []).filter(b => b.key !== 'overall');
+  if (cardBenchDefs.length) {
+    // For 'overall' active state, fall back to the first benchmark that has data
+    const overallFallbackKey = state.activeBenchmark === 'overall'
+      ? (cardBenchDefs.find(b => m.benchmarks?.[b.key] != null)?.key ?? null)
+      : null;
+    const pills = cardBenchDefs.map(b => {
+      const val = m.benchmarks?.[b.key] ?? null;
       const isActive = state.activeBenchmark === b.key ||
-        (state.activeBenchmark === 'overall' && b.key === 'mmlu');
+        (state.activeBenchmark === 'overall' && b.key === overallFallbackKey);
+      if (val == null) {
+        // Only show N/A pill for the actively selected benchmark so cards stay compact
+        return isActive ? `<span class="bench-pill" style="color:var(--text-muted)">${b.label}: N/A</span>` : '';
+      }
       const tier = benchmarkTier(val, b.key);
       const label = LOWER_IS_BETTER.has(b.key)
         ? `${b.label}: ${val}%`
@@ -1160,6 +1172,13 @@ function showSkeletons() {
 
 function escapeHtml(str = '') {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtCount(n) {
+  if (n == null) return 'N/A';
+  if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
+  if (n >= 1e3) return `${(n / 1e3).toFixed(0)}K`;
+  return `${n}`;
 }
 
 // ── Initialize ─────────────────────────────────────────────────

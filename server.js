@@ -81,10 +81,6 @@ const BENCHMARK_DATA = {
   'google/gemma-2-2b-it':                       { mmlu:55.7, humaneval:40.2, math:20.0, gsm8k:61.0, arc:52.2, ifeval:52.0 },
   'google/gemma-2-9b-it':                       { mmlu:72.3, humaneval:68.3, math:44.4, gsm8k:90.8, arc:63.7, ifeval:71.5 },
   'google/gemma-2-27b-it':                      { mmlu:78.7, humaneval:74.4, math:55.2, gsm8k:90.7, arc:67.5, ifeval:77.9 },
-  'google/gemma-3-1b-it':                       { mmlu:52.0, humaneval:42.0, math:40.0, gsm8k:58.0, arc:48.0, ifeval:48.0 },
-  'google/gemma-3-4b-it':                       { mmlu:68.0, humaneval:65.0, math:65.0, gsm8k:82.0, arc:60.0, ifeval:62.0 },
-  'google/gemma-3-12b-it':                      { mmlu:76.0, humaneval:74.0, math:76.0, gsm8k:91.0, arc:65.0, ifeval:71.0 },
-  'google/gemma-3-27b-it':                      { mmlu:80.0, humaneval:78.5, math:80.0, gsm8k:93.0, arc:68.0, ifeval:76.0 },
   // Microsoft Phi
   'microsoft/Phi-3-mini-4k-instruct':           { mmlu:69.9, humaneval:59.1, math:41.6, gsm8k:86.4, arc:62.0, ifeval:45.8 },
   'microsoft/Phi-3-mini-128k-instruct':         { mmlu:69.9, humaneval:59.1, math:41.6, gsm8k:86.4, arc:62.0, ifeval:45.8 },
@@ -93,7 +89,6 @@ const BENCHMARK_DATA = {
   'microsoft/Phi-3-medium-128k-instruct':       { mmlu:78.0, humaneval:70.6, math:51.4, gsm8k:90.9, arc:65.0, ifeval:55.0 },
   'microsoft/Phi-3.5-MoE-instruct':            { mmlu:77.8, humaneval:68.4, math:59.2, gsm8k:90.9, arc:64.0, ifeval:56.0 },
   'microsoft/Phi-4':                            { mmlu:84.8, humaneval:82.6, math:80.4, gsm8k:95.6, arc:72.0, ifeval:72.0 },
-  'microsoft/phi-4-mini-instruct':              { mmlu:75.0, humaneval:72.0, math:68.0, gsm8k:90.0, arc:64.0, ifeval:60.0 },
   // DeepSeek R1 distills
   'deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B': { mmlu:44.0, humaneval:72.8, math:83.9, gsm8k:83.9, arc:48.0, ifeval:36.0 },
   'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B':   { mmlu:55.5, humaneval:86.0, math:92.8, gsm8k:92.8, arc:59.0, ifeval:51.2 },
@@ -164,10 +159,19 @@ const BENCHMARK_DATA = {
   'google/gemma-3-1b-it':                      { mmlu:45.2, humaneval:35.4, math:39.6, gsm8k:49.8, arc:42.1, ifeval:41.8 },
   'google/gemma-3-4b-it':                      { mmlu:59.6, humaneval:60.4, math:62.1, gsm8k:68.0, arc:54.3, ifeval:52.2 },
   'google/gemma-3-12b-it':                     { mmlu:74.5, humaneval:79.2, math:79.5, gsm8k:89.2, arc:64.5, ifeval:73.0 },
+  'google/gemma-3-27b-it':                     { mmlu:83.2, humaneval:82.0, math:89.2, gsm8k:93.0, arc:70.4, ifeval:76.5 },
   // Mistral — Small 3.1 (March 2025)
   'mistralai/Mistral-Small-3.1-24B-Instruct-2503': { mmlu:81.5, humaneval:71.2, math:57.8, gsm8k:92.5, arc:66.2, ifeval:74.8 },
-  // Microsoft — Phi-4-mini (April 2025, 3.8B)
-  'microsoft/Phi-4-mini-instruct':             { mmlu:67.1, humaneval:75.4, math:71.3, gsm8k:83.0, arc:60.2, ifeval:67.5 },
+  // Microsoft — Phi-4-mini (April 2025, 3.8B) — note: HF id uses lowercase 'phi'
+  'microsoft/phi-4-mini-instruct':             { mmlu:67.1, humaneval:75.4, math:71.3, gsm8k:83.0, arc:60.2, ifeval:67.5 },
+  // DeepSeek — V3.2 (2025 thinking/reasoning model; official model card benchmarks)
+  'deepseek-ai/DeepSeek-V3.2':          { swebench: 73.1, gpqa: 82.4, hle: 25.1 },
+  'deepseek-ai/DeepSeek-V3.2-Speciale': { swebench: 73.1, gpqa: 82.4, hle: 25.1 },
+  // Cohere — Command A (March 2025, 111B MoE — benchmarks only in tech report PDF)
+  // Zhipu AI / ZAI — GLM series (2025 thinking/reasoning models; official model card benchmarks)
+  'zai-org/GLM-5':                      { swebench: 77.8, gpqa: 86.0, hle: 30.5 },
+  'zai-org/GLM-4.7':                    { swebench: 73.8, gpqa: 85.7, hle: 24.8 },
+  'zai-org/GLM-4.7-Flash':              { swebench: 59.2, gpqa: 75.2, hle: 14.4 },
   // ── Embeddings: mteb ──────────────────────────────────────────
   'BAAI/bge-large-en-v1.5':                     { mteb: 64.2 },
   'BAAI/bge-m3':                                { mteb: 62.8 },
@@ -259,7 +263,7 @@ const FLAGSHIP_VRAM_FP16 = {
   'google/gemma-3-27b-it':                        55,
   'google/gemma-3-12b-it':                        24,
   'microsoft/Phi-4':                              16,
-  'microsoft/Phi-4-mini-instruct':                 8,  // 3.8B
+  'microsoft/phi-4-mini-instruct':                 8,  // 3.8B
   'nvidia/Llama-3.1-Nemotron-51B-Instruct':      102,
 };
 
