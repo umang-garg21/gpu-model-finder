@@ -474,13 +474,14 @@
     /* ── GPU Picker ──────────────────────────────────────────── */
     .gpu-tier-tabs {
       display: flex;
+      flex-wrap: wrap;
       gap: 4px;
       margin-bottom: 10px;
     }
 
     .gpu-tier-btn {
-      flex: 1;
-      min-width: 0;
+      flex: 1 1 calc(25% - 4px);
+      min-width: 52px;
       padding: 5px 4px;
       font-size: 11px;
       font-weight: 600;
@@ -1247,7 +1248,10 @@
       <div class="gpu-tier-tabs" id="gpuTierTabs">
         <button class="gpu-tier-btn active" data-tier="50-series">RTX 50</button>
         <button class="gpu-tier-btn" data-tier="40-series">RTX 40</button>
-        <button class="gpu-tier-btn" data-tier="workstation">Pro</button>
+        <button class="gpu-tier-btn" data-tier="30-series">RTX 30</button>
+        <button class="gpu-tier-btn" data-tier="amd">AMD</button>
+        <button class="gpu-tier-btn" data-tier="apple">Apple</button>
+        <button class="gpu-tier-btn" data-tier="workstation">Pro / HPC</button>
         <button class="gpu-tier-btn" data-tier="datacenter">Data Center</button>
       </div>
       <div class="gpu-grid" id="gpuGrid"></div>
@@ -1278,15 +1282,17 @@
         <span class="vram-value" id="vramDisplay">8</span>
         <span class="vram-unit">GB</span>
       </div>
-      <input type="range" id="vramSlider" min="2" max="80" value="8" step="1" />
+      <input type="range" id="vramSlider" min="2" max="192" value="8" step="1" />
       <div class="vram-presets" id="vramPresets">
         <button class="preset-btn" data-v="4">4 GB</button>
         <button class="preset-btn active" data-v="8">8 GB</button>
         <button class="preset-btn" data-v="12">12 GB</button>
         <button class="preset-btn" data-v="16">16 GB</button>
         <button class="preset-btn" data-v="24">24 GB</button>
-        <button class="preset-btn" data-v="40">40 GB</button>
+        <button class="preset-btn" data-v="48">48 GB</button>
         <button class="preset-btn" data-v="80">80 GB</button>
+        <button class="preset-btn" data-v="128">128 GB</button>
+        <button class="preset-btn" data-v="192">192 GB</button>
       </div>
     </div>
 

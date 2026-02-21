@@ -2,13 +2,14 @@
    Fit to Metal — Frontend
    ───────────────────────────────────────────────────────────── */
 
-// ── NVIDIA GPU data ────────────────────────────────────────────
+// ── GPU data (NVIDIA, AMD, Apple Silicon) ───────────────────────
 const NVIDIA_GPUS = {
   '50-series': [
     { name: 'RTX 5090',    vram: 32, bw: 1792 },
     { name: 'RTX 5080',    vram: 16, bw: 960  },
     { name: 'RTX 5070 Ti', vram: 16, bw: 896  },
     { name: 'RTX 5070',    vram: 12, bw: 672  },
+    { name: 'RTX 5060 Ti', vram: 16, bw: 448  },
   ],
   '40-series': [
     { name: 'RTX 4090',          vram: 24, bw: 1008 },
@@ -22,19 +23,65 @@ const NVIDIA_GPUS = {
     { name: 'RTX 4060 Ti',       vram: 8,  bw: 288  },
     { name: 'RTX 4060',          vram: 8,  bw: 272  },
   ],
+  '30-series': [
+    { name: 'RTX 3090 Ti', vram: 24, bw: 1008 },
+    { name: 'RTX 3090',    vram: 24, bw: 936  },
+    { name: 'RTX 3080 Ti', vram: 12, bw: 912  },
+    { name: 'RTX 3080 12G',vram: 12, bw: 912  },
+    { name: 'RTX 3080',    vram: 10, bw: 760  },
+    { name: 'RTX 3070 Ti', vram: 8,  bw: 608  },
+    { name: 'RTX 3070',    vram: 8,  bw: 448  },
+    { name: 'RTX 3060 Ti', vram: 8,  bw: 448  },
+    { name: 'RTX 3060',    vram: 12, bw: 360  },
+  ],
+  'amd': [
+    { name: 'RX 9070 XT',  vram: 16, bw: 640  },
+    { name: 'RX 9070',     vram: 16, bw: 576  },
+    { name: 'RX 7900 XTX', vram: 24, bw: 960  },
+    { name: 'RX 7900 XT',  vram: 20, bw: 800  },
+    { name: 'RX 7900 GRE', vram: 16, bw: 576  },
+    { name: 'RX 7800 XT',  vram: 16, bw: 624  },
+    { name: 'RX 7700 XT',  vram: 12, bw: 432  },
+    { name: 'RX 7600',     vram: 8,  bw: 288  },
+    { name: 'RX 6950 XT',  vram: 16, bw: 576  },
+    { name: 'RX 6900 XT',  vram: 16, bw: 512  },
+    { name: 'RX 6800 XT',  vram: 16, bw: 512  },
+  ],
+  'apple': [
+    { name: 'M4 Ultra 192G',  vram: 192, bw: 819  },
+    { name: 'M4 Ultra 96G',   vram: 96,  bw: 819  },
+    { name: 'M4 Max 128G',    vram: 128, bw: 546  },
+    { name: 'M4 Max 64G',     vram: 64,  bw: 546  },
+    { name: 'M4 Pro 48G',     vram: 48,  bw: 273  },
+    { name: 'M4 Pro 24G',     vram: 24,  bw: 273  },
+    { name: 'M3 Ultra 192G',  vram: 192, bw: 800  },
+    { name: 'M3 Max 128G',    vram: 128, bw: 400  },
+    { name: 'M3 Max 64G',     vram: 64,  bw: 400  },
+    { name: 'M3 Pro 36G',     vram: 36,  bw: 150  },
+    { name: 'M2 Ultra 192G',  vram: 192, bw: 800  },
+    { name: 'M2 Max 96G',     vram: 96,  bw: 400  },
+  ],
   'workstation': [
-    { name: 'RTX 6000 Ada', vram: 48, bw: 960 },
-    { name: 'RTX 5000 Ada', vram: 32, bw: 576 },
-    { name: 'RTX 4500 Ada', vram: 24, bw: 432 },
-    { name: 'RTX 4000 Ada', vram: 20, bw: 360 },
+    { name: 'RTX 6000 Ada',  vram: 48, bw: 960 },
+    { name: 'RTX 5000 Ada',  vram: 32, bw: 576 },
+    { name: 'RTX 4500 Ada',  vram: 24, bw: 432 },
+    { name: 'RTX 4000 Ada',  vram: 20, bw: 360 },
+    { name: 'A40',           vram: 48, bw: 696 },
+    { name: 'MI300X',        vram: 192, bw: 5300 },
+    { name: 'MI250X',        vram: 128, bw: 3277 },
+    { name: 'MI210',         vram: 64,  bw: 1638 },
   ],
   'datacenter': [
-    { name: 'H200 SXM',  vram: 141, bw: 4800 },
-    { name: 'H100 SXM',  vram: 80,  bw: 3350 },
-    { name: 'H100 PCIe', vram: 80,  bw: 2000 },
-    { name: 'A100 80G',  vram: 80,  bw: 2000 },
-    { name: 'A100 40G',  vram: 40,  bw: 1600 },
-    { name: 'L40S',      vram: 48,  bw: 864  },
+    { name: 'GB200',      vram: 192, bw: 8000 },
+    { name: 'B200',       vram: 192, bw: 8000 },
+    { name: 'B100',       vram: 192, bw: 7200 },
+    { name: 'GH200',      vram: 96,  bw: 4000 },
+    { name: 'H200 SXM',   vram: 141, bw: 4800 },
+    { name: 'H100 SXM',   vram: 80,  bw: 3350 },
+    { name: 'H100 PCIe',  vram: 80,  bw: 2000 },
+    { name: 'A100 80G',   vram: 80,  bw: 2000 },
+    { name: 'A100 40G',   vram: 40,  bw: 1600 },
+    { name: 'L40S',       vram: 48,  bw: 864  },
   ],
 };
 
@@ -467,7 +514,7 @@ clearGpuBtn.addEventListener('click', () => clearGpu());
 function clearGpu() {
   state.selectedGpu = null;
   state.gpuCount = 1;
-  vramSlider.max = 80;
+  vramSlider.max = 192;
   updateGpuUI();
   renderGpuGrid();
 }
@@ -507,7 +554,7 @@ function updateGpuUI() {
   } else {
     selectedGpuRow.style.display = 'none';
     multiGpuSection.style.display = 'none';
-    vramSlider.max = 80;
+    vramSlider.max = 192;
   }
   renderGpuGrid();
 }
