@@ -36,11 +36,8 @@
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background-color: var(--bg);
-      /* Subtle dot grid — ultra-faint, just enough for texture */
-      background-image:
-        radial-gradient(ellipse 90% 40% at 50% 0%, #06b6d40d 0%, transparent 65%),
-        radial-gradient(circle, #1a2a40 1px, transparent 1px);
-      background-size: auto, 28px 28px;
+      background-image: radial-gradient(circle, rgba(6,182,212,0.07) 1px, transparent 1px);
+      background-size: 28px 28px;
       color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
@@ -62,17 +59,21 @@
 
     .logo-icon {
       width: 40px; height: 40px;
-      background: linear-gradient(135deg, #0e7490, var(--accent));
-      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent) 0%, #0369a1 100%);
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       font-size: 20px;
-      box-shadow: 0 0 16px var(--accent-glow);
+      box-shadow: 0 0 22px #06b6d455, 0 0 6px #06b6d430;
     }
 
     .logo h1 {
       font-size: 22px;
       font-weight: 700;
       letter-spacing: -0.3px;
+      background: linear-gradient(100deg, var(--text) 5%, var(--accent-h) 42%, var(--text) 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .logo-sub { font-size: 13px; color: var(--text-muted); }
@@ -651,22 +652,6 @@
        Steel cyan palette · Blueprint grid · Glow accents
        ════════════════════════════════════════════════════ */
 
-    :root {
-      --accent:    #06b6d4;
-      --accent-h:  #22d3ee;
-      --accent-low:#06b6d418;
-      --bg:        #080b10;
-      --surface:   #0d1118;
-      --surface2:  #141924;
-      --border:    #1e2538;
-    }
-
-    /* Blueprint dot-grid texture */
-    body {
-      background-image: radial-gradient(circle, rgba(6,182,212,0.07) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
-
     /* Glowing accent stripe at top of viewport */
     body::before {
       content: '';
@@ -701,21 +686,6 @@
         var(--accent) 70%,
         transparent);
       opacity: 0.35;
-    }
-
-    /* Logo icon: cyan gradient + ambient glow */
-    .logo-icon {
-      background: linear-gradient(135deg, var(--accent) 0%, #0369a1 100%);
-      box-shadow: 0 0 22px #06b6d455, 0 0 6px #06b6d430;
-      border-radius: 8px;
-    }
-
-    /* Logo title: metallic gradient sheen */
-    .logo h1 {
-      background: linear-gradient(100deg, var(--text) 5%, var(--accent-h) 42%, var(--text) 80%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
 
     /* Sidebar: steel-cyan top rail */
@@ -1191,57 +1161,66 @@
       opacity: 0.7;
     }
 
-    /* ── Load More Bar ─────────────────────────────────────── */
-    #loadMoreBar {
+    /* ── Pagination ─────────────────────────────────────────── */
+    #pagination {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 32px 40px;
     }
-    .load-more-wrap {
+    .pagination-wrap {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      gap: 16px;
       padding-top: 8px;
+      flex-wrap: wrap;
     }
-    .load-more-track {
-      width: 100%;
-      max-width: 480px;
-      height: 3px;
-      background: var(--border);
-      border-radius: 99px;
-      overflow: hidden;
-    }
-    .load-more-fill {
-      height: 100%;
-      background: var(--accent);
-      border-radius: 99px;
-      transition: width 0.3s ease;
-    }
-    .load-more-info {
+    .pagination-info {
       font-size: 12px;
       color: var(--text-muted);
-      letter-spacing: 0.02em;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
     }
-    .load-more-btn {
-      padding: 9px 24px;
-      border-radius: 8px;
+    .page-btns {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .page-btn {
+      min-width: 32px;
+      height: 32px;
+      padding: 0 10px;
+      border-radius: 6px;
       border: 1px solid var(--border);
       background: var(--surface2);
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 500;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
       cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
+      transition: all .15s;
+      white-space: nowrap;
     }
-    .load-more-btn:hover {
+    .page-btn:hover:not(:disabled) {
       border-color: var(--accent);
-      background: var(--accent-low);
+      color: var(--text);
     }
-    .load-more-done {
+    .page-btn.active {
+      background: var(--accent-low);
+      border-color: var(--accent);
+      color: var(--accent-h);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    .page-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .page-nav { font-size: 11px; }
+    .page-ellipsis {
       font-size: 12px;
       color: var(--text-muted);
-      padding: 4px 0 2px;
+      padding: 0 4px;
+      font-family: 'JetBrains Mono', monospace;
     }
   </style>
 </head>
@@ -1392,7 +1371,7 @@
   </section>
 </main>
 
-<div id="loadMoreBar"></div>
+<div id="pagination"></div>
 
 <footer>
   Model data from <a href="https://huggingface.co" target="_blank">HuggingFace</a>.

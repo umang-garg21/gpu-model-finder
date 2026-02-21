@@ -984,40 +984,56 @@ function renderModels(models, maxVram) {
     });
   }
 
-  const showing = Math.min(state.page * PAGE_SIZE, sorted.length);
-  modelGrid.innerHTML = sorted.slice(0, showing).map((m, i) => modelCardHTML(m, maxVram, i + 1)).join('');
-  updateLoadMoreBar(showing, sorted.length);
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
+  if (state.page > totalPages) state.page = Math.max(1, totalPages);
+  const startIdx = (state.page - 1) * PAGE_SIZE;
+  const page = sorted.slice(startIdx, startIdx + PAGE_SIZE);
+  modelGrid.innerHTML = page.map((m, i) => modelCardHTML(m, maxVram, startIdx + i + 1)).join('');
+  renderPagination(sorted.length, state.page, totalPages);
 }
 
-function updateLoadMoreBar(showing, total) {
-  const bar = document.getElementById('loadMoreBar');
+function renderPagination(total, currentPage, totalPages) {
+  const bar = document.getElementById('pagination');
   if (!bar) return;
-  if (total === 0) { bar.innerHTML = ''; return; }
+  if (total === 0 || totalPages <= 1) { bar.innerHTML = ''; return; }
 
-  const pct = Math.round((showing / total) * 100);
-  const remaining = total - showing;
+  const start = (currentPage - 1) * PAGE_SIZE + 1;
+  const end   = Math.min(currentPage * PAGE_SIZE, total);
 
-  if (showing >= total) {
-    bar.innerHTML = `<div class="load-more-wrap">
-      <div class="load-more-track"><div class="load-more-fill" style="width:100%"></div></div>
-      <div class="load-more-done">Showing all ${total} model${total !== 1 ? 's' : ''}</div>
-    </div>`;
+  // Build page numbers with ellipsis
+  const nums = [];
+  if (totalPages <= 7) {
+    for (let p = 1; p <= totalPages; p++) nums.push(p);
   } else {
-    bar.innerHTML = `<div class="load-more-wrap">
-      <div class="load-more-track"><div class="load-more-fill" style="width:${pct}%"></div></div>
-      <div class="load-more-info">Showing ${showing} of ${total} models</div>
-      <button class="load-more-btn" onclick="loadMore()">Show ${Math.min(remaining, PAGE_SIZE)} more &darr;</button>
-    </div>`;
+    nums.push(1);
+    if (currentPage > 3) nums.push('…');
+    for (let p = Math.max(2, currentPage - 1); p <= Math.min(totalPages - 1, currentPage + 1); p++) nums.push(p);
+    if (currentPage < totalPages - 2) nums.push('…');
+    nums.push(totalPages);
   }
+
+  const pageHTML = nums.map(p =>
+    p === '…'
+      ? `<span class="page-ellipsis">…</span>`
+      : `<button class="page-btn${p === currentPage ? ' active' : ''}" onclick="goToPage(${p})">${p}</button>`
+  ).join('');
+
+  bar.innerHTML = `<div class="pagination-wrap">
+    <span class="pagination-info">${start}–${end} of ${total}</span>
+    <div class="page-btns">
+      <button class="page-btn page-nav" onclick="goToPage(${currentPage - 1})"${currentPage <= 1 ? ' disabled' : ''}>← Prev</button>
+      ${pageHTML}
+      <button class="page-btn page-nav" onclick="goToPage(${currentPage + 1})"${currentPage >= totalPages ? ' disabled' : ''}>Next →</button>
+    </div>
+  </div>`;
 }
 
-window.loadMore = function loadMore() {
-  state.page += 1;
+window.goToPage = function(page) {
+  const totalPages = Math.ceil(state.models.length / PAGE_SIZE);
+  if (page < 1 || page > totalPages) return;
+  state.page = page;
   renderModels(state.models, state.vram);
-  // Scroll to the first newly visible card
-  const cards = modelGrid.querySelectorAll('.model-card');
-  const firstNew = cards[(state.page - 1) * PAGE_SIZE];
-  if (firstNew) firstNew.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  modelGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
 function modelCardHTML(m, maxVram, rank) {
