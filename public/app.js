@@ -198,12 +198,18 @@ const SAFETY_INFO = {
     safetyLevel: 3,
     knownRisks: 'Community checkpoints often bypass safety filters entirely. Base model can generate NSFW/harmful imagery. Deepfake and non-consensual intimate image (NCII) generation is a documented misuse vector.',
   },
-  // Zhipu AI — GLM
+  // Zhipu AI — GLM (older series under THUDM, newer under zai-org)
   'THUDM/': {
     alignment: 'SFT + RLHF (Zhipu AI alignment pipeline)',
     redTeam: "Zhipu AI's internal safety evaluations; aligned with Chinese AI regulations and content standards",
     safetyLevel: 3,
     knownRisks: "Safety alignment reflects Chinese regulatory standards which differ from Western norms. GLM models include content filtering for politically sensitive topics. Evaluate against your jurisdiction's requirements before deployment.",
+  },
+  'zai-org/': {
+    alignment: 'SFT + RLHF (Zhipu AI / ZAI alignment pipeline)',
+    redTeam: "ZAI internal safety evaluations; GLM-5 and GLM-4.7 series follow Zhipu AI safety standards",
+    safetyLevel: 3,
+    knownRisks: "Same considerations as GLM series: alignment reflects Chinese regulatory standards. GLM-5 is a large MoE model; evaluate carefully for your deployment jurisdiction.",
   },
   // 01.ai — Yi
   '01-ai/': {

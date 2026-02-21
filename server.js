@@ -210,6 +210,8 @@ const BENCHMARK_DATA = {
 // For models whose names don't embed a size token — ensures they surface
 // when the user has enough VRAM, regardless of download rank.
 const FLAGSHIP_VRAM_FP16 = {
+  // ── 700B+ MoE ─────────────────────────────────────────────────
+  'zai-org/GLM-5':                              1700,  // ~700B MoE (282 shards); fp8 fits 8×H200
   // ── 600B+ ──────────────────────────────────────────────────────
   'deepseek-ai/DeepSeek-R1':                    1342,  // 671B dense
   'deepseek-ai/DeepSeek-V3':                    1342,
@@ -218,7 +220,9 @@ const FLAGSHIP_VRAM_FP16 = {
   'deepseek-ai/DeepSeek-V3.2-Speciale':         1342,
   // ── 400B ──────────────────────────────────────────────────────
   'meta-llama/Llama-3.1-405B-Instruct':          810,
-  // ── 200B MoE ──────────────────────────────────────────────────
+  // ── 200-500B MoE ──────────────────────────────────────────────
+  'zai-org/GLM-4.7':                             558,  // ~232B MoE (93 shards)
+  'zai-org/GLM-4.7-Flash':                       290,  // ~120B MoE (48 shards)
   'Qwen/Qwen3-235B-A22B':                        470,  // all weights loaded; ~22B active
   'Qwen/Qwen3-Coder-Next':                       240,  // ~100B MoE (40 shards × ~5 GB)
   'mistralai/Mixtral-8x22B-Instruct-v0.1':       281,
@@ -275,6 +279,9 @@ const FLAGSHIP_PARAMS = {
   'nvidia/Llama-3.1-Nemotron-51B-Instruct':     51e9,
   'deepseek-ai/DeepSeek-Coder-V2-Instruct':    236e9,
   'databricks/dbrx-instruct':                  132e9,
+  'zai-org/GLM-5':                             700e9,  // ~700B MoE
+  'zai-org/GLM-4.7':                           232e9,  // ~232B MoE
+  'zai-org/GLM-4.7-Flash':                     120e9,  // ~120B MoE
 };
 
 const USECASE_PIPELINES = {
@@ -298,7 +305,7 @@ const PRIORITY_AUTHORS = {
   llm:    ['Qwen', 'deepseek-ai', 'meta-llama', 'mistralai', 'google',
            'microsoft', 'nvidia', 'internlm', 'EleutherAI', 'allenai',
            'tiiuae', 'NousResearch', '01-ai', 'baichuan-inc', 'open-thoughts',
-           'HuggingFaceTB', 'bigcode'],
+           'HuggingFaceTB', 'bigcode', 'zai-org'],
   image:  ['black-forest-labs', 'stabilityai', 'ByteDance', 'Tencent-Hunyuan', 'shuttleai'],
   audio:  ['openai', 'speechbrain', 'facebook', 'suno-ai'],
   vision: ['google', 'microsoft', 'facebook', 'openai', 'Salesforce'],
