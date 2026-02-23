@@ -1,0 +1,169 @@
+{
+  "url": "https://artificialanalysis.ai/models/gpt-5-2",
+  "found": true,
+  "sourceName": "Output Speed vs. Price by GPT-5.2 Endpoint",
+  "mapping": [
+    {
+      "model": "GPT-5.2 (xhigh)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 4.81,
+      "raw": "4.81"
+    },
+    {
+      "model": "Gemini 3.1 Pro Preview",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 4.5,
+      "raw": "4.50"
+    },
+    {
+      "model": "Claude Opus 4.6 (max)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 10,
+      "raw": "10.00"
+    },
+    {
+      "model": "DeepSeek V3.2",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 0.32,
+      "raw": "0.32"
+    },
+    {
+      "model": "Claude Sonnet 4.6 (max)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 6,
+      "raw": "6.00"
+    },
+    {
+      "model": "GLM-5",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 1.55,
+      "raw": "1.55"
+    },
+    {
+      "model": "gpt-oss-120B (high)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 0.26,
+      "raw": "0.26"
+    },
+    {
+      "model": "Grok 4",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 6,
+      "raw": "6.00"
+    },
+    {
+      "model": "Gemini 3 Flash",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 1.13,
+      "raw": "1.13"
+    },
+    {
+      "model": "Kimi K2.5",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 1.2,
+      "raw": "1.20"
+    },
+    {
+      "model": "Nova 2.0 Pro Preview (medium)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 3.44,
+      "raw": "3.44"
+    },
+    {
+      "model": "Claude Opus 4.5",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 10,
+      "raw": "10.00"
+    },
+    {
+      "model": "GPT-5.2 Codex (xhigh)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 4.81,
+      "raw": "4.81"
+    },
+    {
+      "model": "Gemini 3 Pro Preview (high)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 4.5,
+      "raw": "4.50"
+    },
+    {
+      "model": "GPT-5.1 (high)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 3.44,
+      "raw": "3.44"
+    },
+    {
+      "model": "GPT-5.2 (medium)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 4.81,
+      "raw": "4.81"
+    },
+    {
+      "model": "Claude Opus 4.6",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 10,
+      "raw": "10.00"
+    },
+    {
+      "model": "Qwen3.5 397B A17B",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 1.35,
+      "raw": "1.35"
+    },
+    {
+      "model": "GPT-5 (high)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 3.44,
+      "raw": "3.44"
+    },
+    {
+      "model": "GPT-5 Codex (high)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 3.44,
+      "raw": "3.44"
+    },
+    {
+      "model": "Claude Sonnet 4.6",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 6,
+      "raw": "6.00"
+    },
+    {
+      "model": "Claude Opus 4.5",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 10,
+      "raw": "10.00"
+    },
+    {
+      "model": "Claude 4.5 Sonnet",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 6,
+      "raw": "6.00"
+    },
+    {
+      "model": "Claude Sonnet 4.6 (Non-reasoning, Low Effort)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 6,
+      "raw": "6.00"
+    },
+    {
+      "model": "GPT-5.1 Codex (high)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 3.44,
+      "raw": "3.44"
+    },
+    {
+      "model": "GPT-5 (medium)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 3.44,
+      "raw": "3.44"
+    },
+    {
+      "model": "Gemini 3 Pro Preview (low)",
+      "scoreKey": "Price (USD per M Tokens)",
+      "value": 4.5,
+      "raw": "4.50"
+    }
+  ]
+}

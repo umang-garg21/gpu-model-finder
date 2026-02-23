@@ -1,0 +1,1558 @@
+{
+  "fetchedAt": "2026-02-22T20:32:42.845Z",
+  "source": "https://artificialanalysis.ai/models/",
+  "scanned": 814,
+  "toFetch": 100,
+  "fetched": 100,
+  "successCount": 100,
+  "failureCount": 0,
+  "failures": [],
+  "models": [
+    {
+      "title": "gpt-oss-20B (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-oss-20b/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 20,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 10,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 11,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 60,
+          "AA-LCR (Long Context Reasoning)": 31,
+          "AA-Omniscience Accuracy (Knowledge)": 15,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 7,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 9.8,
+          "GPQA Diamond (Scientific Reasoning)": 69,
+          "SciCode (Coding)": 34,
+          "IFBench (Instruction Following)": 65,
+          "CritPt (Physics Reasoning)": 1,
+          "MMMU Pro (Visual Reasoning)": "Artificial Analysis"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "gpt-oss-20B (low): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-oss-20b-low/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 20,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 6,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 5,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 50,
+          "AA-LCR (Long Context Reasoning)": 31,
+          "AA-Omniscience Accuracy (Knowledge)": 14,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 14,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 5.1,
+          "GPQA Diamond (Scientific Reasoning)": 61,
+          "SciCode (Coding)": 34,
+          "IFBench (Instruction Following)": 58,
+          "CritPt (Physics Reasoning)": 0
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "gpt-oss-120B (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-oss-120b/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 120,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 24,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 24,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 66,
+          "AA-LCR (Long Context Reasoning)": 51,
+          "AA-Omniscience Accuracy (Knowledge)": 20,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 10,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 18.5,
+          "GPQA Diamond (Scientific Reasoning)": 78,
+          "SciCode (Coding)": 39,
+          "IFBench (Instruction Following)": 69,
+          "CritPt (Physics Reasoning)": 1
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "gpt-oss-20B (low) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-oss-20b-low",
+      "metrics": {
+        "intelligence": 21,
+        "speed": 309.84,
+        "wer": 500,
+        "math": 26,
+        "input_price": 45,
+        "output_price": 45
+      },
+      "status": "ok"
+    },
+    {
+      "title": "gpt-oss-120B (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-oss-120b",
+      "metrics": {
+        "intelligence": 33,
+        "speed": 331.34,
+        "wer": 500,
+        "math": 26,
+        "input_price": 23,
+        "output_price": 29
+      },
+      "status": "ok"
+    },
+    {
+      "title": "gpt-oss-20B (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-oss-20b",
+      "metrics": {
+        "intelligence": 24,
+        "speed": 327.14,
+        "wer": 500,
+        "math": 26,
+        "input_price": 45,
+        "output_price": 45
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.2 Codex (xhigh): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-2-codex/providers",
+      "metrics": {
+        "wer": 5.2,
+        "speed": 1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 36,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 32,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 47,
+          "AA-LCR (Long Context Reasoning)": 38,
+          "AA-Omniscience Accuracy (Knowledge)": 28,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 40,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 7.3,
+          "GPQA Diamond (Scientific Reasoning)": 71,
+          "SciCode (Coding)": 40,
+          "IFBench (Instruction Following)": 47,
+          "CritPt (Physics Reasoning)": 1,
+          "MMMU Pro (Visual Reasoning)": -5.2
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.2 (medium): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-2-medium/providers",
+      "metrics": {
+        "wer": 5.2,
+        "speed": 1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 46,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 43,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 74,
+          "AA-LCR (Long Context Reasoning)": 63,
+          "AA-Omniscience Accuracy (Knowledge)": 36,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 41,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 24.9,
+          "GPQA Diamond (Scientific Reasoning)": 86,
+          "SciCode (Coding)": 46,
+          "IFBench (Instruction Following)": 65,
+          "CritPt (Physics Reasoning)": 8,
+          "MMMU Pro (Visual Reasoning)": -5.2
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.2 Codex (xhigh) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-2-codex",
+      "metrics": {
+        "intelligence": 49,
+        "speed": 103.23,
+        "wer": 5.2,
+        "math": 26,
+        "input_price": 59,
+        "output_price": 79
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.2 (medium) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-2-medium",
+      "metrics": {
+        "intelligence": 47,
+        "wer": 5.2,
+        "math": 26,
+        "speed": 4,
+        "input_price": 59,
+        "output_price": 79
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.2 (xhigh): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-2/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 5.2,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 48,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 47,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 85,
+          "AA-LCR (Long Context Reasoning)": 73,
+          "AA-Omniscience Accuracy (Knowledge)": 41,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 22,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 35.4,
+          "GPQA Diamond (Scientific Reasoning)": 90,
+          "SciCode (Coding)": 52,
+          "IFBench (Instruction Following)": 75,
+          "CritPt (Physics Reasoning)": 12
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.2 (xhigh) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-2",
+      "metrics": {
+        "intelligence": 51,
+        "speed": 84.03,
+        "wer": 5.2,
+        "math": 26,
+        "input_price": 59,
+        "output_price": 79
+      },
+      "status": "ok"
+    },
+    {
+      "title": "gpt-oss-120B (low): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-oss-120b-low/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 120,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 19,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 5,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 45,
+          "AA-LCR (Long Context Reasoning)": 44,
+          "AA-Omniscience Accuracy (Knowledge)": 18,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 9,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 5.2,
+          "GPQA Diamond (Scientific Reasoning)": 67,
+          "SciCode (Coding)": 36,
+          "IFBench (Instruction Following)": 58,
+          "CritPt (Physics Reasoning)": 0
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "gpt-oss-120B (low) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-oss-120b-low",
+      "metrics": {
+        "intelligence": 24,
+        "speed": 345.74,
+        "wer": 500,
+        "math": 26,
+        "input_price": 23,
+        "output_price": 28
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 nano (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-nano/providers",
+      "metrics": {
+        "wer": 5,
+        "speed": 1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 15,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 12,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 37,
+          "AA-LCR (Long Context Reasoning)": 42,
+          "AA-Omniscience Accuracy (Knowledge)": 18,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 41,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 8.2,
+          "GPQA Diamond (Scientific Reasoning)": 68,
+          "SciCode (Coding)": 37,
+          "IFBench (Instruction Following)": 68,
+          "CritPt (Physics Reasoning)": 0,
+          "MMMU Pro (Visual Reasoning)": -5
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o3: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/o3/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 3,
+        "input_price": 3,
+        "output_price": 3,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 12,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 37,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 81,
+          "AA-LCR (Long Context Reasoning)": 69,
+          "AA-Omniscience Accuracy (Knowledge)": 37,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 13,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 20,
+          "GPQA Diamond (Scientific Reasoning)": 83,
+          "SciCode (Coding)": 41,
+          "IFBench (Instruction Following)": 71,
+          "CritPt (Physics Reasoning)": 1,
+          "MMMU Pro (Visual Reasoning)": 3
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 nano (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-nano",
+      "metrics": {
+        "intelligence": 27,
+        "speed": 140.63,
+        "wer": 5,
+        "math": 26,
+        "input_price": 135,
+        "output_price": 153
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o3 - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/o3",
+      "metrics": {
+        "intelligence": 38,
+        "speed": 144.34,
+        "wer": 3,
+        "math": 26,
+        "input_price": 63,
+        "output_price": 46
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.1 Codex mini (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-1-codex-mini/providers",
+      "metrics": {
+        "wer": 5.1,
+        "speed": 1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 25,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 23,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 47,
+          "AA-LCR (Long Context Reasoning)": 44,
+          "AA-Omniscience Accuracy (Knowledge)": 28,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 11,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 5.2,
+          "GPQA Diamond (Scientific Reasoning)": 64,
+          "SciCode (Coding)": 37,
+          "IFBench (Instruction Following)": 43,
+          "CritPt (Physics Reasoning)": 0,
+          "MMMU Pro (Visual Reasoning)": -5.1
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.2: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-2-non-reasoning/providers",
+      "metrics": {
+        "wer": 5.2,
+        "speed": 1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.1 Codex mini (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-1-codex-mini",
+      "metrics": {
+        "intelligence": 39,
+        "speed": 159.73,
+        "wer": 5.1,
+        "math": 26,
+        "input_price": 67,
+        "output_price": 105
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.2 - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-2-non-reasoning",
+      "metrics": {
+        "intelligence": 34,
+        "speed": 73.53,
+        "wer": 5.2,
+        "math": 26,
+        "input_price": 27,
+        "output_price": 41
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 mini (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-mini/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 5,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 35,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 33,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 68,
+          "AA-LCR (Long Context Reasoning)": 68,
+          "AA-Omniscience Accuracy (Knowledge)": 23,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 45,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 19.7,
+          "GPQA Diamond (Scientific Reasoning)": 83,
+          "SciCode (Coding)": 39,
+          "IFBench (Instruction Following)": 75,
+          "CritPt (Physics Reasoning)": 0,
+          "MMMU Pro (Visual Reasoning)": -5
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o1: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/o1/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 1,
+        "input_price": 1,
+        "output_price": 1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 14,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 13,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 63,
+          "AA-LCR (Long Context Reasoning)": 59,
+          "AA-Omniscience Accuracy (Knowledge)": 33,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 31,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 7.7,
+          "GPQA Diamond (Scientific Reasoning)": 75,
+          "SciCode (Coding)": 36,
+          "IFBench (Instruction Following)": 70,
+          "CritPt (Physics Reasoning)": 0
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 mini (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-mini",
+      "metrics": {
+        "intelligence": 41,
+        "speed": 75.72,
+        "wer": 5,
+        "math": 26,
+        "input_price": 67,
+        "output_price": 105
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o1-preview: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/o1-preview/providers",
+      "metrics": {
+        "wer": 1,
+        "speed": 1,
+        "input_price": 1,
+        "output_price": 1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o1 - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/o1",
+      "metrics": {
+        "intelligence": 31,
+        "speed": 180.94,
+        "wer": 1,
+        "math": 26,
+        "input_price": 107,
+        "output_price": 107
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o1-mini: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/o1-mini/providers",
+      "metrics": {
+        "wer": 500,
+        "speed": 0,
+        "intelligence": {
+          "Humanity's Last Exam (Reasoning & Knowledge)": 4.9,
+          "GPQA Diamond (Scientific Reasoning)": 60,
+          "SciCode (Coding)": 32
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o1-preview - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/o1-preview",
+      "metrics": {
+        "intelligence": 24,
+        "wer": 500,
+        "math": 26,
+        "speed": 4,
+        "input_price": 113,
+        "output_price": 109
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o (Aug): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-2024-08-06/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 4,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 0,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 8,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 29,
+          "AA-LCR (Long Context Reasoning)": 35,
+          "AA-Omniscience Accuracy (Knowledge)": 21,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 46,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 2.9,
+          "GPQA Diamond (Scientific Reasoning)": 52,
+          "SciCode (Coding)": 33,
+          "IFBench (Instruction Following)": 36,
+          "CritPt (Physics Reasoning)": 0,
+          "MMMU Pro (Visual Reasoning)": -4
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o1-mini - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/o1-mini",
+      "metrics": {
+        "intelligence": 20,
+        "wer": 500,
+        "math": 26,
+        "speed": 4,
+        "input_price": 1,
+        "output_price": 1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o (May): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-2024-05-13/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 4,
+        "intelligence": {
+          "Humanity's Last Exam (Reasoning & Knowledge)": 2.8,
+          "GPQA Diamond (Scientific Reasoning)": 53,
+          "SciCode (Coding)": 31
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o (Aug) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-2024-08-06",
+      "metrics": {
+        "intelligence": 19,
+        "speed": 114.24,
+        "wer": 4,
+        "math": 26,
+        "input_price": 35,
+        "output_price": 32
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o (May) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-2024-05-13",
+      "metrics": {
+        "intelligence": 16,
+        "speed": 115.54,
+        "wer": 4,
+        "math": 26,
+        "input_price": 53,
+        "output_price": 42
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4 Turbo: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4-turbo/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 4,
+        "intelligence": {
+          "Humanity's Last Exam (Reasoning & Knowledge)": 3.3,
+          "SciCode (Coding)": 32
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o (Nov): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o/providers",
+      "metrics": {
+        "wer": 4,
+        "speed": 1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 0,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 8,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 25,
+          "AA-LCR (Long Context Reasoning)": 0,
+          "AA-Omniscience Accuracy (Knowledge)": 19,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 62,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 3.3,
+          "GPQA Diamond (Scientific Reasoning)": 54,
+          "SciCode (Coding)": 33,
+          "IFBench (Instruction Following)": 34,
+          "CritPt (Physics Reasoning)": 0
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4 Turbo - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4-turbo",
+      "metrics": {
+        "intelligence": 14,
+        "speed": 26.21,
+        "wer": 4,
+        "math": 26,
+        "input_price": 58,
+        "output_price": 58
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o mini: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-mini/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 4,
+        "intelligence": {
+          "Humanity's Last Exam (Reasoning & Knowledge)": 4,
+          "GPQA Diamond (Scientific Reasoning)": 43,
+          "SciCode (Coding)": 23,
+          "IFBench (Instruction Following)": 31,
+          "MMMU Pro (Visual Reasoning)": -4
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o (Nov) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o",
+      "metrics": {
+        "intelligence": 17,
+        "speed": 172.04,
+        "wer": 4,
+        "math": 26,
+        "input_price": 35,
+        "output_price": 32
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-3.5 Turbo: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-35-turbo/providers",
+      "metrics": {
+        "wer": 3.5,
+        "speed": 1,
+        "intelligence": {
+          "GPQA Diamond (Scientific Reasoning)": 30
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o mini - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-mini",
+      "metrics": {
+        "intelligence": 13,
+        "speed": 53.91,
+        "wer": 4,
+        "math": 26,
+        "input_price": 19,
+        "output_price": 33
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4.1 mini: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4-1-mini/providers",
+      "metrics": {
+        "wer": 4.1,
+        "speed": 1,
+        "intelligence": {
+          "Humanity's Last Exam (Reasoning & Knowledge)": 4.6,
+          "GPQA Diamond (Scientific Reasoning)": 66,
+          "SciCode (Coding)": 40,
+          "IFBench (Instruction Following)": 38,
+          "MMMU Pro (Visual Reasoning)": -4.1,
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 8,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 8,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 53,
+          "AA-LCR (Long Context Reasoning)": 42,
+          "AA-Omniscience Accuracy (Knowledge)": 19,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 8,
+          "CritPt (Physics Reasoning)": 0
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-3.5 Turbo - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-35-turbo",
+      "metrics": {
+        "intelligence": 9,
+        "speed": 97.42,
+        "wer": 500,
+        "math": 26,
+        "input_price": 64,
+        "output_price": 59
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4.1 mini - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4-1-mini",
+      "metrics": {
+        "intelligence": 22,
+        "speed": 78.02,
+        "wer": 4.1,
+        "math": 26,
+        "input_price": 57,
+        "output_price": 62
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o3-mini (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/o3-mini-high/providers",
+      "metrics": {
+        "wer": 3,
+        "speed": 1,
+        "input_price": 3,
+        "output_price": 3,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 14,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 7,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 29,
+          "AA-LCR (Long Context Reasoning)": 39,
+          "AA-Omniscience Accuracy (Knowledge)": 20,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 19,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 8.7,
+          "GPQA Diamond (Scientific Reasoning)": 75,
+          "SciCode (Coding)": 40,
+          "IFBench (Instruction Following)": 67,
+          "CritPt (Physics Reasoning)": 0
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o Realtime (Dec): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-realtime-dec-2024/providers",
+      "metrics": {
+        "wer": 500,
+        "speed": 0
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o3-mini (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/o3-mini-high",
+      "metrics": {
+        "intelligence": 25,
+        "speed": 161.04,
+        "wer": 500,
+        "math": 26,
+        "input_price": 31,
+        "output_price": 28
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.1 (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-1/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 5.1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 36,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 46,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 82,
+          "AA-LCR (Long Context Reasoning)": 75,
+          "AA-Omniscience Accuracy (Knowledge)": 35,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 49,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 26.5,
+          "GPQA Diamond (Scientific Reasoning)": 87,
+          "SciCode (Coding)": 43,
+          "IFBench (Instruction Following)": 73,
+          "CritPt (Physics Reasoning)": 5,
+          "MMMU Pro (Visual Reasoning)": -5.1
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o Realtime (Dec) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-realtime-dec-2024",
+      "metrics": {
+        "intelligence": 0,
+        "wer": 500,
+        "math": 26,
+        "speed": 4,
+        "input_price": 1,
+        "output_price": 1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o mini Realtime (Dec): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-mini-realtime-dec-2024/providers",
+      "metrics": {
+        "wer": 500,
+        "speed": 0
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.1 (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-1",
+      "metrics": {
+        "intelligence": 48,
+        "speed": 135.84,
+        "wer": 5.1,
+        "math": 26,
+        "input_price": 40,
+        "output_price": 57
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 5,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 40,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 33,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 85,
+          "AA-LCR (Long Context Reasoning)": 76,
+          "AA-Omniscience Accuracy (Knowledge)": 39,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 19,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 26.5,
+          "GPQA Diamond (Scientific Reasoning)": 85,
+          "SciCode (Coding)": 43,
+          "IFBench (Instruction Following)": 73,
+          "CritPt (Physics Reasoning)": 6,
+          "MMMU Pro (Visual Reasoning)": -5
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o mini Realtime (Dec) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-mini-realtime-dec-2024",
+      "metrics": {
+        "intelligence": 0,
+        "wer": 500,
+        "math": 26,
+        "speed": 4,
+        "input_price": 1,
+        "output_price": 1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 mini (medium): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-mini-medium/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 5,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 26,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 29,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 71,
+          "AA-LCR (Long Context Reasoning)": 66,
+          "AA-Omniscience Accuracy (Knowledge)": 21,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 57,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 14.6,
+          "GPQA Diamond (Scientific Reasoning)": 80,
+          "SciCode (Coding)": 41,
+          "IFBench (Instruction Following)": 71,
+          "CritPt (Physics Reasoning)": 1,
+          "MMMU Pro (Visual Reasoning)": -5
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5",
+      "metrics": {
+        "intelligence": 45,
+        "speed": 97.93,
+        "wer": 5,
+        "math": 26,
+        "input_price": 40,
+        "output_price": 57
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 nano (medium): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-nano-medium/providers",
+      "metrics": {
+        "wer": 5,
+        "speed": 1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 8,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 17,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 30,
+          "AA-LCR (Long Context Reasoning)": 40,
+          "AA-Omniscience Accuracy (Knowledge)": 16,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 48,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 7.6,
+          "GPQA Diamond (Scientific Reasoning)": 67,
+          "SciCode (Coding)": 34,
+          "IFBench (Instruction Following)": 66,
+          "CritPt (Physics Reasoning)": 0,
+          "MMMU Pro (Visual Reasoning)": -5
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 mini (medium) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-mini-medium",
+      "metrics": {
+        "intelligence": 39,
+        "speed": 74.32,
+        "wer": 5,
+        "math": 26,
+        "input_price": 67,
+        "output_price": 105
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o1-pro: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/o1-pro/providers",
+      "metrics": {
+        "wer": 500,
+        "speed": 0
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 nano (medium) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-nano-medium",
+      "metrics": {
+        "intelligence": 26,
+        "speed": 138.43,
+        "wer": 5,
+        "math": 26,
+        "input_price": 135,
+        "output_price": 153
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 (minimal): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-minimal/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 5,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 0,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 18,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 67,
+          "AA-LCR (Long Context Reasoning)": 25,
+          "AA-Omniscience Accuracy (Knowledge)": 27,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 12,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 5.4,
+          "GPQA Diamond (Scientific Reasoning)": 67,
+          "SciCode (Coding)": 39,
+          "IFBench (Instruction Following)": 46,
+          "CritPt (Physics Reasoning)": 0,
+          "MMMU Pro (Visual Reasoning)": -5
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o1-pro - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/o1-pro",
+      "metrics": {
+        "intelligence": 26,
+        "wer": 1,
+        "math": 26,
+        "speed": 4,
+        "input_price": 116,
+        "output_price": 116
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4.1: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4-1/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 4.1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 (minimal) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-minimal",
+      "metrics": {
+        "intelligence": 24,
+        "speed": 70.63,
+        "wer": 5,
+        "math": 26,
+        "input_price": 21,
+        "output_price": 32
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4.1 nano: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4-1-nano/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 4.1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 0,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 4,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 17,
+          "AA-LCR (Long Context Reasoning)": 17,
+          "AA-Omniscience Accuracy (Knowledge)": 13,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 18,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 3.9,
+          "GPQA Diamond (Scientific Reasoning)": 51,
+          "SciCode (Coding)": 26,
+          "IFBench (Instruction Following)": 32,
+          "CritPt (Physics Reasoning)": 0,
+          "MMMU Pro (Visual Reasoning)": -4.1
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4.1 - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4-1",
+      "metrics": {
+        "intelligence": 26,
+        "speed": 104.84,
+        "wer": 4.1,
+        "math": 26,
+        "input_price": 28,
+        "output_price": 27
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.1 Codex (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-1-codex/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 5.1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4.1 nano - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4-1-nano",
+      "metrics": {
+        "intelligence": 13,
+        "speed": 141.94,
+        "wer": 4.1,
+        "math": 26,
+        "input_price": 2,
+        "output_price": 13
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o3-mini: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/o3-mini/providers",
+      "metrics": {
+        "wer": 3,
+        "speed": 1,
+        "input_price": 3,
+        "output_price": 3
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.1 Codex (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-1-codex",
+      "metrics": {
+        "intelligence": 42,
+        "speed": 279.14,
+        "wer": 5.1,
+        "math": 26,
+        "input_price": 40,
+        "output_price": 57
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o3-mini - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/o3-mini",
+      "metrics": {
+        "intelligence": 26,
+        "speed": 156.74,
+        "wer": 500,
+        "math": 26,
+        "input_price": 31,
+        "output_price": 28
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4/providers",
+      "metrics": {
+        "wer": 4,
+        "speed": 1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 mini (minimal): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-mini-minimal/providers",
+      "metrics": {
+        "wer": 5,
+        "speed": 1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 2,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 14,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 32,
+          "AA-LCR (Long Context Reasoning)": 36,
+          "AA-Omniscience Accuracy (Knowledge)": 17,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 12,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 5,
+          "GPQA Diamond (Scientific Reasoning)": 69,
+          "SciCode (Coding)": 37,
+          "IFBench (Instruction Following)": 46,
+          "CritPt (Physics Reasoning)": 0,
+          "MMMU Pro (Visual Reasoning)": -5
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4 - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4",
+      "metrics": {
+        "intelligence": 13,
+        "speed": 38.01,
+        "wer": 500,
+        "math": 26,
+        "input_price": 62,
+        "output_price": 59
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 nano (minimal): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-nano-minimal/providers",
+      "metrics": {
+        "wer": 5,
+        "speed": 1,
+        "intelligence": {
+          "MMMU Pro (Visual Reasoning)": -5,
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 0,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 7,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 26,
+          "AA-LCR (Long Context Reasoning)": 20,
+          "AA-Omniscience Accuracy (Knowledge)": 11,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 12,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 4.1,
+          "GPQA Diamond (Scientific Reasoning)": 43,
+          "SciCode (Coding)": 29,
+          "IFBench (Instruction Following)": 33,
+          "CritPt (Physics Reasoning)": 0
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 mini (minimal) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-mini-minimal",
+      "metrics": {
+        "intelligence": 21,
+        "speed": 78.12,
+        "wer": 5,
+        "math": 26,
+        "input_price": 41,
+        "output_price": 67
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o3-pro: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/o3-pro/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 3,
+        "input_price": 3,
+        "output_price": 3,
+        "intelligence": {
+          "GPQA Diamond (Scientific Reasoning)": 85
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 nano (minimal) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-nano-minimal",
+      "metrics": {
+        "intelligence": 14,
+        "speed": 139.83,
+        "wer": 5,
+        "math": 26,
+        "input_price": 88,
+        "output_price": 101
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o4-mini (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/o4-mini/providers",
+      "metrics": {
+        "wer": 4,
+        "speed": 1,
+        "input_price": 4,
+        "output_price": 4,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 26,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 15,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 56,
+          "AA-LCR (Long Context Reasoning)": 55,
+          "AA-Omniscience Accuracy (Knowledge)": 23,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 21,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 17.5,
+          "GPQA Diamond (Scientific Reasoning)": 78,
+          "SciCode (Coding)": 47,
+          "IFBench (Instruction Following)": 69,
+          "CritPt (Physics Reasoning)": 1,
+          "MMMU Pro (Visual Reasoning)": 4
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o3-pro - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/o3-pro",
+      "metrics": {
+        "intelligence": 41,
+        "speed": 37.11,
+        "wer": 3,
+        "math": 26,
+        "input_price": 114,
+        "output_price": 115
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 (medium): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-medium/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 5,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 26,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 38,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 87,
+          "AA-LCR (Long Context Reasoning)": 73,
+          "AA-Omniscience Accuracy (Knowledge)": 37,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 18,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 23.5,
+          "GPQA Diamond (Scientific Reasoning)": 84,
+          "SciCode (Coding)": 41,
+          "IFBench (Instruction Following)": 71,
+          "CritPt (Physics Reasoning)": 0,
+          "MMMU Pro (Visual Reasoning)": -5
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "o4-mini (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/o4-mini",
+      "metrics": {
+        "intelligence": 33,
+        "speed": 133.84,
+        "wer": 4,
+        "math": 26,
+        "input_price": 31,
+        "output_price": 28
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4.5 (Preview): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4-5/providers",
+      "metrics": {
+        "wer": 500,
+        "speed": 0
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 (medium) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-medium",
+      "metrics": {
+        "intelligence": 42,
+        "speed": 97.03,
+        "wer": 5,
+        "math": 26,
+        "input_price": 40,
+        "output_price": 57
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o (ChatGPT): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-chatgpt/providers",
+      "metrics": {
+        "wer": 4,
+        "speed": 1,
+        "intelligence": {
+          "AA-LCR (Long Context Reasoning)": 53,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 3.7,
+          "GPQA Diamond (Scientific Reasoning)": 51,
+          "SciCode (Coding)": 33
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4.5 (Preview) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4-5",
+      "metrics": {
+        "intelligence": 20,
+        "wer": 4.5,
+        "math": 26,
+        "speed": 4,
+        "input_price": 1,
+        "output_price": 1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o (Mar): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-chatgpt-03-25/providers",
+      "metrics": {
+        "wer": 500,
+        "speed": 0,
+        "intelligence": {
+          "Humanity's Last Exam (Reasoning & Knowledge)": 5,
+          "GPQA Diamond (Scientific Reasoning)": 66,
+          "SciCode (Coding)": 37
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o (ChatGPT) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-chatgpt",
+      "metrics": {
+        "intelligence": 14,
+        "wer": 4,
+        "math": 26,
+        "speed": 4,
+        "input_price": 53,
+        "output_price": 42
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 (low): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-low/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 5,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 33,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 27,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 84,
+          "AA-LCR (Long Context Reasoning)": 59,
+          "AA-Omniscience Accuracy (Knowledge)": 36,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 23,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 18.4,
+          "GPQA Diamond (Scientific Reasoning)": 81,
+          "SciCode (Coding)": 39,
+          "IFBench (Instruction Following)": 67,
+          "CritPt (Physics Reasoning)": 1,
+          "MMMU Pro (Visual Reasoning)": -5
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-4o (Mar) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-4o-chatgpt-03-25",
+      "metrics": {
+        "intelligence": 19,
+        "wer": 4,
+        "math": 26,
+        "speed": 4,
+        "input_price": 53,
+        "output_price": 42
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 Codex (high): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-codex/providers",
+      "metrics": {
+        "wer": 5,
+        "speed": 1,
+        "intelligence": {
+          "GDPval-AA (Agentic Real-World Work Tasks, (ELO-500)/2000)": 36,
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 38,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 87,
+          "AA-LCR (Long Context Reasoning)": 69,
+          "AA-Omniscience Accuracy (Knowledge)": 37,
+          "AA-Omniscience Non-Hallucination Rate (1 - Hallucination Rate)": 26,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 25.6,
+          "GPQA Diamond (Scientific Reasoning)": 84,
+          "SciCode (Coding)": 41,
+          "IFBench (Instruction Following)": 74,
+          "CritPt (Physics Reasoning)": 5,
+          "MMMU Pro (Visual Reasoning)": -5
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 (low) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-low",
+      "metrics": {
+        "intelligence": 39,
+        "speed": 91.03,
+        "wer": 5,
+        "math": 26,
+        "input_price": 40,
+        "output_price": 57
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.1: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-1-non-reasoning/providers",
+      "metrics": {
+        "speed": 1,
+        "wer": 5.1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 Codex (high) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-codex",
+      "metrics": {
+        "intelligence": 45,
+        "speed": 345.54,
+        "wer": 5,
+        "math": 26,
+        "input_price": 40,
+        "output_price": 57
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 (ChatGPT): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-chatgpt/providers",
+      "metrics": {
+        "wer": 5,
+        "speed": 1,
+        "intelligence": {
+          "Terminal-Bench Hard (Agentic Coding & Terminal Use)": 13,
+          "𝜏²-Bench Telecom (Agentic Tool Use)": 0,
+          "AA-LCR (Long Context Reasoning)": 64,
+          "Humanity's Last Exam (Reasoning & Knowledge)": 5.8,
+          "GPQA Diamond (Scientific Reasoning)": 69,
+          "SciCode (Coding)": 38,
+          "IFBench (Instruction Following)": 45
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5.1 - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-1-non-reasoning",
+      "metrics": {
+        "intelligence": 27,
+        "speed": 112.44,
+        "wer": 5.1,
+        "math": 26,
+        "input_price": 21,
+        "output_price": 32
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-3.5 Turbo (0613): API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-3-5-turbo-0613/providers",
+      "metrics": {
+        "wer": 500,
+        "speed": 0
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-5 (ChatGPT) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-5-chatgpt",
+      "metrics": {
+        "intelligence": 22,
+        "speed": 208.84,
+        "wer": 5,
+        "math": 26,
+        "input_price": 21,
+        "output_price": 32
+      },
+      "status": "ok"
+    },
+    {
+      "title": "Grok-1: API Provider Performance Benchmarking & Price Analysis | Artificial Analysis",
+      "url": "https://artificialanalysis.ai/models/grok-1/providers",
+      "metrics": {
+        "wer": 500,
+        "speed": 0
+      },
+      "status": "ok"
+    },
+    {
+      "title": "GPT-3.5 Turbo (0613) - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/gpt-3-5-turbo-0613",
+      "metrics": {
+        "intelligence": 0,
+        "wer": 500,
+        "math": 26,
+        "speed": 4,
+        "input_price": 1,
+        "output_price": 1
+      },
+      "status": "ok"
+    },
+    {
+      "title": "Grok-1 - Intelligence, Performance & Price Analysis",
+      "url": "https://artificialanalysis.ai/models/grok-1",
+      "metrics": {
+        "intelligence": 12,
+        "wer": 500,
+        "math": 26,
+        "speed": 4,
+        "input_price": 1,
+        "output_price": 1
+      },
+      "status": "ok"
+    }
+  ]
+}

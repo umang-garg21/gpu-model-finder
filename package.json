@@ -5,12 +5,19 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "fetch:aa": "node scripts/fetch_artificialanalysis.js",
+    "fetch:intel": "node scripts/scrape_intel_puppeteer.js",
+    "merge:intel": "node scripts/merge_intel_into_models.js",
+    "search": "node scripts/search_models.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "escalade": "3.2.0",
+    "express": "^4.18.2",
     "node-cache": "^5.1.2",
-    "cors": "^2.8.5"
+    "puppeteer": "^21.3.8"
   }
 }

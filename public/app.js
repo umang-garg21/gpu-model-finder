@@ -470,6 +470,9 @@ const benchmarkTabs   = document.getElementById('benchmarkTabs');
 const modalOverlay    = document.getElementById('modalOverlay');
 const modalBody       = document.getElementById('modalBody');
 const modalClose      = document.getElementById('modalClose');
+const globalSearch    = document.getElementById('globalSearch');
+const globalSearchBtn = document.getElementById('globalSearchBtn');
+const globalSearchSuggestions = document.getElementById('searchSuggestions');
 
 // ── GPU Picker ─────────────────────────────────────────────────
 function renderGpuGrid() {
@@ -514,7 +517,7 @@ clearGpuBtn.addEventListener('click', () => clearGpu());
 function clearGpu() {
   state.selectedGpu = null;
   state.gpuCount = 1;
-  vramSlider.max = 192;
+  vramSlider.max = 5000;
   updateGpuUI();
   renderGpuGrid();
 }
@@ -523,7 +526,7 @@ function updateVramFromGpu() {
   if (!state.selectedGpu) return;
   const total = state.selectedGpu.vram * state.gpuCount;
   state.vram = total;
-  vramSlider.max = Math.max(320, total + 40);
+  vramSlider.max = Math.min(5000, Math.max(320, total + 40));
   vramSlider.value = total;
   vramDisplay.textContent = total;
   syncPresets();
@@ -554,7 +557,7 @@ function updateGpuUI() {
   } else {
     selectedGpuRow.style.display = 'none';
     multiGpuSection.style.display = 'none';
-    vramSlider.max = 192;
+    vramSlider.max = 5000;
   }
   renderGpuGrid();
 }
@@ -772,7 +775,7 @@ function renderModalContent(model) {
   const likeStr = fmtCount(model.likes);
 
   // Benchmark grid
-  const benchDefs = (USE_CASE_BENCHMARKS[state.usecase] ?? []).filter(b => b.key !== 'overall');
+    const benchDefs = (USE_CASE_BENCHMARKS[state.usecase] ?? []).filter(b => b.key !== 'overall');
   const benchCells = benchDefs.length
     ? benchDefs.map(b => {
         const val = model.benchmarks?.[b.key] ?? null;
@@ -785,9 +788,11 @@ function renderModalContent(model) {
         const tier = benchmarkTier(val, b.key);
         const pct  = LOWER_IS_BETTER.has(b.key) ? Math.max(0, 100 - val * 5) : val;
         const label = LOWER_IS_BETTER.has(b.key) ? `${val}%` : `${val.toFixed(1)}%`;
+        const src = model.benchmarks_source?.[b.key] ?? null;
+        const srcHtml = src ? `<span style="margin-left:8px;font-size:11px;color:var(--text-muted)">(${src === 'aa' ? 'AA' : 'HF'})</span>` : '';
         return `
           <div class="bench-cell ${tier}">
-            <div class="bench-cell-label">${b.label}</div>
+            <div class="bench-cell-label">${b.label}${srcHtml}</div>
             <div class="bench-cell-score">${label}</div>
             <div class="bench-cell-bar">
               <div class="bench-cell-bar-fill" style="width:${Math.min(pct,100).toFixed(1)}%"></div>
@@ -1018,8 +1023,9 @@ function renderModels(models, maxVram) {
     modelGrid.innerHTML = `
       <div class="state-box">
         <div class="state-icon">😕</div>
-        <div class="state-title">No models found</div>
-        <div class="state-desc">Try increasing VRAM, switching quantization, or a different use case.</div>
+        <div class="state-title">No open-source models fit your constraints</div>
+        <div class="state-desc">None of the open-source models match <strong>${state.vram} GB</strong> with <strong>${state.quantization}</strong> for <strong>${state.usecase.toUpperCase()}</strong>.
+        Try increasing VRAM, choosing a lower-precision quantization (e.g. FP16 → INT8), or selecting a different use case.</div>
       </div>`;
     return;
   }
@@ -1147,6 +1153,23 @@ function modelCardHTML(m, maxVram, rank) {
       return `<span class="bench-pill ${cls}">${label}</span>`;
     }).filter(Boolean).slice(0, 4);
 
+    // Fallback: if HF benchmarks missing, try to show AA intelligence metrics in same pill style
+    if (!pills.length && m.artificialAnalysis?.metrics) {
+      const aaIntel = m.artificialAnalysis.metrics.intelligence || (typeof m.artificialAnalysis.metrics === 'object' ? m.artificialAnalysis.metrics : null);
+      if (aaIntel && typeof aaIntel === 'object') {
+        const aaEntries = Object.entries(aaIntel).slice(0, 4);
+        const aaPills = aaEntries.map(([k,v]) => {
+          const short = k.length > 18 ? k.slice(0,16) + '…' : k;
+          const val = typeof v === 'number' ? v : (parseFloat(v) || 0);
+          const keyLower = k.toLowerCase();
+          const tier = benchmarkTier(val, keyLower);
+          const label = LOWER_IS_BETTER.has(keyLower) ? `${short}: ${val}%` : `${short}: ${val.toFixed ? val.toFixed(1) + '%' : val + '%'} `;
+          return `<span class="bench-pill ${tier}">${escapeHtml(label)}</span>`;
+        });
+        if (aaPills.length) benchHtml = `<div class="bench-row">${aaPills.join('')}</div>`;
+      }
+    }
+
     if (pills.length) benchHtml = `<div class="bench-row">${pills.join('')}</div>`;
   }
 
@@ -1230,3 +1253,273 @@ function fmtCount(n) {
 
 // ── Initialize ─────────────────────────────────────────────────
 renderGpuGrid();
+
+// ── Global search (ArtificialAnalysis) ───────────────────────
+async function doGlobalSearch() {
+  const q = (globalSearch?.value || '').trim();
+  if (!q) { globalSearch?.focus(); return; }
+
+  // UX: show brief loading state
+  searchBtn.disabled = true;
+  searchBtn.textContent = 'Searching…';
+  showSkeletons();
+  resultsCount.textContent = `Searching ArtificialAnalysis for "${q}"…`;
+
+  try {
+    const res = await fetch(`/api/search?name=${encodeURIComponent(q)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const list = data.results || [];
+    if (!list.length) {
+      modelGrid.innerHTML = `<div class="state-box"><div class="state-icon">🔎</div><div class="state-title">No matches</div><div class="state-desc">No ArtificialAnalysis models matched "${escapeHtml(q)}".</div></div>`;
+      resultsCount.textContent = `No matches for "${escapeHtml(q)}"`;
+      return;
+    }
+
+    // Fetch the current HF+AA processed model list (so that AA entries are attached or injected as stubs)
+    const params = new URLSearchParams({ vram: state.vram, usecase: state.usecase, quantization: state.quantization || 'fp16', limit: '150' });
+    const modelsRes = await fetch(`/api/models?${params.toString()}`);
+    const modelsJson = modelsRes.ok ? await modelsRes.json() : null;
+    const allModels = modelsJson?.models || [];
+
+    // Match AA search results to the processed model objects (match by URL or AA slug)
+    const matched = [];
+    const unmatchedAA = [];
+    for (const a of list) {
+      const aaUrl = (a.url || '').toString();
+      const aaSlug = (() => { try { return new URL(aaUrl).pathname.split('/').filter(Boolean).pop().toLowerCase(); } catch(e){ return (a.id||a.model||a.title||'').toString().toLowerCase(); }})();
+      const found = allModels.find(m => (m.artificialAnalysis && (m.artificialAnalysis.url === aaUrl || (m.artificialAnalysis.slug && m.artificialAnalysis.slug === aaSlug))) || (m.id && m.id.toLowerCase().includes(aaSlug)));
+      if (found) matched.push(found);
+      else unmatchedAA.push(a);
+    }
+
+    if (matched.length) {
+      // Render matched models using the same renderer as "Find Models" so cards look identical
+      state.models = matched; // set so openModal works
+      state.page = 1;
+      renderModels(state.models, state.vram);
+      resultsCount.textContent = `${matched.length} model${matched.length>1?'s':''} matched for "${escapeHtml(q)}"`;
+    } else {
+      // Fallback: render compact AA-only list (user can open AA modal)
+      modelGrid.innerHTML = list.map((a, idx) => `
+        <div class="model-card" data-aa-index="${idx}" onclick="openAAModalFromSearch(${idx})">
+          <div class="card-top">
+            <div>
+              <div class="card-title">${escapeHtml(a.title || a.name || a.model || a.id || 'Untitled')}</div>
+              <div class="card-author">Source: ArtificialAnalysis</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:flex-start;flex-shrink:0">
+              <div class="card-badge badge-gray">AA</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;color:var(--text-muted);font-size:13px">${escapeHtml(a.url || '')}</div>
+        </div>`).join('');
+      resultsCount.textContent = `${list.length} results for "${escapeHtml(q)}"`;
+    }
+
+    // Save AA raw results for modal fallback
+    window.__aa_search_results = list;
+
+  } catch (err) {
+    console.error(err);
+    modelGrid.innerHTML = `<div class="state-box"><div class="state-icon">⚠️</div><div class="state-title">Search failed</div><div class="state-desc">${escapeHtml(err.message)}</div></div>`;
+    resultsCount.textContent = 'Search error';
+  } finally {
+    searchBtn.disabled = false;
+    searchBtn.textContent = 'Find Models →';
+  }
+}
+
+function openAAModalFromSearch(idx) {
+  const list = window.__aa_search_results || [];
+  const item = list[idx];
+  if (!item) return;
+  openAAModal(item);
+}
+
+function openAAModal(item) {
+  const metrics = item.metrics || {};
+  const intel = metrics.intelligence && typeof metrics.intelligence === 'object'
+    ? metrics.intelligence
+    : (typeof metrics === 'object' && Object.keys(metrics).some(k => typeof metrics[k] === 'number') ? metrics : null);
+
+  const renderIntelRows = () => {
+    if (!intel) return '<div style="color:var(--text-muted)">No intelligence metrics available.</div>';
+    // Build bench-cell style grid consistent with modal benchmark layout
+    const entries = Object.entries(intel);
+    if (!entries.length) return '<div style="color:var(--text-muted)">No intelligence metrics available.</div>';
+    return `<div style="display:grid;grid-template-columns:1fr;gap:8px">${entries.map(([k,v]) => {
+      const key = k.toString();
+      const val = (typeof v === 'number') ? v : (parseFloat(v) || 0);
+      const lowKey = key.toLowerCase();
+      const pct = LOWER_IS_BETTER.has(lowKey) ? Math.max(0, 100 - Math.min(val, 100)) : Math.min(Math.max(val, 0), 100);
+      const tier = (LOWER_IS_BETTER.has(lowKey) ? (val <= 5 ? 'high' : val <= 12 ? 'med' : 'low') : (val >= 75 ? 'high' : val >= 55 ? 'med' : 'low'));
+      const display = typeof v === 'number' ? `${v}` : escapeHtml(String(v));
+      return `
+        <div class="bench-cell ${tier}">
+          <div class="bench-cell-label" style="font-weight:600">${escapeHtml(key)}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+            <div style="font-size:13px;color:var(--text-muted)">${display}</div>
+            <div style="width:40%;text-align:right;font-size:12px;color:var(--text-muted)">${LOWER_IS_BETTER.has(lowKey) ? '' : (isNaN(val) ? '' : (Math.round(val) + '%'))}</div>
+          </div>
+          <div class="bench-cell-bar" style="margin-top:8px"><div class="bench-cell-bar-fill" style="width:${Math.min(Math.max(pct,0),100)}%;background:${tier === 'high' ? '#22c55e' : tier === 'med' ? '#eab308' : '#ef4444'}"></div></div>
+        </div>`;
+    }).join('')}</div>`;
+  };
+
+  // Other simple numeric metrics
+  const otherMetrics = ['speed','wer','math','input_price','output_price'];
+  const otherRows = otherMetrics.map(k => {
+    if (metrics[k] == null) return '';
+    return `<div style="display:flex;justify-content:space-between;padding:6px 8px;border-top:1px solid var(--border)"><div style="color:var(--text-muted)">${escapeHtml(k)}</div><div style="font-family: 'JetBrains Mono', monospace">${escapeHtml(String(metrics[k]))}</div></div>`;
+  }).join('');
+
+  modalBody.innerHTML = `
+    <h2 style="margin-bottom:8px">${escapeHtml(item.title || item.name || item.model || item.id || 'Model')}</h2>
+    <div style="margin-bottom:10px;color:var(--text-muted)"><a href="${escapeHtml(item.url||'')}" target="_blank" rel="noopener">View on ArtificialAnalysis</a></div>
+    <div style="margin-bottom:12px">${escapeHtml(item.description || '')}</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;max-height:420px;overflow:auto">
+      ${renderIntelRows()}
+      ${otherRows ? `<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">${otherRows}</div>` : ''}
+    </div>
+  `;
+  modalOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// Typeahead / suggestions for global search
+let __suggestions = [];
+let __suggestionIndex = -1;
+function debounce(fn, wait) {
+  let t = null;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+}
+
+async function fetchSuggestions(q) {
+  if (!q || q.length < 2) { clearSuggestions(); return; }
+  try {
+    const res = await fetch(`/api/search?name=${encodeURIComponent(q)}`);
+    if (!res.ok) return clearSuggestions();
+    const data = await res.json();
+    const list = (data.results || []).slice(0, 8);
+    __suggestions = list;
+    renderSuggestions(list);
+  } catch (e) {
+    console.warn('Suggestion fetch failed', e);
+    clearSuggestions();
+  }
+}
+
+const debouncedFetch = debounce(fetchSuggestions, 220);
+
+function renderSuggestions(list) {
+  if (!globalSearchSuggestions) return;
+  if (!list || !list.length) { clearSuggestions(); return; }
+  globalSearchSuggestions.innerHTML = list.map((a, i) => {
+    const title = escapeHtml(a.title || a.name || a.model || a.id || 'Untitled');
+    const sub = escapeHtml(a.url ? new URL(a.url).pathname.split('/').pop() : (a.description || 'ArtificialAnalysis'));
+    return `<div role="option" tabindex="0" class="search-suggestion-item" data-idx="${i}">
+      <div style="flex:1">${title}</div>
+      <div class="search-suggestion-sub">${sub}</div>
+    </div>`;
+  }).join('');
+  globalSearchSuggestions.hidden = false;
+  __suggestionIndex = -1;
+
+  // attach click handlers
+  globalSearchSuggestions.querySelectorAll('.search-suggestion-item').forEach(el => {
+    el.addEventListener('mousedown', e => { // use mousedown to fire before blur
+      const idx = parseInt(el.dataset.idx);
+      selectSuggestion(idx);
+      e.preventDefault();
+    });
+  });
+}
+
+function clearSuggestions() {
+  if (!globalSearchSuggestions) return;
+  globalSearchSuggestions.innerHTML = '';
+  globalSearchSuggestions.hidden = true;
+  __suggestions = [];
+  __suggestionIndex = -1;
+}
+
+function highlightSuggestion(i) {
+  if (!globalSearchSuggestions) return;
+  const items = Array.from(globalSearchSuggestions.querySelectorAll('.search-suggestion-item'));
+  items.forEach((it, idx) => it.classList.toggle('active', idx === i));
+}
+
+function selectSuggestion(i) {
+  const item = __suggestions[i];
+  if (!item) return;
+  globalSearch.value = (item.title || item.name || item.model || item.id || '');
+  clearSuggestions();
+  // Try to find a matching processed model and open the HF-style modal.
+  const aaUrl = (item.url || '').toString();
+  const aaSlug = (() => { try { return new URL(aaUrl).pathname.split('/').filter(Boolean).pop().toLowerCase(); } catch(e){ return (item.id||item.model||item.title||'').toString().toLowerCase(); }})();
+  // Try to find in currently loaded models first
+  let found = state.models.find(m => (m.artificialAnalysis && (m.artificialAnalysis.url === aaUrl || (m.artificialAnalysis.slug && m.artificialAnalysis.slug === aaSlug))) || (m.id && m.id.toLowerCase().includes(aaSlug)));
+  if (found) {
+    openModal(found.id);
+    return;
+  }
+
+  // Otherwise fetch /api/models to search for a matching model (include generous limit)
+  (async () => {
+    try {
+      const params = new URLSearchParams({ vram: state.vram, usecase: state.usecase, limit: '150' });
+      const res = await fetch(`/api/models?${params.toString()}`);
+      if (!res.ok) throw new Error('models fetch failed');
+      const json = await res.json();
+      const all = json.models || [];
+      found = all.find(m => (m.artificialAnalysis && (m.artificialAnalysis.url === aaUrl || (m.artificialAnalysis.slug && m.artificialAnalysis.slug === aaSlug))) || (m.id && m.id.toLowerCase().includes(aaSlug)));
+      if (found) {
+        // ensure state.models includes it so modal helpers work
+        state.models = [found];
+        renderModels(state.models, state.vram);
+        openModal(found.id);
+        return;
+      }
+    } catch (e) {
+      console.warn('Failed to resolve suggestion to model:', e.message);
+    }
+    // Fallback: show raw AA modal
+    openAAModal(item);
+  })();
+}
+
+// Input & keyboard handling
+if (globalSearch) {
+  globalSearch.addEventListener('input', e => {
+    const v = (e.target.value || '').trim();
+    debouncedFetch(v);
+  });
+
+  globalSearch.addEventListener('keydown', e => {
+    if (!__suggestions.length) {
+      if (e.key === 'Enter') return doGlobalSearch();
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      __suggestionIndex = Math.min(__suggestions.length - 1, __suggestionIndex + 1);
+      highlightSuggestion(__suggestionIndex);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      __suggestionIndex = Math.max(0, __suggestionIndex - 1);
+      highlightSuggestion(__suggestionIndex);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (__suggestionIndex >= 0) selectSuggestion(__suggestionIndex);
+      else doGlobalSearch();
+    } else if (e.key === 'Escape') {
+      clearSuggestions();
+    }
+  });
+
+  // hide suggestions on blur (allow click via mousedown handler)
+  globalSearch.addEventListener('blur', () => setTimeout(clearSuggestions, 150));
+}
+
+if (globalSearchBtn) globalSearchBtn.addEventListener('click', doGlobalSearch);

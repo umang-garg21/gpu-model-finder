@@ -43,6 +43,119 @@
       line-height: 1.6;
     }
 
+    /* Global search (compact top-right pill) */
+    .global-search {
+      position: absolute;
+      right: 40px; /* moved slightly right */
+      top: 30px;   /* moved slightly lower */
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 999px;
+      transition: transform .16s ease, box-shadow .18s ease, border-color .16s ease;
+      will-change: transform;
+    }
+
+    .global-search input[type="search"] {
+      width: 200px;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      padding: 6px 6px;
+      transition: width .18s ease, color .12s ease;
+    }
+
+    .global-search input[type="search"]::placeholder { color: var(--text-muted); }
+
+    /* subtle expansion + glow on hover/focus */
+    .global-search:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(6,182,212,0.07);
+    }
+    .global-search:hover input[type="search"] { width: 240px; }
+
+    .global-search:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 10px 36px var(--accent-glow);
+    }
+
+    /* interactive pressed feel */
+    .global-search:active, .global-search .search-btn:active {
+      transform: translateY(0) scale(0.985);
+      box-shadow: inset 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    .global-search .search-btn {
+      width: 28px; height: 28px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid var(--border);
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0; margin: 0;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background .12s ease, color .12s ease, border-color .12s ease, box-shadow .12s ease;
+    }
+
+    .global-search .search-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent-h);
+      box-shadow: 0 6px 18px var(--accent-glow);
+      background: rgba(6,182,212,0.03);
+    }
+
+    /* no symbol on the button — purely decorative / action */
+    .global-search .search-btn::after { content: '' }
+
+    @media (max-width: 768px) {
+      .global-search { display: none; }
+    }
+
+    /* Suggestions dropdown */
+    .search-suggestions {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      width: 360px;
+      max-width: calc(100vw - 48px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px;
+      box-shadow: 0 12px 40px rgba(2,6,23,0.6);
+      z-index: 1200;
+      overflow: hidden;
+    }
+
+    .search-suggestions[hidden] { display: none; }
+
+    .search-suggestion-item {
+      padding: 8px 10px;
+      font-size: 13px;
+      color: var(--text);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-suggestion-item + .search-suggestion-item { margin-top: 6px; }
+
+    .search-suggestion-item:hover, .search-suggestion-item.active {
+      background: linear-gradient(90deg, rgba(6,182,212,0.03), rgba(6,182,212,0.01));
+      border: 1px solid var(--accent);
+      color: var(--accent-h);
+    }
+
+    .search-suggestion-sub { font-size: 12px; color: var(--text-muted); }
+
     /* ── Header ────────────────────────────────────────────── */
     header {
       padding: 28px 32px 0;
@@ -1235,6 +1348,12 @@
       <div class="logo-sub">Match open-source AI models to your exact GPU setup</div>
     </div>
   </div>
+    <!-- Global search -->
+    <div class="global-search">
+      <input id="globalSearch" type="search" placeholder="Search models" aria-label="Search models" />
+      <button id="globalSearchBtn" class="search-btn" title="Search"></button>
+      <div id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="Search suggestions" hidden></div>
+    </div>
 </header>
 
 <main>
@@ -1282,7 +1401,7 @@
         <span class="vram-value" id="vramDisplay">8</span>
         <span class="vram-unit">GB</span>
       </div>
-      <input type="range" id="vramSlider" min="2" max="192" value="8" step="1" />
+      <input type="range" id="vramSlider" min="2" max="5000" value="8" step="1" />
       <div class="vram-presets" id="vramPresets">
         <button class="preset-btn" data-v="4">4 GB</button>
         <button class="preset-btn active" data-v="8">8 GB</button>
@@ -1292,7 +1411,12 @@
         <button class="preset-btn" data-v="48">48 GB</button>
         <button class="preset-btn" data-v="80">80 GB</button>
         <button class="preset-btn" data-v="128">128 GB</button>
-        <button class="preset-btn" data-v="192">192 GB</button>
+        <button class="preset-btn" data-v="256">256 GB</button>
+        <button class="preset-btn" data-v="512">512 GB</button>
+        <button class="preset-btn" data-v="1024">1 TB</button>
+        <button class="preset-btn" data-v="2048">2 TB</button>
+        <button class="preset-btn" data-v="4096">4 TB</button>
+        <button class="preset-btn" data-v="5000">5 TB</button>
       </div>
     </div>
 
@@ -1321,6 +1445,7 @@
       </div>
     </div>
 
+
     <!-- Quantization -->
     <div class="field">
       <label>Quantization / Precision</label>
@@ -1343,7 +1468,7 @@
         <option value="newest">Newest</option>
       </select>
     </div>
-
+    
     <button class="search-btn" id="searchBtn" onclick="fetchModels()">
       Find Models →
     </button>

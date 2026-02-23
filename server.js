@@ -1,6 +1,7 @@
 const express = require('express');
 const axios   = require('axios');
 const NodeCache = require('node-cache');
+const fs = require('fs');
 const path    = require('path');
 
 const app   = express();
@@ -395,6 +396,38 @@ function extractBenchmarks(cardData) {
 }
 
 /**
+ * Map ArtificialAnalysis metric names into one or more canonical benchmark keys.
+ * Returns an array of benchmark keys (may be empty).
+ */
+function aaMetricNameToBenchKeys(name) {
+  if (!name) return [];
+  const n = name.toString().toLowerCase();
+  const out = new Set();
+
+  if (n.includes('mmlu')) out.add('mmlu');
+  if (n.includes('hle') || n.includes("humanity's last") || n.includes('humanity')) out.add('hle');
+  if (n.includes('gdpval')) out.add('swebench');
+  if (n.includes('omniscience')) { out.add('mmlu'); out.add('gpqa'); }
+  if (n.includes('humaneval') || n.includes('human_eval')) out.add('humaneval');
+  if (n.includes('math') && !n.includes('gsm')) out.add('math');
+  if (n.includes('gsm8k') || (n.includes('gsm') && !n.includes('gdp'))) out.add('gsm8k');
+  if (n.includes('arc')) out.add('arc');
+  if (n.includes('ifeval') || n.includes('ifbench') || n.includes('instruction')) out.add('ifeval');
+  if (n.includes('gpqa')) out.add('gpqa');
+  if (n.includes('swebench') || n.includes('terminal-bench') || n.includes('agentic')) out.add('swebench');
+  if (n.includes('tau2') || n.includes('\u03c4') || n.includes('𝜏')) out.add('swebench');
+  if (n.includes('gaia')) out.add('gaia');
+  if (n.includes('wer')) out.add('wer');
+  if (n.includes('imagenet')) out.add('imagenet_top1');
+  if (n.includes('clip')) out.add('clip_score');
+  if (n.includes('mteb')) out.add('mteb');
+  if (n.includes('scicode') || n.includes('coding') || n.includes('code')) out.add('humaneval');
+  if (n.includes('critpt') || n.includes('physics')) out.add('math');
+
+  return Array.from(out);
+}
+
+/**
  * Server-side overall quality score for a model.
  * Same weights as the frontend so pre-sorted order matches client re-sort.
  * For audio WER (lower=better) we invert to keep "higher=better" across all usecases.
@@ -573,8 +606,10 @@ app.get('/api/models', async (req, res) => {
       details = await batchFetchDetails(needsDetail, 8);
     }
 
+    // No AA over-budget allowlist: strictly enforce VRAM budget here.
+
     // 4. Merge detail data, build final model objects
-    const processed = candidates
+    let processed = candidates
       .map(({ raw: m, totalParams: nameParams, estimatedVRAM: nameVRAM, curatedVRAM }) => {
         let totalParams = nameParams;
         let estimatedVRAM = nameVRAM;
@@ -600,11 +635,14 @@ app.get('/api/models', async (req, res) => {
         // Merge benchmark data: hardcoded lookup + model-card extraction
         const bmLookup = BENCHMARK_DATA[m.id] ?? {};
         const bmCard   = extractBenchmarks(details[m.id]?.cardData) ?? {};
-        const benchmarks = Object.keys({ ...bmLookup, ...bmCard }).length
-          ? { ...bmLookup, ...bmCard }
-          : null;
+        // Build benchmarks along with provenance (hf vs aa)
+        const benchmarks = {};
+        const benchmarks_source = {};
+        for (const [k,v] of Object.entries(bmLookup)) { if (typeof v === 'number') { benchmarks[k]=v; benchmarks_source[k]='hf'; } }
+        for (const [k,v] of Object.entries(bmCard))   { if (typeof v === 'number') { benchmarks[k]=v; benchmarks_source[k]='hf'; } }
+        const hasBench = Object.keys(benchmarks).length > 0;
 
-        const overallScore = computeOverallScore(benchmarks, usecase);
+        const overallScore = computeOverallScore(hasBench ? benchmarks : null, usecase);
 
         return {
           id:           m.id,
@@ -617,7 +655,9 @@ app.get('/api/models', async (req, res) => {
           lastModified: m.lastModified,
           estimatedVRAM,
           paramLabel:   approxParams ? `~${paramLabel(totalParams)}` : paramLabel(totalParams),
-          benchmarks,
+          benchmarks: hasBench ? benchmarks : null,
+          benchmarks_source: hasBench ? benchmarks_source : null,
+          _hfBenchmarks: hasBench ? { ...benchmarks } : null,
           overallScore,
           tags: (m.tags ?? [])
             .filter(t => !t.startsWith('arxiv:') && !t.startsWith('base_model:') &&
@@ -628,7 +668,10 @@ app.get('/api/models', async (req, res) => {
           gated: m.gated ?? false,
         };
       })
-      // Keep models that fit (or have unknown VRAM)
+
+      // Keep models that fit (or have unknown VRAM). If `includeAAOverBudget` is
+      // enabled, also keep HF models that were matched to ArtificialAnalysis
+      // pages (they are added to `aaAllowIds` above).
       .filter(m => m.estimatedVRAM === null || m.estimatedVRAM <= vramGB)
       // Sort priority:
       //  1. Models with VRAM known before unknowns (we can confirm they fit)
@@ -642,7 +685,27 @@ app.get('/api/models', async (req, res) => {
         const bK = b.estimatedVRAM !== null;
         if (aK !== bK) return aK ? -1 : 1;
 
-        // Benchmark quality: scored models first, then by score descending
+        // Prioritize models that have ArtificialAnalysis task-specific scores for this usecase
+        const aAA = typeof a.aaTaskScore === 'number' ? a.aaTaskScore : null;
+        const bAA = typeof b.aaTaskScore === 'number' ? b.aaTaskScore : null;
+        if (aAA !== null && bAA === null) return -1;
+        if (aAA === null && bAA !== null) return 1;
+        if (aAA !== null && bAA !== null) {
+          const diff = bAA - aAA;
+          if (Math.abs(diff) > 0.5) return diff;
+        }
+
+        // If no AA scores, fall back to HF task-specific scores
+        const aHF = typeof a.hfTaskScore === 'number' ? a.hfTaskScore : null;
+        const bHF = typeof b.hfTaskScore === 'number' ? b.hfTaskScore : null;
+        if (aHF !== null && bHF === null) return -1;
+        if (aHF === null && bHF !== null) return 1;
+        if (aHF !== null && bHF !== null) {
+          const diffHF = bHF - aHF;
+          if (Math.abs(diffHF) > 0.5) return diffHF;
+        }
+
+        // Benchmark quality: scored models first, then by score descending (overall)
         const aS = a.overallScore;
         const bS = b.overallScore;
         if (aS !== null && bS === null) return -1;
@@ -665,6 +728,292 @@ app.get('/api/models', async (req, res) => {
       })
       .slice(0, maxResults);
 
+      // Attach ArtificialAnalysis metrics when available (match by slug/title/url)
+      // `aaList` is declared here so later sections (AA-only injection) can reuse it.
+      let aaList = [];
+      try {
+        const aaPath = path.join(__dirname, 'data', 'models_artificialanalysis.json');
+        if (fs.existsSync(aaPath)) {
+          const aaRaw = fs.readFileSync(aaPath, 'utf8');
+          const aaObj = JSON.parse(aaRaw || '{}');
+          aaList = Array.isArray(aaObj.models) ? aaObj.models : (Array.isArray(aaObj) ? aaObj : []);
+
+          const aaBySlug = new Map();
+          const aaByNormTitle = new Map();
+          function aaSlugFromUrl(u) {
+            try { const p = new URL(u).pathname.split('/').filter(Boolean); const idx = p.indexOf('models'); if (idx >= 0 && p.length > idx+1) return p[idx+1].toString().toLowerCase(); return p[p.length-1]?.toString().toLowerCase() || '';} catch(e){ return '' }
+          }
+          function normTitle(s) { return (s||'').toString().toLowerCase().replace(/\(.*?\)/g,'').replace(/[^a-z0-9]+/g,' ').trim(); }
+
+          for (const a of aaList) {
+            const slug = aaSlugFromUrl(a.url || '');
+            if (slug) aaBySlug.set(slug, a);
+            const nt = normTitle(a.title || a.url || '');
+            if (nt) aaByNormTitle.set(nt, a);
+          }
+          // Build additional canonical keys for more robust matching
+          const aaByCanonical = new Map();
+          function canonicalKey(s) { return (s||'').toString().toLowerCase().replace(/[^a-z0-9]/g,''); }
+          for (const a of aaList) {
+            const slug = aaSlugFromUrl(a.url || '');
+            if (slug) {
+              aaBySlug.set(slug, a);
+              aaByCanonical.set(canonicalKey(slug), a);
+            }
+            const nt = normTitle(a.title || a.url || '');
+            if (nt) {
+              aaByNormTitle.set(nt, a);
+              aaByCanonical.set(canonicalKey(nt), a);
+            }
+            // also index raw title key
+            if (a.title) aaByCanonical.set(canonicalKey(a.title), a);
+          }
+
+          for (const m of processed) {
+            try {
+              const hfSlug = (m.id || '').toString().split('/').pop().toLowerCase();
+              let found = null;
+
+              // 1) exact slug match
+              if (hfSlug && aaBySlug.has(hfSlug)) found = aaBySlug.get(hfSlug);
+
+              // 2) canonicalized id/title match (removes punctuation)
+              if (!found) {
+                const hfCanon = canonicalKey(hfSlug || m.name || m.id || '');
+                if (hfCanon && aaByCanonical.has(hfCanon)) found = aaByCanonical.get(hfCanon);
+              }
+
+              // 3) normalized title exact match
+              if (!found) {
+                const n = normTitle(m.name || m.id || m.url || '');
+                if (n && aaByNormTitle.has(n)) found = aaByNormTitle.get(n);
+              }
+
+              // 4) substring matches between normalized forms
+              if (!found) {
+                const n = normTitle(m.name || m.id || '');
+                for (const [k,a] of aaByNormTitle.entries()) {
+                  if (!k || !n) continue;
+                  if (k.includes(n) || n.includes(k) || k.replace(/\s+/g,'').includes(n.replace(/\s+/g,'')) || n.replace(/\s+/g,'').includes(k.replace(/\s+/g,''))) {
+                    found = a; break;
+                  }
+                }
+              }
+
+              // 5) last-resort: if HF id contains the AA slug as substring
+              if (!found) {
+                for (const [s,a] of aaBySlug.entries()) {
+                  if (s && (m.id || '').toLowerCase().includes(s)) { found = a; break; }
+                }
+              }
+
+              if (found) {
+                m.artificialAnalysis = m.artificialAnalysis || {};
+                m.artificialAnalysis.url = found.url;
+                // Normalize metrics shape: prefer intelligence object when present
+                const intel = found.metrics?.intelligence ?? (typeof found.metrics === 'object' ? found.metrics : null);
+                m.artificialAnalysis.metrics = intel ? { intelligence: intel } : (found.metrics || null);
+                m.artificialAnalysis.title = found.title || null;
+                // Map AA metric names into canonical benchmark keys and merge into
+                // the model's `benchmarks` so HF+AA metrics are available uniformly.
+                try {
+                  // Use shared mapping helper
+                  const aaToBenchKeys = aaMetricNameToBenchKeys;
+
+                  const aaMetricsObj = intel;
+                  if (aaMetricsObj && typeof aaMetricsObj === 'object') {
+                    m.benchmarks = m.benchmarks || {};
+                    m.benchmarks_source = m.benchmarks_source || {};
+                    for (const [k,v] of Object.entries(aaMetricsObj)) {
+                      if (typeof v !== 'number') continue;
+                      const bks = aaToBenchKeys(k);
+                      if (!bks || !bks.length) continue;
+                      for (const bk of bks) {
+                        // Prefer AA over HF: always set/override HF benchmark values
+                        m.benchmarks[bk] = v;
+                        m.benchmarks_source[bk] = 'aa';
+                      }
+                    }
+                    // Recompute overallScore if we added any benchmarks
+                    try {
+                      m.overallScore = computeOverallScore(m.benchmarks, usecase);
+                    } catch (e) { /* ignore */ }
+                  }
+                } catch (e) { /* ignore mapping errors */ }
+              }
+            } catch (e) { /* ignore per-model match failures */ }
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to attach ArtificialAnalysis metrics:', e.message || e);
+      }
+
+      // Compute per-model task scores from benchmarks (AA + HF) and prioritize AA-enabled models for the requested usecase.
+      const BENCHMARK_TASK_MAP = [
+        // map substrings -> tasks (benchmarks can belong to multiple tasks)
+        ['agentic', ['agentic']],
+        ['agentic real', ['agentic']],
+        ['gdpval', ['agentic']],
+        ['terminal-bench', ['coding','agentic']],
+        ['𝜏²-bench', ['agentic','telecom']],
+        ['tau2-bench', ['agentic','telecom']],
+        ['aa-lcr', ['long_context','reasoning']],
+        ['lcr', ['long_context','reasoning']],
+        ['omniscience', ['knowledge']],
+        ['gpqa', ['reasoning','scientific']],
+        ['gpqa diamond', ['reasoning','scientific']],
+        ['scicode', ['coding']],
+        ['ifbench', ['instruction_following']],
+        ['critpt', ['physics','reasoning']],
+        ['mmmu', ['vision']],
+        ['mmlu', ['reasoning']],
+        ['humaneval', ['coding']],
+        ['math', ['reasoning']],
+        ['gsm8k', ['math','reasoning']],
+        ['wer', ['speech','audio']],
+        ['imagenet', ['vision']],
+        ['clip', ['vision']],
+        ['instruction', ['instruction_following']],
+        ['coding', ['coding','reasoning']],
+        ['code', ['coding']],
+      ];
+
+      function canonicalTasksForKey(k) {
+        if (!k) return [];
+        const key = k.toString().toLowerCase();
+        const tasks = new Set();
+        for (const [sub, tlist] of BENCHMARK_TASK_MAP) if (key.includes(sub)) tlist.forEach(t=>tasks.add(t));
+        return Array.from(tasks);
+      }
+
+      function avgScoreForUsecase(metricsObj, usecaseTasks) {
+        if (metricsObj == null) return null;
+        // If AA provided a single numeric intelligence score, use it as-is
+        if (typeof metricsObj === 'number') return metricsObj;
+        if (typeof metricsObj.intelligence === 'number') return metricsObj.intelligence;
+
+        const entries = Object.entries(metricsObj).filter(([k,v]) => typeof v === 'number');
+        if (!entries.length) return null;
+        let total = 0, count = 0;
+        for (const [k,v] of entries) {
+          const tasks = canonicalTasksForKey(k);
+          // weight metric if it matches the requested tasks
+          const weight = tasks.some(t => usecaseTasks.includes(t)) ? 1.0 : 0.0;
+          if (weight > 0) { total += v * weight; count += weight; }
+        }
+        if (count === 0) return null;
+        return total / count;
+      }
+
+      // Usecase -> relevant canonical tasks
+      const USECASE_TASKS = {
+        llm: ['reasoning','coding','instruction_following','long_context','knowledge','agentic','scientific'],
+        image: ['vision'],
+        audio: ['audio','speech'],
+        vision: ['vision'],
+        video: ['vision'],
+        embed: ['instruction_following','reasoning'],
+      };
+      // Allow explicit `task` query to focus ranking on a single canonical task
+      const taskParam = (req.query.task || '').toString().toLowerCase();
+      const usecaseTasks = taskParam ? [taskParam] : (USECASE_TASKS[usecase] || USECASE_TASKS.llm);
+
+      // annotate processed models with task scores
+      processed.forEach(m => {
+        try {
+          const aaMetrics = m.artificialAnalysis?.metrics?.intelligence || m.artificialAnalysis?.metrics || null;
+          // Prefer preserved HF benchmarks (before AA overrides) for hfTaskScore when available
+          let hfMetrics = m._hfBenchmarks || null;
+          // Fallback: derive hfMetrics from benchmarks where provenance is 'hf'
+          if (!hfMetrics && m.benchmarks && m.benchmarks_source) {
+            hfMetrics = {};
+            for (const [k,v] of Object.entries(m.benchmarks)) if (m.benchmarks_source[k] === 'hf') hfMetrics[k] = v;
+            if (!Object.keys(hfMetrics).length) hfMetrics = null;
+          }
+          m.aaTaskScore = avgScoreForUsecase(aaMetrics, usecaseTasks);
+          m.hfTaskScore = avgScoreForUsecase(hfMetrics, usecaseTasks);
+          m.hasAAmetrics = !!m.artificialAnalysis?.metrics;
+        } catch (e) {
+          m.aaTaskScore = null; m.hfTaskScore = null; m.hasAAmetrics = false;
+        }
+      });
+
+      // Include AA-only models (those present in AA dataset but not matched to HF)
+      try {
+        const matchedAAUrls = new Set(processed.filter(m => m.artificialAnalysis?.url).map(m => m.artificialAnalysis.url));
+        const aaOnlyToAdd = [];
+
+        const aaMetricToBenchKey = aaMetricNameToBenchKeys;
+
+        for (const a of aaList) {
+          if (!a || !a.url) continue;
+          if (matchedAAUrls.has(a.url)) continue;
+          // build model-like object
+          const slug = (() => { try { const p = new URL(a.url).pathname.split('/').filter(Boolean); const idx = p.indexOf('models'); if (idx>=0 && p.length>idx+1) return p[idx+1]; return p[p.length-1]; } catch(e){ return null } })();
+          const id = `artificialanalysis/${(slug||(a.title||'unnamed')).toString().toLowerCase().replace(/[^a-z0-9-_]/g,'-')}`;
+          const name = (a.title || slug || id).toString().split(' - ')[0];
+          const benchmarks = {};
+          const cardIntel = a.metrics?.intelligence ?? (typeof a.metrics === 'object' ? a.metrics : null);
+          if (cardIntel && typeof cardIntel === 'object') {
+            for (const [k,v] of Object.entries(cardIntel)) {
+              const bks = aaMetricToBenchKey(k);
+              if (!bks || !bks.length) continue;
+              for (const bk of bks) if (typeof v === 'number') { benchmarks[bk] = v; benchmarks_source[bk] = 'aa'; }
+            }
+          }
+
+          const modelStub = {
+            id,
+            name,
+            author: 'ArtificialAnalysis',
+            task: PIPELINE_LABELS[pipelines[0]] || pipelines[0],
+            pipeline: pipelines[0],
+            downloads: 0,
+            likes: 0,
+            lastModified: a.fetchedAt || new Date().toISOString(),
+            estimatedVRAM: null,
+            paramLabel: null,
+            benchmarks: Object.keys(benchmarks).length ? benchmarks : null,
+            benchmarks_source: Object.keys(benchmarks).length ? benchmarks_source : null,
+            overallScore: computeOverallScore(Object.keys(benchmarks).length ? benchmarks : null, usecase),
+            tags: ['artificialanalysis'],
+            license: null,
+            url: a.url,
+            gated: false,
+            artificialAnalysis: { url: a.url, metrics: a.metrics, title: a.title },
+          };
+
+          // compute task scores
+          modelStub.aaTaskScore = avgScoreForUsecase(modelStub.artificialAnalysis?.metrics?.intelligence || modelStub.artificialAnalysis?.metrics, usecaseTasks);
+          modelStub.hfTaskScore = null;
+          modelStub.hasAAmetrics = true;
+
+          aaOnlyToAdd.push(modelStub);
+        }
+
+        // append AA-only models so they participate in sorting and rendering
+        if (aaOnlyToAdd.length) processed.push(...aaOnlyToAdd);
+      } catch (e) {
+        console.warn('Failed to inject AA-only models:', e.message || e);
+      }
+
+      // Enforce: only return open-source models. Exclude gated models and
+      // any entries without an allowed open-source license.
+      function isOpenSourceModel(m) {
+        if (m.gated) return false;
+        if (m.license && typeof m.license === 'string') {
+          const l = m.license.toLowerCase();
+          const allow = ['apache', 'mit', 'bsd', 'lgpl', 'gpl', 'mpl', 'epl', 'cc-by', 'cc0', 'unlicense', 'agpl'];
+          for (const a of allow) if (l.includes(a)) return true;
+        }
+        return false;
+      }
+
+      processed = processed.filter(isOpenSourceModel);
+
+    // Remove internal preserved HF benchmarks before returning
+    processed.forEach(m => { if (m && m._hfBenchmarks) delete m._hfBenchmarks; });
+
     const response = {
       models: processed,
       total:  processed.length,
@@ -677,6 +1026,28 @@ app.get('/api/models', async (req, res) => {
   } catch (err) {
     console.error('Error:', err.message);
     res.status(500).json({ error: 'Failed to fetch model data', details: err.message });
+  }
+});
+
+// API: Search models from artificialanalysis data (committed by GitHub Action)
+app.get('/api/search', (req, res) => {
+  const q = (req.query.name || '').trim().toLowerCase();
+  if (!q) return res.status(400).json({ error: 'Missing query param: name' });
+
+  const dataPath = path.join(__dirname, 'data', 'models_artificialanalysis.json');
+  if (!fs.existsSync(dataPath)) return res.status(404).json({ error: 'Model data not available' });
+
+  try {
+    const raw = fs.readFileSync(dataPath, 'utf8');
+    const obj = JSON.parse(raw);
+    const models = Array.isArray(obj.models) ? obj.models : (Array.isArray(obj) ? obj : []);
+    const results = models.filter(m => {
+      const name = (m.name || m.model || m.id || m.title || '').toString().toLowerCase();
+      return name.includes(q);
+    }).slice(0, 100);
+    res.json({ total: results.length, results });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to read model data', details: e.message });
   }
 });
 

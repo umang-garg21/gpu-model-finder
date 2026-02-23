@@ -1,0 +1,1 @@
+conda run -n ortho python scripts/automate_full_run.py --start-chrome

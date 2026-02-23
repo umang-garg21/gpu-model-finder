@@ -1,0 +1,107 @@
+{
+  "chartsFound": 0,
+  "charts": [],
+  "intelDatasetsCount": 4,
+  "intelDatasets": [
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Artificial Analysis Intelligence Index",
+      "creator": {
+        "@type": "Organization",
+        "name": "Artificial Analysis",
+        "url": "https://artificialanalysis.ai"
+      },
+      "description": "Artificial Analysis Intelligence Index: Includes GDPval-AA, 𝜏²-Bench Telecom, Terminal-Bench Hard, SciCode, AA-LCR, AA-Omniscience, IFBench, Humanity's Last Exam, GPQA Diamond, CritPt evaluations spanning reasoning, knowledge, math & coding; Evaluation results measured independently by Artificial Analysis",
+      "measurementTechnique": "Independent test run by Artificial Analysis on dedicated hardware.",
+      "spatialCoverage": "Worldwide",
+      "keywords": [
+        "analytics",
+        "llm",
+        "AI",
+        "benchmark",
+        "model",
+        "gpt",
+        "claude"
+      ],
+      "license": "https://artificialanalysis.ai/docs/legal/Terms-of-Use.pdf",
+      "isAccessibleForFree": true,
+      "citation": "Artificial Analysis (2025). LLM benchmarks dataset. https://artificialanalysis.ai"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Artificial Analysis Intelligence Index by Open Weights / Proprietary",
+      "creator": {
+        "@type": "Organization",
+        "name": "Artificial Analysis",
+        "url": "https://artificialanalysis.ai"
+      },
+      "description": "Artificial Analysis Intelligence Index: Includes GDPval-AA, 𝜏²-Bench Telecom, Terminal-Bench Hard, SciCode, AA-LCR, AA-Omniscience, IFBench, Humanity's Last Exam, GPQA Diamond, CritPt evaluations spanning reasoning, knowledge, math & coding; Evaluation results measured independently by Artificial Analysis",
+      "measurementTechnique": "Independent test run by Artificial Analysis on dedicated hardware.",
+      "spatialCoverage": "Worldwide",
+      "keywords": [
+        "analytics",
+        "llm",
+        "AI",
+        "benchmark",
+        "model",
+        "gpt",
+        "claude"
+      ],
+      "license": "https://artificialanalysis.ai/docs/legal/Terms-of-Use.pdf",
+      "isAccessibleForFree": true,
+      "citation": "Artificial Analysis (2025). LLM benchmarks dataset. https://artificialanalysis.ai"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Context Window",
+      "creator": {
+        "@type": "Organization",
+        "name": "Artificial Analysis",
+        "url": "https://artificialanalysis.ai"
+      },
+      "description": "Context window is the maximum number of tokens a model can accept in a single request. Higher limits allow longer prompts, documents, and more complex instructions.",
+      "measurementTechnique": "Independent test run by Artificial Analysis on dedicated hardware.",
+      "spatialCoverage": "Worldwide",
+      "keywords": [
+        "analytics",
+        "llm",
+        "AI",
+        "benchmark",
+        "model",
+        "gpt",
+        "claude"
+      ],
+      "license": "https://artificialanalysis.ai/docs/legal/Terms-of-Use.pdf",
+      "isAccessibleForFree": true,
+      "citation": "Artificial Analysis (2025). LLM benchmarks dataset. https://artificialanalysis.ai"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      "name": "Output Speed",
+      "creator": {
+        "@type": "Organization",
+        "name": "Artificial Analysis",
+        "url": "https://artificialanalysis.ai"
+      },
+      "description": "Output speed measures tokens generated per second after the first token is received. Higher values mean faster model output and higher throughput under comparable conditions.",
+      "measurementTechnique": "Independent test run by Artificial Analysis on dedicated hardware.",
+      "spatialCoverage": "Worldwide",
+      "keywords": [
+        "analytics",
+        "llm",
+        "AI",
+        "benchmark",
+        "model",
+        "gpt",
+        "claude"
+      ],
+      "license": "https://artificialanalysis.ai/docs/legal/Terms-of-Use.pdf",
+      "isAccessibleForFree": true,
+      "citation": "Artificial Analysis (2025). LLM benchmarks dataset. https://artificialanalysis.ai"
+    }
+  ]
+}
