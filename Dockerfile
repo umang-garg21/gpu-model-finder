@@ -27,7 +27,12 @@ WORKDIR /usr/src/app
 
 # Install node deps
 COPY package*.json ./
-RUN npm ci --only=production
+# Use npm install when no lockfile is present; omit dev dependencies for smaller image
+RUN if [ -f package-lock.json ] ; then \
+            npm ci --omit=dev --no-audit --no-fund ; \
+        else \
+            npm install --omit=dev --no-audit --no-fund ; \
+        fi
 
 # Copy app
 COPY . .
