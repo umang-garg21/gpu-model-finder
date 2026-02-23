@@ -788,8 +788,13 @@ function renderModalContent(model) {
         const tier = benchmarkTier(val, b.key);
         const pct  = LOWER_IS_BETTER.has(b.key) ? Math.max(0, 100 - val * 5) : val;
         const label = LOWER_IS_BETTER.has(b.key) ? `${val}%` : `${val.toFixed(1)}%`;
-        const src = model.benchmarks_source?.[b.key] ?? null;
-        const srcHtml = src ? `<span style="margin-left:8px;font-size:11px;color:var(--text-muted)">(${src === 'aa' ? 'AA' : 'HF'})</span>` : '';
+        const srcObj = model.benchmarks_source?.[b.key] ?? null;
+        let srcHtml = '';
+        if (srcObj && srcObj.source) {
+          const s = srcObj.source === 'aa' ? 'AA' : 'HF';
+          const u = srcObj.url ? escapeHtml(srcObj.url) : null;
+          srcHtml = u ? ` <a href="${u}" target="_blank" rel="noopener" style="font-size:11px;color:var(--text-muted);margin-left:8px">(${s})</a>` : ` <span style="font-size:11px;color:var(--text-muted);margin-left:8px">(${s})</span>`;
+        }
         return `
           <div class="bench-cell ${tier}">
             <div class="bench-cell-label">${b.label}${srcHtml}</div>

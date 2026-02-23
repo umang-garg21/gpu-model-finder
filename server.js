@@ -407,6 +407,8 @@ function aaMetricNameToBenchKeys(name) {
   if (n.includes('mmlu')) out.add('mmlu');
   if (n.includes('hle') || n.includes("humanity's last") || n.includes('humanity')) out.add('hle');
   if (n.includes('gdpval')) out.add('swebench');
+  // GDPval-AA indicates a general knowledge / broad competence signal — map to MMLU
+  if (n.includes('gdpval')) { out.delete('swebench'); out.add('mmlu'); }
   if (n.includes('omniscience')) { out.add('mmlu'); out.add('gpqa'); }
   if (n.includes('humaneval') || n.includes('human_eval')) out.add('humaneval');
   if (n.includes('math') && !n.includes('gsm')) out.add('math');
@@ -638,8 +640,8 @@ app.get('/api/models', async (req, res) => {
         // Build benchmarks along with provenance (hf vs aa)
         const benchmarks = {};
         const benchmarks_source = {};
-        for (const [k,v] of Object.entries(bmLookup)) { if (typeof v === 'number') { benchmarks[k]=v; benchmarks_source[k]='hf'; } }
-        for (const [k,v] of Object.entries(bmCard))   { if (typeof v === 'number') { benchmarks[k]=v; benchmarks_source[k]='hf'; } }
+        for (const [k,v] of Object.entries(bmLookup)) { if (typeof v === 'number') { benchmarks[k]=v; benchmarks_source[k]={ source: 'hf', url: `https://huggingface.co/${m.id}` }; } }
+        for (const [k,v] of Object.entries(bmCard))   { if (typeof v === 'number') { benchmarks[k]=v; benchmarks_source[k]={ source: 'hf', url: `https://huggingface.co/${m.id}` }; } }
         const hasBench = Object.keys(benchmarks).length > 0;
 
         const overallScore = computeOverallScore(hasBench ? benchmarks : null, usecase);
@@ -829,10 +831,22 @@ app.get('/api/models', async (req, res) => {
                       const bks = aaToBenchKeys(k);
                       if (!bks || !bks.length) continue;
                       for (const bk of bks) {
-                        // Prefer AA over HF: always set/override HF benchmark values
-                        m.benchmarks[bk] = v;
-                        m.benchmarks_source[bk] = 'aa';
-                      }
+                          // Prefer AA over HF; if multiple AA metrics map to the same
+                          // canonical key, keep the strongest (max) AA signal.
+                          const prev = m.benchmarks[bk];
+                          const prevSrc = m.benchmarks_source[bk]?.source;
+                          if (prev == null) {
+                            m.benchmarks[bk] = v;
+                            m.benchmarks_source[bk] = { source: 'aa', url: found.url };
+                          } else if (prevSrc === 'aa') {
+                            m.benchmarks[bk] = Math.max(prev, v);
+                            // keep existing AA url (could be same or different); prefer existing
+                          } else {
+                            // prev was 'hf' — override with AA
+                            m.benchmarks[bk] = v;
+                            m.benchmarks_source[bk] = { source: 'aa', url: found.url };
+                          }
+                        }
                     }
                     // Recompute overallScore if we added any benchmarks
                     try {
@@ -927,7 +941,7 @@ app.get('/api/models', async (req, res) => {
           // Fallback: derive hfMetrics from benchmarks where provenance is 'hf'
           if (!hfMetrics && m.benchmarks && m.benchmarks_source) {
             hfMetrics = {};
-            for (const [k,v] of Object.entries(m.benchmarks)) if (m.benchmarks_source[k] === 'hf') hfMetrics[k] = v;
+            for (const [k,v] of Object.entries(m.benchmarks)) if (m.benchmarks_source[k]?.source === 'hf') hfMetrics[k] = v;
             if (!Object.keys(hfMetrics).length) hfMetrics = null;
           }
           m.aaTaskScore = avgScoreForUsecase(aaMetrics, usecaseTasks);
@@ -953,16 +967,27 @@ app.get('/api/models', async (req, res) => {
           const id = `artificialanalysis/${(slug||(a.title||'unnamed')).toString().toLowerCase().replace(/[^a-z0-9-_]/g,'-')}`;
           const name = (a.title || slug || id).toString().split(' - ')[0];
           const benchmarks = {};
+          const benchmarks_source = {};
           const cardIntel = a.metrics?.intelligence ?? (typeof a.metrics === 'object' ? a.metrics : null);
           if (cardIntel && typeof cardIntel === 'object') {
             for (const [k,v] of Object.entries(cardIntel)) {
               const bks = aaMetricToBenchKey(k);
               if (!bks || !bks.length) continue;
-              for (const bk of bks) if (typeof v === 'number') { benchmarks[bk] = v; benchmarks_source[bk] = 'aa'; }
+              for (const bk of bks) if (typeof v === 'number') {
+                const prev = benchmarks[bk];
+                if (prev == null) {
+                  benchmarks[bk] = v;
+                  benchmarks_source[bk] = { source: 'aa', url: a.url };
+                } else {
+                  // if multiple AA metrics map to same canonical key, keep max
+                  benchmarks[bk] = Math.max(prev, v);
+                  // preserve benchmarks_source[bk] (same AA page)
+                }
+              }
             }
           }
 
-          const modelStub = {
+            const modelStub = {
             id,
             name,
             author: 'ArtificialAnalysis',
