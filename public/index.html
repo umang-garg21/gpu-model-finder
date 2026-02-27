@@ -11,24 +11,24 @@
 
     :root {
       /* ── Core surfaces ───────────────────── */
-      --bg:         #080b10;   /* deep navy-black          */
-      --surface:    #0d1118;   /* card background          */
-      --surface2:   #141924;   /* inset / secondary        */
-      --border:     #1e2538;   /* default border           */
-      --border-hi:  #2a4060;   /* hover / focus border     */
-      /* ── Accent — GPU cyan ──────────────── */
-      --accent:     #06b6d4;   /* tailwind cyan-500        */
-      --accent-h:   #22d3ee;   /* cyan-400 on hover        */
-      --accent-low: #06b6d418; /* subtle tint              */
-      --accent-glow:#06b6d435; /* for box-shadow glows     */
+      --bg:         #0a0a0a;   /* near-black               */
+      --surface:    #0f0f0f;   /* card background          */
+      --surface2:   #161616;   /* inset / secondary        */
+      --border:     #1e1e1e;   /* neutral dark border      */
+      --border-hi:  #2e2e2e;   /* hover / focus border     */
+      /* ── Accent — NVIDIA Green ──────────── */
+      --accent:     #76b900;   /* NVIDIA green             */
+      --accent-h:   #8ed200;   /* brighter on hover        */
+      --accent-low: #76b90014; /* subtle tint              */
+      --accent-glow:#76b90030; /* for box-shadow glows     */
       /* ── Typography ─────────────────────── */
-      --text:       #c8d8ea;   /* cool-tinted white        */
-      --text-muted: #465f7a;   /* de-emphasised            */
+      --text:       #e0e0e0;   /* clean neutral white      */
+      --text-muted: #606060;   /* neutral grey             */
       /* ── Semantic ───────────────────────── */
-      --green:      #10b981;   /* emerald-500              */
+      --green:      #c8d8cc;   /* soft sage-white          */
       --yellow:     #f59e0b;   /* amber-500                */
       --red:        #f43f5e;   /* rose-500                 */
-      --radius:     10px;
+      --radius:     6px;
     }
 
     html { scroll-behavior: smooth; }
@@ -36,8 +36,6 @@
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background-color: var(--bg);
-      background-image: radial-gradient(circle, rgba(6,182,212,0.07) 1px, transparent 1px);
-      background-size: 28px 28px;
       color: var(--text);
       min-height: 100vh;
       line-height: 1.6;
@@ -72,22 +70,10 @@
 
     .global-search input[type="search"]::placeholder { color: var(--text-muted); }
 
-    /* subtle expansion + glow on hover/focus */
-    .global-search:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 30px rgba(6,182,212,0.07);
-    }
     .global-search:hover input[type="search"] { width: 240px; }
 
     .global-search:focus-within {
       border-color: var(--accent);
-      box-shadow: 0 10px 36px var(--accent-glow);
-    }
-
-    /* interactive pressed feel */
-    .global-search:active, .global-search .search-btn:active {
-      transform: translateY(0) scale(0.985);
-      box-shadow: inset 0 3px 8px rgba(0,0,0,0.2);
     }
 
     .global-search .search-btn {
@@ -106,7 +92,7 @@
       border-color: var(--accent);
       color: var(--accent-h);
       box-shadow: 0 6px 18px var(--accent-glow);
-      background: rgba(6,182,212,0.03);
+      background: rgba(255,255,255,0.02);
     }
 
     /* no symbol on the button — purely decorative / action */
@@ -149,7 +135,7 @@
     .search-suggestion-item + .search-suggestion-item { margin-top: 6px; }
 
     .search-suggestion-item:hover, .search-suggestion-item.active {
-      background: linear-gradient(90deg, rgba(6,182,212,0.03), rgba(6,182,212,0.01));
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(118,185,0,0.01));
       border: 1px solid var(--accent);
       color: var(--accent-h);
     }
@@ -171,22 +157,19 @@
     }
 
     .logo-icon {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, var(--accent) 0%, #0369a1 100%);
-      border-radius: 8px;
+      width: 32px; height: 32px;
+      background: var(--accent);
+      border-radius: 4px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-      box-shadow: 0 0 22px #06b6d455, 0 0 6px #06b6d430;
+      font-size: 15px;
+      flex-shrink: 0;
     }
 
     .logo h1 {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      background: linear-gradient(100deg, var(--text) 5%, var(--accent-h) 42%, var(--text) 80%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      color: var(--text);
     }
 
     .logo-sub { font-size: 13px; color: var(--text-muted); }
@@ -470,7 +453,7 @@
       white-space: nowrap;
     }
 
-    .badge-green  { background: #22c55e20; color: var(--green); }
+    .badge-green  { background: rgba(200,216,204,0.07); border: 1px solid rgba(200,216,204,0.18); color: var(--green); }
     .badge-yellow { background: #eab30820; color: var(--yellow); }
     .badge-red    { background: #ef444420; color: var(--red); }
     .badge-gray   { background: var(--surface2); color: var(--text-muted); }
@@ -519,9 +502,9 @@
     }
 
     .chip.task {
-      border-color: var(--accent);
-      color: var(--accent-h);
-      background: var(--accent-low);
+      border-color: rgba(255,255,255,0.18);
+      color: var(--text);
+      background: rgba(255,255,255,0.05);
     }
 
     /* Stats row */
@@ -545,7 +528,7 @@
       color: var(--text-muted);
     }
 
-    .state-icon { font-size: 48px; margin-bottom: 12px; filter: drop-shadow(0 0 16px #06b6d460); }
+    .state-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
     .state-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: -0.3px; }
     .state-desc  { font-size: 14px; }
 
@@ -746,7 +729,7 @@
       width: fit-content;
     }
 
-    .latency-chip.fast   { color: var(--green);  border-color: #22c55e40; background: #22c55e12; }
+    .latency-chip.fast   { color: var(--green);  border-color: rgba(200,216,204,0.22); background: rgba(200,216,204,0.06); }
     .latency-chip.medium { color: var(--yellow); border-color: #eab30840; background: #eab30812; }
     .latency-chip.slow   { color: var(--red);    border-color: #ef444440; background: #ef444412; }
 
@@ -766,18 +749,13 @@
        Steel cyan palette · Blueprint grid · Glow accents
        ════════════════════════════════════════════════════ */
 
-    /* Glowing accent stripe at top of viewport */
     body::before {
       content: '';
       position: fixed;
       top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg,
-        transparent 5%,
-        var(--accent) 30%,
-        var(--accent-h) 50%,
-        var(--accent) 70%,
-        transparent 95%);
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.7;
       z-index: 999;
       pointer-events: none;
     }
@@ -805,7 +783,7 @@
     /* Sidebar: steel-cyan top rail */
     .sidebar {
       border-top: 2px solid var(--accent);
-      box-shadow: 0 0 40px rgba(6,182,212,0.04) inset;
+      box-shadow: 0 0 40px rgba(255,255,255,0.02) inset;
     }
 
     /* Sidebar section label: mono, cyan-tinted */
@@ -817,29 +795,22 @@
       opacity: 0.85;
     }
 
-    /* VRAM readout number: cyan glow */
     .vram-value {
-      filter: drop-shadow(0 0 14px #06b6d455);
+      color: var(--accent-h);
     }
 
-    /* Search button: gradient fill */
     .search-btn {
-      background: linear-gradient(135deg, var(--accent) 0%, #0369a1 100%);
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 18px #06b6d430;
+      background: var(--accent);
+      color: #000;
+      letter-spacing: 0.3px;
     }
 
     .search-btn:hover {
-      background: linear-gradient(135deg, var(--accent-h) 0%, var(--accent) 100%);
-      box-shadow: 0 4px 24px #06b6d450;
+      background: var(--accent-h);
     }
 
-    /* Model card: glow aura on hover */
     .model-card:hover {
-      box-shadow:
-        0 0 0 1px #06b6d435,
-        0 8px 28px rgba(0,0,0,0.45),
-        0 0 36px #06b6d410;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     }
 
     /* Results count numbers: mono + accent */
@@ -923,10 +894,10 @@
 
     .bench-pill.highlighted {
       font-size: 11px; font-weight: 700; padding: 3px 10px;
-      background: var(--accent-low); border-color: var(--accent); color: var(--accent-h);
+      background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.22); color: var(--text);
     }
 
-    .bench-pill.high { color: var(--green);  border-color: #22c55e30; background: #22c55e0d; }
+    .bench-pill.high { color: var(--green);  border-color: rgba(200,216,204,0.2); background: rgba(200,216,204,0.05); }
     .bench-pill.med  { color: var(--yellow); border-color: #eab30830; background: #eab3080d; }
     .bench-pill.low  { color: var(--red);    border-color: #ef444430; background: #ef44440d; }
 
@@ -979,7 +950,7 @@
       overflow-y: auto;
       padding: 28px;
       position: relative;
-      box-shadow: 0 0 60px #06b6d422, 0 20px 60px rgba(0,0,0,0.6);
+      box-shadow: 0 0 60px #76b90022, 0 20px 60px rgba(0,0,0,0.6);
       transform: translateY(12px);
       transition: transform .2s;
     }
@@ -1079,8 +1050,8 @@
     }
 
     .bench-cell-bar-fill { height: 100%; border-radius: 2px; }
-    .bench-cell.high .bench-cell-score { color: var(--green); }
-    .bench-cell.high .bench-cell-bar-fill { background: var(--green); }
+    .bench-cell.high .bench-cell-score { color: var(--text); }
+    .bench-cell.high .bench-cell-bar-fill { background: rgba(200,216,204,0.5); }
     .bench-cell.med  .bench-cell-score { color: var(--yellow); }
     .bench-cell.med  .bench-cell-bar-fill { background: var(--yellow); }
     .bench-cell.low  .bench-cell-score { color: var(--red); }
@@ -1176,13 +1147,12 @@
     }
 
     .modal-btn-primary {
-      background: linear-gradient(135deg, var(--accent) 0%, #0369a1 100%);
-      color: #fff;
+      background: var(--accent);
+      color: #000;
       border: none;
-      box-shadow: 0 4px 14px #06b6d430;
     }
 
-    .modal-btn-primary:hover { box-shadow: 0 4px 20px #06b6d455; }
+    .modal-btn-primary:hover { background: var(--accent-h); }
     .modal-btn-secondary {
       background: var(--surface2);
       color: var(--text);
@@ -1345,12 +1315,12 @@
     <div class="logo-icon">◈</div>
     <div>
       <h1>Fit to Metal</h1>
-      <div class="logo-sub">Match open-source AI models to your exact GPU setup</div>
+      <div class="logo-sub">VRAM compatibility · open-source models</div>
     </div>
   </div>
     <!-- Global search -->
     <div class="global-search">
-      <input id="globalSearch" type="search" placeholder="Search models" aria-label="Search models" />
+      <input id="globalSearch" type="search" placeholder="Model name or family..." aria-label="Search models" />
       <button id="globalSearchBtn" class="search-btn" title="Search"></button>
       <div id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="Search suggestions" hidden></div>
     </div>
@@ -1359,7 +1329,7 @@
 <main>
   <!-- ── Sidebar ── -->
   <aside class="sidebar">
-    <h2>Your Setup</h2>
+    <h2>Hardware Profile</h2>
 
     <!-- GPU Quick Select -->
     <div class="field">
@@ -1470,7 +1440,7 @@
     </div>
     
     <button class="search-btn" id="searchBtn" onclick="fetchModels()">
-      Find Models →
+      Run Search
     </button>
   </aside>
 
@@ -1478,7 +1448,7 @@
   <section class="results-panel">
     <div class="results-header">
       <div class="results-count" id="resultsCount">
-        Configure your GPU and click <strong>Find Models</strong>
+        Set hardware profile and click <strong>Run Search</strong>
       </div>
       <div class="sort-bar" id="sortBar" style="display:none">
         <button class="sort-btn" data-s="downloads">Downloads</button>
@@ -1495,8 +1465,8 @@
     <div class="model-grid" id="modelGrid">
       <div class="state-box">
         <div class="state-icon">◈</div>
-        <div class="state-title">Fit to Metal</div>
-        <div class="state-desc">Pick your GPU (or set VRAM manually), choose a use case,<br/>then click <strong>Find Models</strong> to see what fits.</div>
+        <div class="state-title">No results</div>
+        <div class="state-desc">Configure a hardware profile and run a search.</div>
       </div>
     </div>
   </section>

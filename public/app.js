@@ -312,7 +312,7 @@ const SAFETY_INFO = {
 };
 
 const SAFETY_LABELS = ['', 'Minimal', 'Basic', 'Moderate', 'Thorough', 'Comprehensive'];
-const SAFETY_COLORS = ['', '#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4'];
+const SAFETY_COLORS = ['', '#ef4444', '#f97316', '#eab308', '#c8d8cc', '#76b900'];
 
 function inferSafety(model) {
   // Match by longest-prefix first for specificity
@@ -974,7 +974,7 @@ async function fetchModels() {
   state.loading = true;
   state.page = 1;
   searchBtn.disabled = true;
-  searchBtn.textContent = 'Searching…';
+  searchBtn.textContent = 'Searching...';
   // Keep activeBenchmark — re-apply ranking after fetch completes
 
   showSkeletons();
@@ -1107,7 +1107,7 @@ function modelCardHTML(m, maxVram, rank) {
     const pct = Math.min((m.estimatedVRAM / maxVram) * 100, 100);
     barPct = pct;
     badgeLabel = `~${m.estimatedVRAM} GB`;
-    if (pct <= 50)      { badgeClass = 'badge-green';  barColor = '#22c55e'; }
+    if (pct <= 50)      { badgeClass = 'badge-green';  barColor = '#b8ccbc'; }
     else if (pct <= 80) { badgeClass = 'badge-yellow'; barColor = '#eab308'; }
     else                { badgeClass = 'badge-red';    barColor = '#ef4444'; }
   }
@@ -1266,7 +1266,7 @@ async function doGlobalSearch() {
 
   // UX: show brief loading state
   searchBtn.disabled = true;
-  searchBtn.textContent = 'Searching…';
+  searchBtn.textContent = 'Searching...';
   showSkeletons();
   resultsCount.textContent = `Searching ArtificialAnalysis for "${q}"…`;
 
@@ -1367,7 +1367,7 @@ function openAAModal(item) {
             <div style="font-size:13px;color:var(--text-muted)">${display}</div>
             <div style="width:40%;text-align:right;font-size:12px;color:var(--text-muted)">${LOWER_IS_BETTER.has(lowKey) ? '' : (isNaN(val) ? '' : (Math.round(val) + '%'))}</div>
           </div>
-          <div class="bench-cell-bar" style="margin-top:8px"><div class="bench-cell-bar-fill" style="width:${Math.min(Math.max(pct,0),100)}%;background:${tier === 'high' ? '#22c55e' : tier === 'med' ? '#eab308' : '#ef4444'}"></div></div>
+          <div class="bench-cell-bar" style="margin-top:8px"><div class="bench-cell-bar-fill" style="width:${Math.min(Math.max(pct,0),100)}%;background:${tier === 'high' ? '#b8ccbc' : tier === 'med' ? '#eab308' : '#ef4444'}"></div></div>
         </div>`;
     }).join('')}</div>`;
   };
