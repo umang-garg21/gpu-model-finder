@@ -3,6 +3,7 @@ const axios   = require('axios');
 const NodeCache = require('node-cache');
 const fs = require('fs');
 const path    = require('path');
+const nodemailer = require('nodemailer');
 
 const app   = express();
 const cache = new NodeCache({ stdTTL: 600 }); // 10-minute cache
@@ -211,6 +212,83 @@ const BENCHMARK_DATA = {
   'facebook/deit-base-distilled-patch16-224':   { imagenet_top1: 83.4 },
 };
 
+// ── Benchmark difficulty calibration ──────────────────────────
+// floor:      score a random/weak model achieves (normalization lower bound)
+// ceiling:    best known frontier score as of early 2026 (normalization upper bound)
+// difficulty: 1–5 scale; scores are weighted by difficulty² so harder benchmarks dominate
+const BENCHMARK_CALIBRATION = {
+  hle:       { floor:  2.0, ceiling:  35.4, difficulty: 5.0 },
+  gpqa:      { floor: 25.0, ceiling:  90.0, difficulty: 4.5 },
+  swebench:  { floor:  0.0, ceiling:  77.0, difficulty: 4.0 },
+  gaia:      { floor:  0.0, ceiling:  75.0, difficulty: 4.0 },
+  gdpval:    { floor:  0.0, ceiling:  60.0, difficulty: 4.0 },
+  math:      { floor:  5.0, ceiling:  90.0, difficulty: 3.5 },
+  humaneval: { floor: 20.0, ceiling:  95.0, difficulty: 3.0 },
+  gsm8k:     { floor:  5.0, ceiling:  98.0, difficulty: 2.5 },
+  mmlu:      { floor: 25.0, ceiling:  92.0, difficulty: 2.5 },
+  arc:       { floor: 25.0, ceiling:  96.0, difficulty: 2.0 },
+  ifeval:    { floor: 30.0, ceiling:  95.0, difficulty: 2.0 },
+};
+
+// Per capability domain only the hardest available benchmark is used,
+// preventing easy benchmarks from diluting harder ones in score computation.
+const BENCHMARK_DOMAIN = {
+  hle: 'reasoning', gpqa: 'reasoning', mmlu: 'reasoning', arc: 'reasoning',
+  gaia: 'agentic',  gdpval: 'agentic',
+  swebench: 'coding', humaneval: 'coding',
+  math: 'math',     gsm8k: 'math',
+  ifeval: 'instruction_following',
+};
+
+/**
+ * Normalize a raw benchmark score to 0–100 using floor/ceiling calibration.
+ * Returns null for unknown benchmarks or scraper outliers (> ceiling × 10).
+ */
+function normalizeBenchmarkScore(benchmarkKey, rawScore) {
+  const cal = BENCHMARK_CALIBRATION[benchmarkKey];
+  if (!cal || typeof rawScore !== 'number') return null;
+  if (rawScore > cal.ceiling * 10) return null; // sanitize scraper outliers
+  const clamped = Math.max(cal.floor, Math.min(cal.ceiling, rawScore));
+  return (clamped - cal.floor) / (cal.ceiling - cal.floor) * 100;
+}
+
+/**
+ * Keep only the highest-difficulty benchmark per capability domain.
+ * e.g. if a model has both mmlu (diff 2.5) and gpqa (diff 4.5) for 'reasoning',
+ * only gpqa is used — this prevents easy benchmarks from diluting harder ones.
+ */
+function deduplicateByCapabilityDomain(benchmarks) {
+  const domainBest = {};
+  for (const key of Object.keys(benchmarks)) {
+    const domain = BENCHMARK_DOMAIN[key];
+    if (!domain) continue;
+    const diff = BENCHMARK_CALIBRATION[key]?.difficulty ?? 0;
+    const prevDiff = BENCHMARK_CALIBRATION[domainBest[domain]]?.difficulty ?? 0;
+    if (diff > prevDiff) domainBest[domain] = key;
+  }
+  const result = {};
+  for (const key of Object.values(domainBest)) result[key] = benchmarks[key];
+  return result;
+}
+
+/**
+ * Return benchmark tier for a model based on its hardest available benchmark.
+ * Tier 3 = frontier (diff ≥ 4.0): HLE, GPQA, SWE-bench, GAIA, GDPval
+ * Tier 2 = hard     (diff ≥ 3.0): MATH, HumanEval
+ * Tier 1 = standard (diff ≥ 2.5): GSM8K, MMLU
+ * Tier 0 = weak / no data
+ * Tier sorting ensures frontier models always rank above models with only easy benchmarks.
+ */
+function benchmarkTier(benchmarks) {
+  if (!benchmarks) return 0;
+  let maxDiff = 0;
+  for (const key of Object.keys(benchmarks)) {
+    const d = BENCHMARK_CALIBRATION[key]?.difficulty ?? 0;
+    if (d > maxDiff) maxDiff = d;
+  }
+  return maxDiff >= 4.0 ? 3 : maxDiff >= 3.0 ? 2 : maxDiff >= 2.5 ? 1 : 0;
+}
+
 // ── Flagship model VRAM map (fp16 GB) ─────────────────────────
 // For models whose names don't embed a size token — ensures they surface
 // when the user has enough VRAM, regardless of download rank.
@@ -404,50 +482,84 @@ function aaMetricNameToBenchKeys(name) {
   const n = name.toString().toLowerCase();
   const out = new Set();
 
-  if (n.includes('mmlu')) out.add('mmlu');
+  // Frontier / hard benchmarks
   if (n.includes('hle') || n.includes("humanity's last") || n.includes('humanity')) out.add('hle');
-  if (n.includes('gdpval')) out.add('swebench');
-  // GDPval-AA indicates a general knowledge / broad competence signal — map to MMLU
-  if (n.includes('gdpval')) { out.delete('swebench'); out.add('mmlu'); }
-  if (n.includes('omniscience')) { out.add('mmlu'); out.add('gpqa'); }
+  if (n.includes('gpqa')) out.add('gpqa');
+  if (n.includes('swebench') || n.includes('terminal-bench')) out.add('swebench');
+  if (n.includes('gaia')) out.add('gaia');
+
+  // GDPval-AA: agentic ELO benchmark (difficulty 4.0) — maps to 'gdpval', NOT 'mmlu'
+  // Previously misclassified as mmlu (wrong domain and scale).
+  if (n.includes('gdpval')) out.add('gdpval');
+
+  // Medium benchmarks
+  if (n.includes('mmlu')) out.add('mmlu');
+  // AA-Omniscience Non-Hallucination Rate is an inverted metric — intentionally excluded
+  // to avoid inflating mmlu/gpqa scores with hallucination rate data.
   if (n.includes('humaneval') || n.includes('human_eval')) out.add('humaneval');
-  if (n.includes('math') && !n.includes('gsm')) out.add('math');
+  if (n.includes('scicode')) out.add('humaneval');
+  // Only map generic 'coding'/'code' when it's the sole label (not a substring of model names)
+  if (/^(coding|code)(\s|$)/.test(n)) out.add('humaneval');
+  if (n.includes('math') && !n.includes('gsm') && !n.includes('gdp')) out.add('math');
+  if (n.includes('critpt') || n.includes('physics')) out.add('math');
   if (n.includes('gsm8k') || (n.includes('gsm') && !n.includes('gdp'))) out.add('gsm8k');
   if (n.includes('arc')) out.add('arc');
-  if (n.includes('ifeval') || n.includes('ifbench') || n.includes('instruction')) out.add('ifeval');
-  if (n.includes('gpqa')) out.add('gpqa');
-  if (n.includes('swebench') || n.includes('terminal-bench') || n.includes('agentic')) out.add('swebench');
-  if (n.includes('tau2') || n.includes('\u03c4') || n.includes('𝜏')) out.add('swebench');
-  if (n.includes('gaia')) out.add('gaia');
+  if (n.includes('ifeval') || n.includes('ifbench')) out.add('ifeval');
+
+  // tau2-bench Telecom is a telecom-domain tool-use benchmark — NOT a coding/swebench eval.
+  // Previously mapped to swebench causing contamination; intentionally excluded now.
+
+  // Non-LLM benchmarks
   if (n.includes('wer')) out.add('wer');
   if (n.includes('imagenet')) out.add('imagenet_top1');
   if (n.includes('clip')) out.add('clip_score');
   if (n.includes('mteb')) out.add('mteb');
-  if (n.includes('scicode') || n.includes('coding') || n.includes('code')) out.add('humaneval');
-  if (n.includes('critpt') || n.includes('physics')) out.add('math');
 
   return Array.from(out);
 }
 
 /**
- * Server-side overall quality score for a model.
- * Same weights as the frontend so pre-sorted order matches client re-sort.
- * For audio WER (lower=better) we invert to keep "higher=better" across all usecases.
+ * Compute a normalized overall quality score (0–100) for a model.
+ *
+ * For LLMs: normalizes each benchmark to 0–100 relative to known frontier performance,
+ * deduplicates by capability domain (keeps hardest per domain), then computes a
+ * difficulty²-weighted average so harder benchmarks dominate the score.
+ *
+ * A model with 30% on HLE (frontier ceiling 35.4%) will rank far above one with
+ * 90% on MMLU (frontier ceiling 92%), because HLE normalized ≈ 84 vs MMLU ≈ 57,
+ * and HLE carries 25× more weight than MMLU (5²=25 vs 2.5²=6.25).
+ *
+ * Non-LLM usecases retain the original single-metric logic (unchanged).
  */
 function computeOverallScore(benchmarks, usecase) {
   if (!benchmarks) return null;
-  if (usecase === 'llm') {
-    const weights = { mmlu: 0.25, humaneval: 0.20, math: 0.20, gsm8k: 0.15, arc: 0.10, ifeval: 0.10 };
-    let sum = 0, wSum = 0;
-    for (const [k, w] of Object.entries(weights)) {
-      if (benchmarks[k] != null) { sum += benchmarks[k] * w; wSum += w; }
-    }
-    return wSum >= 0.25 ? parseFloat((sum / wSum).toFixed(1)) : null;
+
+  // Non-LLM usecases: keep original single-metric logic unchanged
+  if (usecase !== 'llm') {
+    const primary = { embed: 'mteb', vision: 'imagenet_top1', image: 'image_quality', audio: 'wer' };
+    const pk = primary[usecase];
+    if (!pk || benchmarks[pk] == null) return null;
+    return usecase === 'audio' ? 100 - benchmarks[pk] : benchmarks[pk];
   }
-  const primary = { embed: 'mteb', vision: 'imagenet_top1', image: 'image_quality', audio: 'wer' };
-  const pk = primary[usecase];
-  if (!pk || benchmarks[pk] == null) return null;
-  return usecase === 'audio' ? 100 - benchmarks[pk] : benchmarks[pk];
+
+  // Deduplicate: keep only the hardest benchmark per capability domain
+  const deduped = deduplicateByCapabilityDomain(benchmarks);
+
+  let weightedSum = 0, totalWeight = 0, hasMinDifficulty = false;
+  for (const [key, rawScore] of Object.entries(deduped)) {
+    const cal = BENCHMARK_CALIBRATION[key];
+    if (!cal) continue;
+    const normalized = normalizeBenchmarkScore(key, rawScore);
+    if (normalized === null) continue;
+    const weight = cal.difficulty * cal.difficulty; // difficulty² weighting
+    weightedSum += normalized * weight;
+    totalWeight += weight;
+    if (cal.difficulty >= 2.5) hasMinDifficulty = true;
+  }
+
+  // Require at least one benchmark with difficulty ≥ 2.5 for a meaningful score
+  if (!hasMinDifficulty || totalWeight === 0) return null;
+  return parseFloat((weightedSum / totalWeight).toFixed(1));
 }
 
 function paramLabel(total) {
@@ -707,6 +819,13 @@ app.get('/api/models', async (req, res) => {
           if (Math.abs(diffHF) > 0.5) return diffHF;
         }
 
+        // Benchmark tier: frontier models (with hard benchmark data) rank before models
+        // that only have easy benchmark data. Prevents distillation models with ceiling-level
+        // easy scores from outranking frontier models that have HLE/GPQA/SWE-bench data.
+        const aTier = a.benchmarkTier ?? 0;
+        const bTier = b.benchmarkTier ?? 0;
+        if (bTier !== aTier) return bTier - aTier;
+
         // Benchmark quality: scored models first, then by score descending (overall)
         const aS = a.overallScore;
         const bS = b.overallScore;
@@ -717,10 +836,11 @@ app.get('/api/models', async (req, res) => {
           if (Math.abs(diff) > 1.5) return diff; // only separate meaningful gaps
         }
 
-        // Large VRAM budget → prefer bigger models (flagship GPUs get flagship models)
-        if (aK && bK && vramGB >= 48) {
+        // Size preference: only for very large VRAM budgets (>200 GB) with meaningful gap.
+        // Raised from ≥48 GB (was firing too early, overriding benchmark quality ranking).
+        if (aK && bK && vramGB > 200) {
           const diff = b.estimatedVRAM - a.estimatedVRAM;
-          if (Math.abs(diff) > 8) return diff;
+          if (Math.abs(diff) > 20) return diff;
         }
 
         // Fallback: user's preferred sort signal
@@ -932,23 +1052,48 @@ app.get('/api/models', async (req, res) => {
       const taskParam = (req.query.task || '').toString().toLowerCase();
       const usecaseTasks = taskParam ? [taskParam] : (USECASE_TASKS[usecase] || USECASE_TASKS.llm);
 
-      // annotate processed models with task scores
+      // Compute normalized task score from a canonical benchmark object.
+      // Uses the same difficulty²-weighted normalization as computeOverallScore,
+      // but filtered to benchmarks relevant to the requested usecase tasks.
+      function computeNormalizedTaskScore(benchmarksObj) {
+        if (!benchmarksObj || !Object.keys(benchmarksObj).length) return null;
+        const deduped = deduplicateByCapabilityDomain(benchmarksObj);
+        let wSum = 0, wTotal = 0, hasMin = false;
+        for (const [key, rawScore] of Object.entries(deduped)) {
+          const cal = BENCHMARK_CALIBRATION[key];
+          if (!cal) continue;
+          const tasks = canonicalTasksForKey(key);
+          if (!tasks.some(t => usecaseTasks.includes(t))) continue;
+          const norm = normalizeBenchmarkScore(key, rawScore);
+          if (norm === null) continue;
+          const w = cal.difficulty * cal.difficulty;
+          wSum += norm * w; wTotal += w;
+          if (cal.difficulty >= 2.5) hasMin = true;
+        }
+        if (!hasMin || wTotal === 0) return null;
+        return wSum / wTotal;
+      }
+
+      // Annotate processed models with normalized task scores and benchmark tier
       processed.forEach(m => {
         try {
-          const aaMetrics = m.artificialAnalysis?.metrics?.intelligence || m.artificialAnalysis?.metrics || null;
-          // Prefer preserved HF benchmarks (before AA overrides) for hfTaskScore when available
-          let hfMetrics = m._hfBenchmarks || null;
-          // Fallback: derive hfMetrics from benchmarks where provenance is 'hf'
-          if (!hfMetrics && m.benchmarks && m.benchmarks_source) {
-            hfMetrics = {};
-            for (const [k,v] of Object.entries(m.benchmarks)) if (m.benchmarks_source[k]?.source === 'hf') hfMetrics[k] = v;
-            if (!Object.keys(hfMetrics).length) hfMetrics = null;
+          const allBenchmarks = m.benchmarks || {};
+          // Derive HF-sourced benchmarks for a separate hfTaskScore signal
+          let hfBenchmarks = m._hfBenchmarks || null;
+          if (!hfBenchmarks && m.benchmarks && m.benchmarks_source) {
+            hfBenchmarks = {};
+            for (const [k,v] of Object.entries(m.benchmarks)) {
+              if (m.benchmarks_source[k]?.source === 'hf') hfBenchmarks[k] = v;
+            }
+            if (!Object.keys(hfBenchmarks).length) hfBenchmarks = null;
           }
-          m.aaTaskScore = avgScoreForUsecase(aaMetrics, usecaseTasks);
-          m.hfTaskScore = avgScoreForUsecase(hfMetrics, usecaseTasks);
+          // aaTaskScore: from merged benchmarks (AA data already folded in by merge block)
+          m.aaTaskScore  = m.artificialAnalysis?.metrics ? computeNormalizedTaskScore(allBenchmarks) : null;
+          m.hfTaskScore  = computeNormalizedTaskScore(hfBenchmarks);
           m.hasAAmetrics = !!m.artificialAnalysis?.metrics;
+          m.benchmarkTier = benchmarkTier(allBenchmarks);
         } catch (e) {
-          m.aaTaskScore = null; m.hfTaskScore = null; m.hasAAmetrics = false;
+          m.aaTaskScore = null; m.hfTaskScore = null; m.hasAAmetrics = false; m.benchmarkTier = 0;
         }
       });
 
@@ -1008,10 +1153,11 @@ app.get('/api/models', async (req, res) => {
             artificialAnalysis: { url: a.url, metrics: a.metrics, title: a.title },
           };
 
-          // compute task scores
-          modelStub.aaTaskScore = avgScoreForUsecase(modelStub.artificialAnalysis?.metrics?.intelligence || modelStub.artificialAnalysis?.metrics, usecaseTasks);
-          modelStub.hfTaskScore = null;
+          // Compute task score using the same normalized pipeline as processed models
+          modelStub.aaTaskScore  = computeNormalizedTaskScore(modelStub.benchmarks || {});
+          modelStub.hfTaskScore  = null;
           modelStub.hasAAmetrics = true;
+          modelStub.benchmarkTier = benchmarkTier(modelStub.benchmarks || {});
 
           aaOnlyToAdd.push(modelStub);
         }
@@ -1077,6 +1223,51 @@ app.get('/api/search', (req, res) => {
 });
 
 const PORT = process.env.PORT ?? 4242;
+// API: Contact form — sends message to umanggarg78@gmail.com
+// Requires env vars: SMTP_USER (Gmail address) and SMTP_PASS (Gmail app password)
+app.post('/api/contact', async (req, res) => {
+  const { name, email, subject, message } = req.body || {};
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: 'name, email, and message are required.' });
+  }
+  // Basic email format check
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Invalid email address.' });
+  }
+
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  if (!smtpUser || !smtpPass) {
+    console.error('Contact form: SMTP_USER / SMTP_PASS env vars not set.');
+    return res.status(503).json({ error: 'Email service not configured.' });
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: smtpUser, pass: smtpPass },
+    });
+
+    await transporter.sendMail({
+      from: `"Fit to Metal Contact" <${smtpUser}>`,
+      to: 'umanggarg78@gmail.com',
+      replyTo: `"${name}" <${email}>`,
+      subject: `[Fit to Metal] ${subject || 'Contact form'}`,
+      text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject || 'N/A'}\n\n${message}`,
+      html: `<p><strong>Name:</strong> ${name}</p>
+             <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+             <p><strong>Subject:</strong> ${subject || 'N/A'}</p>
+             <hr>
+             <p>${message.replace(/\n/g, '<br>')}</p>`,
+    });
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Contact form send error:', err.message);
+    res.status(500).json({ error: 'Failed to send message. Please try again.' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`\n  GPU Model Finder → http://localhost:${PORT}\n`);
 });

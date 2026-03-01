@@ -446,6 +446,80 @@ const state = {
   page: 1,
 };
 
+// ── Hash router (About / Privacy / Contact pages) ──────────────
+const STATIC_PAGES = ['#/about', '#/privacy', '#/contact'];
+
+function showPage(hash) {
+  const isStatic = STATIC_PAGES.includes(hash);
+  const mainEl = document.querySelector('main');
+  if (mainEl) mainEl.hidden = isStatic;
+  document.getElementById('page-about').hidden   = hash !== '#/about';
+  document.getElementById('page-privacy').hidden = hash !== '#/privacy';
+  document.getElementById('page-contact').hidden = hash !== '#/contact';
+  if (isStatic) window.scrollTo(0, 0);
+}
+
+// Wire up all "back" links inside static pages to go home
+document.querySelectorAll('.back-link').forEach(a => {
+  a.addEventListener('click', e => { e.preventDefault(); window.location.hash = ''; showPage(''); });
+});
+
+// Wire privacy page's internal contact link
+const privacyContactLink = document.getElementById('privacy-contact-link');
+if (privacyContactLink) {
+  privacyContactLink.addEventListener('click', e => { e.preventDefault(); window.location.hash = '#/contact'; showPage('#/contact'); });
+}
+
+window.addEventListener('hashchange', () => showPage(window.location.hash));
+showPage(window.location.hash); // handle direct navigation / page refresh
+
+// ── Contact form submission ─────────────────────────────────────
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+  contactForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn    = contactForm.querySelector('.contact-submit');
+    const status = document.getElementById('contactStatus');
+    const payload = {
+      name:    document.getElementById('contactName').value.trim(),
+      email:   document.getElementById('contactEmail').value.trim(),
+      subject: document.getElementById('contactSubject').value,
+      message: document.getElementById('contactMessage').value.trim(),
+    };
+    if (!payload.name || !payload.email || !payload.message) {
+      status.textContent = 'Please fill in your name, email, and message.';
+      status.className = 'contact-status error';
+      status.hidden = false;
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    status.hidden = true;
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        status.textContent = 'Message sent! We\'ll get back to you soon.';
+        status.className = 'contact-status success';
+        contactForm.reset();
+      } else {
+        status.textContent = data.error || 'Something went wrong. Please try again.';
+        status.className = 'contact-status error';
+      }
+    } catch {
+      status.textContent = 'Network error. Please try again.';
+      status.className = 'contact-status error';
+    }
+    status.hidden = false;
+    btn.disabled = false;
+    btn.textContent = 'Send Message';
+  });
+}
+
 // ── DOM refs ───────────────────────────────────────────────────
 const vramSlider      = document.getElementById('vramSlider');
 const vramDisplay     = document.getElementById('vramDisplay');

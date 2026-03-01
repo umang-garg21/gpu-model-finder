@@ -743,6 +743,169 @@
     }
 
     footer a { color: var(--accent-h); text-decoration: none; }
+    footer a:hover { opacity: 0.8; }
+
+    /* ── Footer navigation ───────────────────────────────── */
+    .footer-pages {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    .footer-pages a {
+      font-size: 12px;
+      color: var(--text-muted);
+      opacity: 0.75;
+      transition: opacity 0.15s;
+    }
+    .footer-pages a:hover { opacity: 1; color: var(--accent-h); }
+
+    /* ── Static pages (About / Privacy / Contact) ────────── */
+    .static-page {
+      max-width: 760px;
+      margin: 2.5rem auto 4rem;
+      padding: 0 1.5rem;
+      line-height: 1.75;
+      color: var(--text);
+    }
+    .static-page .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--accent-h);
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+      cursor: pointer;
+      text-decoration: none;
+      opacity: 0.8;
+    }
+    .static-page .back-link:hover { opacity: 1; }
+    .static-page h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+    .static-page .page-subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.2rem;
+    }
+    .static-page h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent-h);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.8rem;
+    }
+    .static-page p { margin-bottom: 0.9rem; }
+    .static-page ul { padding-left: 1.4rem; margin-bottom: 0.9rem; }
+    .static-page li { margin-bottom: 0.35rem; }
+    .static-page table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.88rem;
+    }
+    .static-page th {
+      text-align: left;
+      padding: 0.45rem 0.75rem;
+      border-bottom: 1px solid var(--accent-h);
+      color: var(--accent-h);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .static-page td {
+      padding: 0.45rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .static-page td:first-child { color: var(--text); font-weight: 500; }
+    .static-page .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .static-page .contact-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      background: var(--card-bg);
+    }
+    .static-page .contact-card h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+    .static-page .contact-card p { font-size: 0.85rem; margin-bottom: 0; color: var(--text-muted); }
+    .static-page .contact-card a { color: var(--accent-h); }
+    .tier-badge {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .tier-5 { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .tier-4 { background: rgba(234,179,8,0.15);  color: #eab308; }
+    .tier-3 { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .tier-2 { background: rgba(34,197,94,0.15);  color: #22c55e; }
+    .tier-1 { background: rgba(148,163,184,0.15);color: #94a3b8; }
+
+    /* ── Contact form ────────────────────────────────────── */
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; max-width: 560px; }
+    .contact-field { display: flex; flex-direction: column; gap: 0.35rem; }
+    .contact-field label { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .contact-field input,
+    .contact-field select,
+    .contact-field textarea {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+    .contact-field input:focus,
+    .contact-field select:focus,
+    .contact-field textarea:focus { border-color: var(--accent-h); }
+    .contact-field textarea { resize: vertical; min-height: 110px; }
+    .contact-field select { cursor: pointer; }
+    .contact-submit {
+      align-self: flex-start;
+      background: var(--accent-h);
+      color: #0f172a;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .contact-submit:hover { opacity: 0.85; }
+    .contact-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .contact-status {
+      font-size: 0.85rem;
+      padding: 0.6rem 0.9rem;
+      border-radius: 8px;
+      margin-top: 0.25rem;
+    }
+    .contact-status.success { background: rgba(34,197,94,0.12); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
+    .contact-status.error   { background: rgba(239,68,68,0.12);  color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
 
     /* ════════════════════════════════════════════════════
        Fit to Metal — Visual Language
@@ -1474,9 +1637,124 @@
 
 <div id="pagination"></div>
 
+<!-- ── Static page: About ──────────────────────────────────── -->
+<section id="page-about" class="static-page" hidden>
+  <a class="back-link" href="#" onclick="return false;">← Back to Model Finder</a>
+  <h1>About Fit to Metal</h1>
+  <p class="page-subtitle">Find the best open-source AI model for your GPU — instantly.</p>
+
+  <h2>What it does</h2>
+  <p>Fit to Metal lets you select your GPU (or enter a custom VRAM budget) and instantly surfaces every open-source model that will fit, ranked by benchmark quality. It covers LLMs, image generation, audio/speech, computer vision, video, and embedding models.</p>
+
+  <h2>How VRAM estimation works</h2>
+  <p>Each model's memory footprint is estimated from its parameter count and the selected precision:</p>
+  <table>
+    <tr><th>Precision</th><th>Bytes / param</th><th>Example — 70 B model</th></tr>
+    <tr><td>FP32</td><td>4</td><td>≈ 280 GB</td></tr>
+    <tr><td>FP16 / BF16</td><td>2</td><td>≈ 140 GB</td></tr>
+    <tr><td>INT8</td><td>1</td><td>≈ 70 GB</td></tr>
+    <tr><td>INT4 / GGUF Q4</td><td>0.5</td><td>≈ 35 GB</td></tr>
+    <tr><td>GGUF Q8</td><td>1</td><td>≈ 70 GB</td></tr>
+  </table>
+  <p>A 20 % overhead is added for KV-cache and activations (minimum 0.5 GB). Estimates are approximate — actual usage varies with context length, batch size, and framework.</p>
+
+  <h2>How benchmark ranking works</h2>
+  <p>Rather than averaging raw scores across benchmarks, Fit to Metal normalises each score against the known frontier ceiling for that benchmark, then weights by difficulty². This means a model scoring 30 % on Humanity's Last Exam (frontier ceiling ≈ 35 %) ranks far above one scoring 90 % on MMLU (frontier ceiling ≈ 92 %), because HLE is genuinely harder and discriminates at the frontier.</p>
+  <table>
+    <tr><th>Benchmark</th><th>Difficulty</th><th>Frontier ceiling</th><th>Capability domain</th></tr>
+    <tr><td>Humanity's Last Exam (HLE)</td><td><span class="tier-badge tier-5">5 / 5</span></td><td>≈ 35 %</td><td>Reasoning &amp; knowledge</td></tr>
+    <tr><td>GPQA Diamond</td><td><span class="tier-badge tier-4">4.5 / 5</span></td><td>≈ 90 %</td><td>Scientific reasoning</td></tr>
+    <tr><td>SWE-bench Verified</td><td><span class="tier-badge tier-4">4 / 5</span></td><td>≈ 77 %</td><td>Coding (real issues)</td></tr>
+    <tr><td>GAIA</td><td><span class="tier-badge tier-4">4 / 5</span></td><td>≈ 75 %</td><td>Agentic tool-use</td></tr>
+    <tr><td>GDPval-AA</td><td><span class="tier-badge tier-4">4 / 5</span></td><td>≈ 60 %</td><td>Agentic real-world tasks</td></tr>
+    <tr><td>MATH</td><td><span class="tier-badge tier-3">3.5 / 5</span></td><td>≈ 90 %</td><td>Competition math</td></tr>
+    <tr><td>HumanEval</td><td><span class="tier-badge tier-3">3 / 5</span></td><td>≈ 95 %</td><td>Python code generation</td></tr>
+    <tr><td>GSM8K</td><td><span class="tier-badge tier-2">2.5 / 5</span></td><td>≈ 98 %</td><td>Grade-school math</td></tr>
+    <tr><td>MMLU</td><td><span class="tier-badge tier-2">2.5 / 5</span></td><td>≈ 92 %</td><td>General knowledge</td></tr>
+    <tr><td>ARC Challenge</td><td><span class="tier-badge tier-1">2 / 5</span></td><td>≈ 96 %</td><td>Science reasoning</td></tr>
+    <tr><td>IFEval</td><td><span class="tier-badge tier-1">2 / 5</span></td><td>≈ 95 %</td><td>Instruction following</td></tr>
+  </table>
+  <p>Within each capability domain (reasoning, coding, math, agentic, instruction-following) only the hardest available benchmark is used, so a model with both MMLU and GPQA data won't have its GPQA score diluted by the easier MMLU score.</p>
+
+  <h2>Data sources</h2>
+  <ul>
+    <li><strong>HuggingFace API</strong> — model discovery, download counts, model cards, parameter metadata</li>
+    <li><strong>ArtificialAnalysis.ai</strong> — standardised benchmark scores run under controlled conditions</li>
+    <li><strong>Curated BENCHMARK_DATA</strong> — hand-verified scores for 150+ flagship models from official model cards and published papers</li>
+  </ul>
+</section>
+
+<!-- ── Static page: Privacy Policy ─────────────────────────── -->
+<section id="page-privacy" class="static-page" hidden>
+  <a class="back-link" href="#" onclick="return false;">← Back to Model Finder</a>
+  <h1>Privacy Policy</h1>
+  <p class="page-subtitle">Short version: we collect nothing about you.</p>
+
+  <h2>No personal data collected</h2>
+  <p>Fit to Metal does not collect, store, or process any personal information. There are no user accounts, no login, no cookies, and no local storage beyond your browser's in-session state.</p>
+
+  <h2>No analytics or tracking</h2>
+  <p>There are no analytics scripts, no tracking pixels, and no third-party advertising tags on this site. Your usage is not recorded.</p>
+
+  <h2>Third-party API calls</h2>
+  <p>When you perform a search, the server fetches model metadata from <a href="https://huggingface.co" target="_blank">HuggingFace</a>. Your IP address is used to make these requests server-side; HuggingFace's own privacy policy applies to their infrastructure. No query parameters or personal data are forwarded beyond what is necessary to fetch model lists.</p>
+  <p>Benchmark data from <a href="https://artificialanalysis.ai" target="_blank">ArtificialAnalysis.ai</a> is fetched periodically by an automated script and cached locally — it is not fetched per user request.</p>
+
+  <h2>Hosting</h2>
+  <p>This application is hosted on Railway. Railway's infrastructure and privacy practices are described at <a href="https://railway.app/legal/privacy" target="_blank">railway.app/legal/privacy</a>.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about privacy? Open an issue on <a href="https://github.com" target="_blank">GitHub</a> or use the <a href="#/contact" id="privacy-contact-link">Contact</a> page.</p>
+</section>
+
+<!-- ── Static page: Contact ────────────────────────────────── -->
+<section id="page-contact" class="static-page" hidden>
+  <a class="back-link" href="#" onclick="return false;">← Back to Model Finder</a>
+  <h1>Contact Us</h1>
+  <p class="page-subtitle">Have a question, bug report, or benchmark correction? We'd love to hear from you.</p>
+
+  <h2>Send a message</h2>
+  <form id="contactForm" class="contact-form" novalidate>
+    <div class="contact-field">
+      <label for="contactName">Name</label>
+      <input type="text" id="contactName" placeholder="Your name" autocomplete="name" required>
+    </div>
+    <div class="contact-field">
+      <label for="contactEmail">Email</label>
+      <input type="email" id="contactEmail" placeholder="your@email.com" autocomplete="email" required>
+    </div>
+    <div class="contact-field">
+      <label for="contactSubject">Subject</label>
+      <select id="contactSubject">
+        <option value="Bug report">Bug report</option>
+        <option value="Benchmark correction">Benchmark correction</option>
+        <option value="Feature request">Feature request</option>
+        <option value="General question">General question</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="contact-field">
+      <label for="contactMessage">Message</label>
+      <textarea id="contactMessage" rows="5" placeholder="Describe your question or issue..." required></textarea>
+    </div>
+    <button type="submit" class="contact-submit">Send Message</button>
+    <p id="contactStatus" class="contact-status" hidden></p>
+  </form>
+
+  <h2>Other ways to reach us</h2>
+  <p>For bug reports and feature requests you can also email directly: <a href="mailto:umanggarg78@gmail.com">umanggarg78@gmail.com</a></p>
+</section>
+
 <footer>
-  Model data from <a href="https://huggingface.co" target="_blank">HuggingFace</a>.
-  VRAM &amp; latency estimates are approximate — actual performance varies by context length, batch size, and driver.
+  <div class="footer-pages">
+    <a href="#/about">About</a>
+    <a href="#/privacy">Privacy Policy</a>
+    <a href="#/contact">Contact</a>
+  </div>
+  <div>
+    Model data from <a href="https://huggingface.co" target="_blank">HuggingFace</a>.
+    VRAM &amp; latency estimates are approximate — actual performance varies by context length, batch size, and driver.
+  </div>
 </footer>
 
 <!-- Model Detail Modal -->
