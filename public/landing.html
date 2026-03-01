@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ── SEO ──────────────────────────────────────────────────── -->
+  <title>Fit to Metal — Free VRAM Calculator for AI Models & LLMs</title>
+  <meta name="description" content="Instantly find which open-source AI models fit your GPU. Free VRAM calculator for LLMs, image generators, and audio models. Supports RTX 4090, 3090, Apple Silicon, H100 and more." />
+  <meta name="keywords" content="VRAM calculator, AI model GPU compatibility, LLM VRAM requirements, GPU memory calculator, can I run Llama on my GPU, how much VRAM for AI, GPU model finder, open source AI models, quantization VRAM" />
+  <link rel="canonical" href="https://fittometal.com/" />
+
+  <!-- ── Open Graph ─────────────────────────────────────────── -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://fittometal.com/" />
+  <meta property="og:title"       content="Fit to Metal — Free VRAM Calculator for AI Models" />
+  <meta property="og:description" content="Find every open-source AI model that fits your GPU — instantly. Supports 500+ GPUs, all quantizations, and ranked by benchmark quality." />
+  <meta property="og:image"       content="https://fittometal.com/og-image.png" />
+
+  <!-- ── Twitter Card ──────────────────────────────────────── -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Fit to Metal — Free VRAM Calculator for AI Models" />
+  <meta name="twitter:description" content="Find every open-source AI model that fits your GPU — instantly." />
+  <meta name="twitter:image"       content="https://fittometal.com/og-image.png" />
+
+  <!-- ── Structured Data (JSON-LD) ─────────────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Fit to Metal",
+    "description": "Free VRAM calculator and GPU compatibility checker for open-source AI models including LLMs, image generators, and audio models.",
+    "url": "https://fittometal.com",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "featureList": [
+      "VRAM requirement calculator for 500+ AI models",
+      "Quantization support (FP32, FP16, INT8, INT4, GGUF)",
+      "Benchmark quality ranking",
+      "500+ GPU profiles including NVIDIA, AMD, Apple Silicon",
+      "LLM, image generation, audio, vision, and embedding models"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much VRAM do I need to run Llama 3.1 70B?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Llama 3.1 70B requires approximately 140 GB VRAM in FP16, ~70 GB in INT8, or ~35 GB in 4-bit quantization. With two RTX 3090s (48 GB total) you can run it at INT8, or on a single RTX 4090 (24 GB) using 4-bit GGUF." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I run Mistral 7B on a RTX 3060 (12 GB)?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Mistral 7B requires about 14 GB in FP16 but only ~7 GB in 4-bit quantization, comfortably fitting in a 12 GB RTX 3060." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is VRAM and why does it matter for AI models?",
+        "acceptedAnswer": { "@type": "Answer", "text": "VRAM (Video RAM) is the dedicated memory on a GPU. AI models store their weights in VRAM during inference — a 70B parameter model at FP16 uses ~140 GB. If a model exceeds your VRAM it won't load, or will fall back to much slower CPU/system RAM." }
+      },
+      {
+        "@type": "Question",
+        "name": "How does quantization reduce VRAM usage?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Quantization reduces the precision of model weights. FP16 uses 2 bytes per parameter; INT8 uses 1 byte (50% less); 4-bit (GGUF Q4/EXL2) uses 0.5 bytes (75% less). Quality loss is minimal at INT8 and acceptable at 4-bit for most tasks." }
+      },
+      {
+        "@type": "Question",
+        "name": "Which AI model is best for my GPU?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Use Fit to Metal — select your GPU, choose a use case (LLM, image generation, audio, etc.), and the tool surfaces every model that fits, ranked by benchmark quality. It normalises benchmark difficulty so a model that scores 30% on the hardest exam (HLE) ranks above one scoring 90% on an easy benchmark." }
+      }
+    ]
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0a0a0a;
+      --surface:    #0f0f0f;
+      --surface2:   #161616;
+      --border:     #1e1e1e;
+      --border-hi:  #2e2e2e;
+      --accent:     #76b900;
+      --accent-h:   #8ed200;
+      --accent-low: #76b90014;
+      --accent-glow:#76b90030;
+      --text:       #e0e0e0;
+      --text-muted: #606060;
+      --radius:     8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Nav ──────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+    .nav-logo .logo-icon {
+      color: var(--accent);
+      font-size: 1.2rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #0a0a0a !important;
+      font-weight: 600;
+      font-size: 0.85rem !important;
+      padding: 0.45rem 1.1rem;
+      border-radius: 6px;
+      transition: background 0.15s, transform 0.1s !important;
+    }
+    .nav-cta:hover { background: var(--accent-h) !important; transform: translateY(-1px); }
+
+    /* ── Hero ─────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: calc(100vh - 60px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 1.5rem;
+      overflow: hidden;
+    }
+
+    /* Blueprint grid background */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(118,185,0,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(118,185,0,0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+      pointer-events: none;
+    }
+
+    /* Glow blob */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(118,185,0,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--accent-low);
+      border: 1px solid rgba(118,185,0,0.3);
+      border-radius: 999px;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.78rem;
+      color: var(--accent-h);
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      max-width: 800px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 .accent { color: var(--accent-h); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 3.5rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #0a0a0a;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.85rem 2rem;
+      border-radius: var(--radius);
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 0 0 0 var(--accent-glow);
+    }
+    .btn-primary:hover {
+      background: var(--accent-h);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px var(--accent-glow);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      padding: 0.85rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-hi);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--text); }
+
+    /* Hero stats bar */
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .num {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent-h);
+      font-family: 'JetBrains Mono', monospace;
+      display: block;
+    }
+    .hero-stat .label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── GPU pill preview ──────────────────────────────────────── */
+    .gpu-preview {
+      padding: 3.5rem 1.5rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .gpu-preview-label {
+      text-align: center;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .gpu-scroll {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .gpu-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .gpu-pill:hover { border-color: var(--accent); color: var(--text); }
+    .gpu-pill .vram-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+    }
+
+    /* ── Section wrapper ───────────────────────────────────────── */
+    .section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+    }
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-h);
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 540px;
+      margin-bottom: 3rem;
+      line-height: 1.7;
+    }
+
+    /* ── Features ──────────────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .feature-card:hover { border-color: var(--border-hi); transform: translateY(-2px); }
+    .feature-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: var(--accent-low);
+      border: 1px solid rgba(118,185,0,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .feature-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* ── How it works ──────────────────────────────────────────── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+      position: relative;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--accent-low);
+      border: 1px solid rgba(118,185,0,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-h);
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+    }
+    .step h3 { font-size: 1rem; font-weight: 600; }
+    .step p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── Use cases ────────────────────────────────────────────── */
+    .usecases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .usecase-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+      transition: border-color 0.2s;
+      cursor: default;
+    }
+    .usecase-card:hover { border-color: var(--accent); }
+    .usecase-card .icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+    .usecase-card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .usecase-card p { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* ── Quant table ──────────────────────────────────────────── */
+    .quant-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .quant-table th {
+      text-align: left;
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--accent);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-h);
+    }
+    .quant-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    .quant-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    .quant-table .good  { color: #22c55e; }
+    .quant-table .ok    { color: #f59e0b; }
+    .quant-table .tradeoff { color: #94a3b8; }
+
+    /* ── FAQ ──────────────────────────────────────────────────── */
+    .faq-list { display: flex; flex-direction: column; gap: 0; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 1.25rem 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text);
+      font-family: inherit;
+    }
+    .faq-q .chevron {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .faq-item.open .faq-q .chevron { transform: rotate(180deg); color: var(--accent-h); }
+    .faq-a {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease;
+    }
+    .faq-a p {
+      padding: 0 0 1.25rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+    }
+    .faq-item.open .faq-a { max-height: 400px; }
+
+    /* ── CTA section ──────────────────────────────────────────── */
+    .cta-section {
+      text-align: center;
+      padding: 5rem 1.5rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px; height: 300px;
+      background: radial-gradient(ellipse, rgba(118,185,0,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      position: relative;
+    }
+    .cta-section p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+    .footer-pages {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+    .footer-pages a { color: var(--text-muted); transition: color 0.15s; }
+    .footer-pages a:hover { color: var(--accent-h); }
+    footer .footer-attr a { color: var(--accent-h); }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hero-stats { gap: 1.5rem; }
+    }
+
+    /* ── Divider ──────────────────────────────────────────────── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────── -->
+<nav>
+  <a class="nav-logo" href="/">
+    <span class="logo-icon">◈</span>
+    Fit to Metal
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#faq">FAQ</a>
+    <a href="/tool" class="nav-cta">Launch Tool →</a>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    Free · Open Source · No Login Required
+  </div>
+  <h1>Find AI Models That<br><span class="accent">Fit Your GPU</span></h1>
+  <p class="hero-sub">
+    The free VRAM calculator for open-source AI. Select your GPU, pick a use case, and instantly see every model that will actually run — ranked by real benchmark quality.
+  </p>
+  <div class="hero-actions">
+    <a href="/tool" class="btn-primary">
+      ⚡ Find Models for My GPU
+    </a>
+    <a href="#how-it-works" class="btn-secondary">
+      How it works ↓
+    </a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="num">500+</span>
+      <span class="label">AI Models</span>
+    </div>
+    <div class="hero-stat">
+      <span class="num">200+</span>
+      <span class="label">GPU Profiles</span>
+    </div>
+    <div class="hero-stat">
+      <span class="num">7</span>
+      <span class="label">Quantizations</span>
+    </div>
+    <div class="hero-stat">
+      <span class="num">100%</span>
+      <span class="label">Free & Open</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── GPU pill bar ──────────────────────────────────────────────── -->
+<div class="gpu-preview">
+  <p class="gpu-preview-label">Works with every major GPU</p>
+  <div class="gpu-scroll">
+    <span class="gpu-pill">RTX 5090 <span class="vram-tag">32 GB</span></span>
+    <span class="gpu-pill">RTX 4090 <span class="vram-tag">24 GB</span></span>
+    <span class="gpu-pill">RTX 4080 <span class="vram-tag">16 GB</span></span>
+    <span class="gpu-pill">RTX 3090 <span class="vram-tag">24 GB</span></span>
+    <span class="gpu-pill">RTX 3080 <span class="vram-tag">10 GB</span></span>
+    <span class="gpu-pill">RTX 4060 Ti <span class="vram-tag">16 GB</span></span>
+    <span class="gpu-pill">RX 7900 XTX <span class="vram-tag">24 GB</span></span>
+    <span class="gpu-pill">RX 7800 XT <span class="vram-tag">16 GB</span></span>
+    <span class="gpu-pill">M4 Max <span class="vram-tag">128 GB</span></span>
+    <span class="gpu-pill">M3 Pro <span class="vram-tag">36 GB</span></span>
+    <span class="gpu-pill">A100 <span class="vram-tag">80 GB</span></span>
+    <span class="gpu-pill">H100 <span class="vram-tag">80 GB</span></span>
+    <span class="gpu-pill">2× RTX 3090 <span class="vram-tag">48 GB</span></span>
+    <span class="gpu-pill">4× A100 <span class="vram-tag">320 GB</span></span>
+    <span class="gpu-pill">Custom VRAM <span class="vram-tag">any</span></span>
+  </div>
+</div>
+
+<!-- ── Features ──────────────────────────────────────────────────── -->
+<section class="section" id="features">
+  <p class="section-label">Features</p>
+  <h2 class="section-title">Everything you need to pick the right model</h2>
+  <p class="section-sub">No more trial and error. No more OOM errors. Just instant, accurate answers about what will fit and which model is actually best.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚖️</div>
+      <h3>Precise VRAM Estimation</h3>
+      <p>Calculates memory requirements from parameter count and precision. Includes 20% overhead for KV-cache and activations. Warns when you're on the edge.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔢</div>
+      <h3>All Quantization Modes</h3>
+      <p>Toggle between FP32, FP16/BF16, INT8, INT4, GGUF Q4, and GGUF Q8. See exactly how quantization changes your options and the quality trade-offs.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <h3>Difficulty-Aware Benchmark Ranking</h3>
+      <p>Scores are normalised against frontier ceilings and weighted by benchmark difficulty. A 30% on HLE (the hardest AI exam) ranks above 90% on MMLU.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3>Real-Time Model Discovery</h3>
+      <p>Live data from HuggingFace and ArtificialAnalysis. Newly released models surface within 24 hours. Always current, never stale.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3>Use-Case Filtering</h3>
+      <p>Separate ranked lists for LLMs, image generation, audio/speech, computer vision, video, and embeddings. Only see what's relevant to your project.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🖥️</div>
+      <h3>Multi-GPU Support</h3>
+      <p>Running 2× 3090s or 4× A100s? Enter your total VRAM pool. The tool accounts for combined capacity so you can surface models that span multiple cards.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider" />
+
+<!-- ── How it works ───────────────────────────────────────────────── -->
+<section class="section" id="how-it-works">
+  <p class="section-label">How it works</p>
+  <h2 class="section-title">Three steps from GPU to model</h2>
+  <p class="section-sub">Designed for engineers and researchers who value accuracy over marketing.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Select your GPU</h3>
+      <p>Pick from 200+ GPU profiles — NVIDIA consumer, workstation, AMD, Apple Silicon, or data centre. Or enter a custom VRAM budget. Multi-GPU configurations are supported.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Choose precision & use case</h3>
+      <p>Select your quantization (FP16, INT8, 4-bit…) and the task you need (LLM chat, image generation, code, etc.). VRAM requirements update instantly.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>See your ranked shortlist</h3>
+      <p>Every model that fits appears, sorted by a difficulty-normalised benchmark quality score. Frontier models with hard benchmark data always surface above those with easy-benchmark inflation.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider" />
+
+<!-- ── Use cases ──────────────────────────────────────────────────── -->
+<section class="section">
+  <p class="section-label">Use cases</p>
+  <h2 class="section-title">Every AI workload covered</h2>
+  <p class="section-sub">From 0.5B local chat models to 700B datacenter behemoths — all in one place.</p>
+
+  <div class="usecases-grid">
+    <div class="usecase-card">
+      <div class="icon">💬</div>
+      <h4>LLM / Chat</h4>
+      <p>Llama, Qwen, Mistral, DeepSeek, GLM & 400+ more</p>
+    </div>
+    <div class="usecase-card">
+      <div class="icon">🎨</div>
+      <h4>Image Generation</h4>
+      <p>FLUX, SDXL, Stable Diffusion, HunyuanDiT</p>
+    </div>
+    <div class="usecase-card">
+      <div class="icon">🎙️</div>
+      <h4>Audio / Speech</h4>
+      <p>Whisper, Distil-Whisper, MMS, Parakeet</p>
+    </div>
+    <div class="usecase-card">
+      <div class="icon">👁️</div>
+      <h4>Computer Vision</h4>
+      <p>ViT, CLIP, DINOv2, ResNet, DEIT</p>
+    </div>
+    <div class="usecase-card">
+      <div class="icon">🎬</div>
+      <h4>Video Generation</h4>
+      <p>Wan-AI, HunyuanVideo, CogVideoX</p>
+    </div>
+    <div class="usecase-card">
+      <div class="icon">📐</div>
+      <h4>Embeddings</h4>
+      <p>BGE, GTE, E5, Sentence-Transformers</p>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider" />
+
+<!-- ── Quantization table ─────────────────────────────────────────── -->
+<section class="section">
+  <p class="section-label">Quantization guide</p>
+  <h2 class="section-title">How much VRAM does a 70B model need?</h2>
+  <p class="section-sub">Quantization is the biggest lever for fitting large models on consumer hardware. Here's exactly what each format costs for a 70B parameter model.</p>
+
+  <table class="quant-table">
+    <thead>
+      <tr>
+        <th>Format</th>
+        <th>Bytes / param</th>
+        <th>70B model VRAM</th>
+        <th>Quality vs FP16</th>
+        <th>Typical hardware</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>FP32</td>
+        <td>4</td>
+        <td>280 GB</td>
+        <td class="good">Reference</td>
+        <td>4× A100 / H100</td>
+      </tr>
+      <tr>
+        <td>FP16 / BF16</td>
+        <td>2</td>
+        <td>140 GB</td>
+        <td class="good">≈ FP32</td>
+        <td>2× A100 / H100</td>
+      </tr>
+      <tr>
+        <td>INT8</td>
+        <td>1</td>
+        <td>70 GB</td>
+        <td class="good">Minimal loss</td>
+        <td>A100 80 GB / 3× 3090</td>
+      </tr>
+      <tr>
+        <td>GGUF Q8</td>
+        <td>1</td>
+        <td>70 GB</td>
+        <td class="good">Near-lossless</td>
+        <td>A100 80 GB / 3× 3090</td>
+      </tr>
+      <tr>
+        <td>INT4 / GGUF Q4</td>
+        <td>0.5</td>
+        <td>35 GB</td>
+        <td class="ok">Small quality drop</td>
+        <td>2× RTX 3090 / 4090</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.82rem;color:var(--text-muted);margin-top:0.75rem;">* Actual VRAM includes ~20% overhead for KV-cache and activations. Numbers are approximate.</p>
+</section>
+
+<hr class="section-divider" />
+
+<!-- ── FAQ ────────────────────────────────────────────────────────── -->
+<section class="section" id="faq">
+  <p class="section-label">FAQ</p>
+  <h2 class="section-title">Common questions</h2>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q">
+        How much VRAM do I need to run Llama 3.1 70B?
+        <span class="chevron">▾</span>
+      </button>
+      <div class="faq-a"><p>Llama 3.1 70B requires approximately 140 GB VRAM in FP16, ~70 GB in INT8, or ~35 GB in 4-bit quantization. With two RTX 3090s (48 GB total) you can run it at INT8, or on a single RTX 4090 (24 GB) using GGUF Q4. Use Fit to Metal to find the exact configuration for your setup.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        Can I run Mistral 7B on 8 GB VRAM?
+        <span class="chevron">▾</span>
+      </button>
+      <div class="faq-a"><p>Yes. Mistral 7B requires about 14 GB in FP16 but only ~4–7 GB in 4-bit quantization (GGUF Q4), making it a great fit for an RTX 4060 (8 GB), GTX 1080 Ti (11 GB), or RTX 3060 (12 GB). Quality is excellent at 4-bit for most chat and coding tasks.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        Can I run models across multiple GPUs?
+        <span class="chevron">▾</span>
+      </button>
+      <div class="faq-a"><p>Yes. Select a GPU and then increase the count (2×, 4×, 8× etc.) in the tool. The total VRAM pool is combined. Note that multi-GPU setups require NVLink or PCIe bandwidth sharing, which can affect throughput — but all weights that fit in total VRAM will load correctly.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        What is quantization and how does it affect quality?
+        <span class="chevron">▾</span>
+      </button>
+      <div class="faq-a"><p>Quantization reduces the bit-width of model weights, dramatically cutting memory usage. INT8 (1 byte/param) cuts VRAM in half with minimal quality loss on most tasks. 4-bit (0.5 bytes/param) cuts it by 75% with a small but noticeable quality drop. For tasks like code generation or precise reasoning, FP16 or INT8 is usually preferred. For general chat, 4-bit is often indistinguishable.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        How are benchmark scores ranked? Why does HLE rank above MMLU?
+        <span class="chevron">▾</span>
+      </button>
+      <div class="faq-a"><p>Fit to Metal normalises each benchmark score against the known frontier ceiling for that benchmark, then weights by difficulty squared. Humanity's Last Exam (HLE) has a frontier ceiling of ~35% — so scoring 30% on HLE is near-frontier. MMLU has a ceiling of ~92% — scoring 80% on MMLU is mediocre by frontier standards. Raw scores are not comparable; normalised difficulty-weighted scores are. This prevents models with only easy benchmark data from outranking genuine frontier models.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        What models does Fit to Metal cover?
+        <span class="chevron">▾</span>
+      </button>
+      <div class="faq-a"><p>Fit to Metal covers 500+ open-source models from HuggingFace across all categories: LLMs (Llama, Qwen, Mistral, DeepSeek, GLM, Falcon, Gemma, Phi…), image generators (FLUX, SDXL, Stable Diffusion…), audio models (Whisper series…), vision models, video generators, and embedding models. New models surface automatically from priority authors within 24 hours.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        Is Fit to Metal free?
+        <span class="chevron">▾</span>
+      </button>
+      <div class="faq-a"><p>Yes, completely free. No login, no rate limits, no paywalled features. The underlying data from HuggingFace and ArtificialAnalysis is publicly available and the tool is open-source.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────────────────── -->
+<div class="cta-section">
+  <h2>Stop guessing. Start running.</h2>
+  <p>Find the best open-source AI model for your exact GPU — in seconds.</p>
+  <a href="/tool" class="btn-primary" style="margin: 0 auto; display: inline-flex;">
+    ⚡ Find Models for My GPU
+  </a>
+</div>
+
+<!-- ── Footer ─────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-pages">
+    <a href="/tool">App</a>
+    <a href="/tool#/about">About</a>
+    <a href="/tool#/privacy">Privacy Policy</a>
+    <a href="/tool#/contact">Contact</a>
+  </div>
+  <div class="footer-attr">
+    Model data from <a href="https://huggingface.co" target="_blank">HuggingFace</a> &amp;
+    <a href="https://artificialanalysis.ai" target="_blank">ArtificialAnalysis</a>.
+    Fit to Metal is free and open-source.
+  </div>
+</footer>
+
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    });
+  });
+</script>
+</body>
+</html>

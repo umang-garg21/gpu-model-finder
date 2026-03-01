@@ -11,6 +11,11 @@ const cache = new NodeCache({ stdTTL: 600 }); // 10-minute cache
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+// ── Page routes ────────────────────────────────────────────────
+// Landing page at root; the tool at /tool
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'landing.html')));
+app.get('/tool', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+
 // ── Constants ──────────────────────────────────────────────────
 const DTYPE_BYTES = { fp32: 4, fp16: 2, bf16: 2, int8: 1, int4: 0.5, gguf_q4: 0.5, gguf_q8: 1 };
 
