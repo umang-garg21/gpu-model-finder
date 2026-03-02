@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Find Hardware for Any AI Model — Reverse GPU Search | Fit to Metal</title>
+  <meta name="description" content="Pick an AI model and target tokens-per-second, and instantly find the cheapest GPU configuration that can run it. Supports Llama, Mistral, Qwen, DeepSeek and 150+ models." />
+  <meta name="keywords" content="GPU for AI model, cheapest GPU to run Llama, minimum hardware for LLM, AI inference hardware calculator, tokens per second GPU, LLM hardware requirements" />
+  <link rel="canonical" href="https://fit-to-metal.up.railway.app/reverse" />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://fit-to-metal.up.railway.app/reverse" />
+  <meta property="og:title"       content="Find Hardware for Any AI Model | Fit to Metal" />
+  <meta property="og:description" content="Pick a model + target TPS → see the cheapest GPU configs that can run it." />
+  <meta property="og:image"       content="https://fit-to-metal.up.railway.app/og-image.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0a0a0a;
+      --surface:    #0f0f0f;
+      --surface2:   #161616;
+      --border:     #1e1e1e;
+      --border-hi:  #2e2e2e;
+      --accent:     #76b900;
+      --accent-h:   #8ed200;
+      --accent-low: #76b90014;
+      --accent-glow:#76b90030;
+      --text:       #e0e0e0;
+      --text-muted: #606060;
+      --radius:     8px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Nav ──────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 60px;
+      background: rgba(10,10,10,0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.05rem; }
+    .nav-logo .logo-icon { color: var(--accent); font-size: 1.2rem; }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-links a { font-size: 0.88rem; color: var(--text-muted); transition: color 0.15s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: #0a0a0a !important; font-weight: 600;
+      font-size: 0.85rem !important; padding: 0.45rem 1.1rem; border-radius: 6px;
+      transition: background 0.15s !important;
+    }
+    .nav-cta:hover { background: var(--accent-h) !important; }
+
+    /* ── Page header ────────────────────────────────────────── */
+    .page-header {
+      padding: 3rem 2rem 0;
+      max-width: 800px; margin: 0 auto;
+    }
+    .page-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--accent-low); border: 1px solid rgba(118,185,0,0.3);
+      border-radius: 999px; padding: 0.25rem 0.75rem;
+      font-size: 0.75rem; color: var(--accent-h); font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .page-header h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 0.75rem; }
+    .page-header h1 .accent { color: var(--accent-h); }
+    .page-header p { font-size: 1rem; color: var(--text-muted); max-width: 560px; }
+
+    /* ── Main layout ─────────────────────────────────────────── */
+    .main {
+      max-width: 800px; margin: 2rem auto;
+      padding: 0 2rem 3rem;
+    }
+
+    /* ── Input panel ─────────────────────────────────────────── */
+    .input-panel {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .field { margin-bottom: 1.25rem; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block; font-size: 0.82rem; font-weight: 600;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    .field-hint { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem; }
+
+    /* Model search */
+    .search-wrap { position: relative; }
+    .search-wrap input {
+      width: 100%; padding: 0.65rem 0.9rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text);
+      font-size: 0.9rem; font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .search-wrap input::placeholder { color: var(--text-muted); }
+    .search-wrap input:focus { outline: none; border-color: var(--accent); }
+
+    .suggestions {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: var(--surface2); border: 1px solid var(--border-hi);
+      border-radius: var(--radius); max-height: 260px; overflow-y: auto;
+      z-index: 50; display: none;
+    }
+    .suggestions.open { display: block; }
+    .suggestion-item {
+      padding: 0.6rem 0.9rem; cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+    .suggestion-item:last-child { border-bottom: none; }
+    .suggestion-item:hover, .suggestion-item.active { background: rgba(118,185,0,0.08); }
+    .suggestion-item .sug-name { font-size: 0.88rem; font-weight: 500; }
+    .suggestion-item .sug-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+    .model-selected-chip {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(118,185,0,0.1); border: 1px solid rgba(118,185,0,0.3);
+      border-radius: 6px; padding: 0.4rem 0.75rem;
+      font-size: 0.85rem; font-weight: 500;
+    }
+    .model-selected-chip .clear-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); font-size: 1rem; line-height: 1;
+      padding: 0; transition: color 0.15s;
+    }
+    .model-selected-chip .clear-btn:hover { color: var(--text); }
+
+    /* TPS slider */
+    .tps-row { display: flex; align-items: center; gap: 1rem; }
+    .tps-row input[type=range] {
+      flex: 1; height: 4px; appearance: none;
+      background: var(--border); border-radius: 2px; cursor: pointer;
+    }
+    .tps-row input[type=range]::-webkit-slider-thumb {
+      appearance: none; width: 16px; height: 16px;
+      border-radius: 50%; background: var(--accent); cursor: pointer;
+    }
+    .tps-val {
+      font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700;
+      color: var(--accent); min-width: 80px; text-align: right;
+    }
+
+    /* Row of selects */
+    .selects-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    select {
+      width: 100%; padding: 0.65rem 0.9rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text);
+      font-size: 0.9rem; font-family: inherit;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23606060' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.75rem center;
+      transition: border-color 0.15s;
+    }
+    select:focus { outline: none; border-color: var(--accent); }
+
+    /* Submit button */
+    .btn-find {
+      width: 100%; padding: 0.85rem;
+      background: var(--accent); color: #0a0a0a;
+      border: none; border-radius: var(--radius);
+      font-size: 1rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: background 0.15s, transform 0.1s;
+      margin-top: 1.25rem;
+    }
+    .btn-find:hover { background: var(--accent-h); transform: translateY(-1px); }
+    .btn-find:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* ── Results ─────────────────────────────────────────────── */
+    #results { display: none; }
+    #results.visible { display: block; }
+
+    .results-header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .results-title { font-size: 1rem; font-weight: 600; }
+    .results-meta { font-size: 0.82rem; color: var(--text-muted); }
+
+    .sort-toggle { display: flex; gap: 0.4rem; }
+    .sort-btn {
+      padding: 0.3rem 0.75rem; border-radius: 5px;
+      font-size: 0.8rem; font-weight: 500; cursor: pointer;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text-muted); transition: all 0.15s;
+    }
+    .sort-btn.active { background: var(--accent-low); border-color: rgba(118,185,0,0.4); color: var(--accent); }
+
+    /* Config cards */
+    .configs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.75rem; }
+
+    .config-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.1rem;
+      transition: border-color 0.15s, transform 0.1s;
+      position: relative; overflow: hidden;
+    }
+    .config-card:hover { border-color: var(--border-hi); transform: translateY(-2px); }
+
+    .config-card .rank-badge {
+      position: absolute; top: 0.75rem; right: 0.75rem;
+      font-size: 0.72rem; font-weight: 700;
+      padding: 0.15rem 0.5rem; border-radius: 4px;
+    }
+    .rank-1 { background: rgba(255, 200, 0, 0.15); color: #ffc800; }
+    .rank-2 { background: rgba(180, 180, 180, 0.12); color: #b0b0b0; }
+    .rank-3 { background: rgba(180, 100, 50, 0.12); color: #cd7f55; }
+
+    .config-gpu-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; padding-right: 3rem; }
+    .config-count-pill {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--accent-low); border: 1px solid rgba(118,185,0,0.25);
+      border-radius: 4px; padding: 0.1rem 0.45rem;
+      font-size: 0.78rem; font-weight: 600; color: var(--accent); margin-left: 0.3rem;
+    }
+    .config-tier { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.85rem; }
+
+    .config-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+      margin-bottom: 0.85rem;
+    }
+    .stat-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; padding: 0.5rem 0.65rem;
+    }
+    .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; margin-bottom: 0.2rem; }
+    .stat-val { font-size: 0.95rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+    .tps-badge {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px;
+    }
+    .tps-fast   { background: rgba(118,185,0,0.12); color: var(--accent-h); }
+    .tps-medium { background: rgba(255,170,0,0.10); color: #ffaa00; }
+    .tps-slow   { background: rgba(255,80,80,0.09); color: #ff6050; }
+
+    .config-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 0.5rem;
+    }
+    .price-label { font-size: 0.8rem; color: var(--text-muted); }
+    .price-val { font-size: 1.1rem; font-weight: 800; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+    .tool-link {
+      font-size: 0.78rem; color: var(--accent); font-weight: 500;
+      padding: 0.2rem 0.5rem; border: 1px solid rgba(118,185,0,0.3);
+      border-radius: 4px; transition: background 0.15s;
+    }
+    .tool-link:hover { background: var(--accent-low); }
+
+    /* Price disclaimer */
+    .disclaimer {
+      margin-top: 1rem; font-size: 0.78rem; color: var(--text-muted);
+      padding: 0.6rem 0.9rem; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 6px;
+    }
+
+    /* Error / empty states */
+    .state-msg {
+      text-align: center; padding: 3rem 1rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .state-msg .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .state-msg h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .state-msg p { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Loading spinner */
+    .spinner {
+      display: none; text-align: center; padding: 2rem;
+      font-size: 0.9rem; color: var(--text-muted);
+    }
+    .spinner.active { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin-icon { display: inline-block; animation: spin 0.8s linear infinite; font-size: 1.4rem; margin-right: 0.5rem; }
+
+    /* Footer */
+    footer { padding: 2rem 1.5rem; border-top: 1px solid var(--border); text-align: center; }
+    .footer-pages { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .footer-pages a { font-size: 0.85rem; color: var(--text-muted); }
+    .footer-pages a:hover { color: var(--text); }
+    .footer-attr { font-size: 0.8rem; color: var(--text-muted); }
+    .footer-attr a { color: var(--text-muted); text-decoration: underline; text-decoration-color: var(--border); }
+
+    @media (max-width: 600px) {
+      .nav-links a:not(.nav-cta) { display: none; }
+      .selects-row { grid-template-columns: 1fr; }
+      .configs-grid { grid-template-columns: 1fr; }
+      .page-header, .main { padding-left: 1rem; padding-right: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <span class="logo-icon">◈</span>
+    Fit to Metal
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/models">Models</a>
+    <a href="/tool" class="nav-cta">GPU → Models →</a>
+  </div>
+</nav>
+
+<!-- ── Page header ─────────────────────────────────────────────── -->
+<div class="page-header">
+  <div class="page-badge">🔄 Reverse Search</div>
+  <h1>Find hardware for <span class="accent">any model</span></h1>
+  <p>Pick a model and a target speed. See every GPU configuration that can achieve it, sorted by approximate cost.</p>
+</div>
+
+<!-- ── Main ────────────────────────────────────────────────────── -->
+<div class="main">
+
+  <!-- Input panel -->
+  <div class="input-panel">
+
+    <div class="field">
+      <label>Model</label>
+      <div class="search-wrap" id="modelSearchWrap">
+        <input type="text" id="modelInput" placeholder="Search for a model (e.g. Llama 3.1 70B, DeepSeek R1...)" autocomplete="off" />
+        <div class="suggestions" id="suggestions"></div>
+      </div>
+      <div id="selectedModel" style="margin-top:0.5rem;display:none"></div>
+      <div class="field-hint">Only flagship models with known VRAM are supported (~150 models).</div>
+    </div>
+
+    <div class="field">
+      <label>Target speed</label>
+      <div class="tps-row">
+        <input type="range" id="tpsSlider" min="1" max="200" value="20" step="1" />
+        <div class="tps-val"><span id="tpsDisplay">20</span> tok/s</div>
+      </div>
+      <div class="field-hint">Minimum tokens per second you want from this model.</div>
+    </div>
+
+    <div class="selects-row">
+      <div class="field" style="margin-bottom:0">
+        <label>Precision</label>
+        <select id="quantSelect">
+          <option value="fp16">FP16 / BF16</option>
+          <option value="int8">INT8</option>
+          <option value="int4">INT4</option>
+          <option value="gguf_q8">GGUF Q8</option>
+          <option value="gguf_q4">GGUF Q4</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Sort results by</label>
+        <select id="sortSelect">
+          <option value="price">Cheapest first</option>
+          <option value="vram">Least VRAM first</option>
+          <option value="tps">Fastest first</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-find" id="findBtn" disabled>Find Hardware →</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="spinner" id="spinner">
+    <span class="spin-icon">⟳</span> Finding compatible configurations…
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="results-header">
+      <div>
+        <div class="results-title" id="resultsTitle"></div>
+        <div class="results-meta" id="resultsMeta"></div>
+      </div>
+    </div>
+    <div class="configs-grid" id="configsGrid"></div>
+    <div class="disclaimer">
+      ⚠️ Prices are approximate retail/street estimates in USD as of 2025 and may vary significantly. Multi-GPU setups add per-card cost. Throughput estimates assume memory-bandwidth-bound inference; actual performance depends on batch size, quantization library, and system overhead.
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-pages">
+    <a href="/tool">GPU → Models</a>
+    <a href="/models">Model Pages</a>
+    <a href="/tool#/about">About</a>
+    <a href="/tool#/privacy">Privacy</a>
+    <a href="/tool#/contact">Contact</a>
+  </div>
+  <div class="footer-attr">
+    Model data from <a href="https://huggingface.co" target="_blank">HuggingFace</a> &amp;
+    <a href="https://artificialanalysis.ai" target="_blank">ArtificialAnalysis</a>.
+    Fit to Metal is free and open-source.
+  </div>
+</footer>
+
+<script>
+  // ── State ────────────────────────────────────────────────────
+  const state = {
+    selectedModelId: null,
+    selectedModelName: null,
+    tps: 20,
+    quantization: 'fp16',
+    sort: 'price',
+    configs: [],
+  };
+
+  // ── DOM refs ─────────────────────────────────────────────────
+  const modelInput   = document.getElementById('modelInput');
+  const suggestions  = document.getElementById('suggestions');
+  const selectedEl   = document.getElementById('selectedModel');
+  const tpsSlider    = document.getElementById('tpsSlider');
+  const tpsDisplay   = document.getElementById('tpsDisplay');
+  const quantSelect  = document.getElementById('quantSelect');
+  const sortSelect   = document.getElementById('sortSelect');
+  const findBtn      = document.getElementById('findBtn');
+  const spinner      = document.getElementById('spinner');
+  const resultsEl    = document.getElementById('results');
+  const configsGrid  = document.getElementById('configsGrid');
+  const resultsTitle = document.getElementById('resultsTitle');
+  const resultsMeta  = document.getElementById('resultsMeta');
+
+  // ── TPS slider ────────────────────────────────────────────────
+  tpsSlider.addEventListener('input', () => {
+    state.tps = parseInt(tpsSlider.value, 10);
+    tpsDisplay.textContent = state.tps;
+  });
+
+  quantSelect.addEventListener('change', () => { state.quantization = quantSelect.value; });
+  sortSelect.addEventListener('change', () => {
+    state.sort = sortSelect.value;
+    if (state.configs.length) renderResults(state.configs);
+  });
+
+  // ── Model search autocomplete ─────────────────────────────────
+  let searchTimeout = null;
+  modelInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    const q = modelInput.value.trim();
+    if (q.length < 2) { hideSuggestions(); return; }
+    searchTimeout = setTimeout(() => fetchSuggestions(q), 220);
+  });
+
+  modelInput.addEventListener('keydown', e => {
+    const items = suggestions.querySelectorAll('.suggestion-item');
+    const active = suggestions.querySelector('.suggestion-item.active');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!active) items[0]?.classList.add('active');
+      else { active.classList.remove('active'); (active.nextElementSibling || items[0])?.classList.add('active'); }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!active) items[items.length-1]?.classList.add('active');
+      else { active.classList.remove('active'); (active.previousElementSibling || items[items.length-1])?.classList.add('active'); }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const act = suggestions.querySelector('.suggestion-item.active') || suggestions.querySelector('.suggestion-item');
+      if (act) act.click();
+    } else if (e.key === 'Escape') {
+      hideSuggestions();
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#modelSearchWrap')) hideSuggestions();
+  });
+
+  async function fetchSuggestions(q) {
+    try {
+      const res = await fetch(`/api/search?name=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      const items = data.results || [];
+      if (!items.length) { hideSuggestions(); return; }
+      suggestions.innerHTML = items.slice(0, 12).map(m => {
+        const title = m.title || m.name || m.id || 'Unknown';
+        const sub = m.url ? m.url.replace('https://artificialanalysis.ai/models/', '') : '';
+        return `<div class="suggestion-item" data-title="${escHtml(title)}" data-sub="${escHtml(sub)}">
+          <div class="sug-name">${escHtml(title)}</div>
+          ${sub ? `<div class="sug-sub">${escHtml(sub)}</div>` : ''}
+        </div>`;
+      }).join('');
+      suggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const title = item.dataset.title;
+          const sub = item.dataset.sub;
+          selectModel(title, sub);
+        });
+      });
+      suggestions.classList.add('open');
+    } catch (_) { hideSuggestions(); }
+  }
+
+  function selectModel(title, sub) {
+    // Try to resolve to an HF model id from the AA slug
+    // The AA url slug is used as the model id lookup key
+    const modelId = resolveModelId(title, sub);
+    state.selectedModelId = modelId || sub || title;
+    state.selectedModelName = title;
+    modelInput.style.display = 'none';
+    selectedEl.style.display = 'block';
+    selectedEl.innerHTML = `<div class="model-selected-chip"><span>✓ ${escHtml(title)}</span><button class="clear-btn" id="clearModel" title="Clear">×</button></div>`;
+    document.getElementById('clearModel').addEventListener('click', clearModel);
+    hideSuggestions();
+    findBtn.disabled = false;
+  }
+
+  function clearModel() {
+    state.selectedModelId = null;
+    state.selectedModelName = null;
+    modelInput.style.display = '';
+    modelInput.value = '';
+    selectedEl.style.display = 'none';
+    findBtn.disabled = true;
+    resultsEl.classList.remove('visible');
+  }
+
+  function hideSuggestions() { suggestions.classList.remove('open'); }
+
+  // Attempt to resolve AA title → HF model id
+  // Uses a curated map of AA titles → HF IDs for the most popular models.
+  const AA_TO_HF = {
+    'llama 3.1 8b instruct': 'meta-llama/Llama-3.1-8B-Instruct',
+    'llama 3.1 70b instruct': 'meta-llama/Llama-3.1-70B-Instruct',
+    'llama 3.3 70b instruct': 'meta-llama/Llama-3.3-70B-Instruct',
+    'llama 3.1 405b instruct': 'meta-llama/Llama-3.1-405B-Instruct',
+    'llama 3.2 1b instruct': 'meta-llama/Llama-3.2-1B-Instruct',
+    'llama 3.2 3b instruct': 'meta-llama/Llama-3.2-3B-Instruct',
+    'mistral 7b instruct v0.3': 'mistralai/Mistral-7B-Instruct-v0.3',
+    'mixtral 8x7b instruct': 'mistralai/Mixtral-8x7B-Instruct-v0.1',
+    'mixtral 8x22b instruct': 'mistralai/Mixtral-8x22B-Instruct-v0.1',
+    'mistral nemo instruct': 'mistralai/Mistral-Nemo-Instruct-2407',
+    'mistral large instruct': 'mistralai/Mistral-Large-Instruct-2411',
+    'mistral small 3.1 24b instruct': 'mistralai/Mistral-Small-3.1-24B-Instruct-2503',
+    'qwen2.5 7b instruct': 'Qwen/Qwen2.5-7B-Instruct',
+    'qwen2.5 14b instruct': 'Qwen/Qwen2.5-14B-Instruct',
+    'qwen2.5 32b instruct': 'Qwen/Qwen2.5-32B-Instruct',
+    'qwen2.5 72b instruct': 'Qwen/Qwen2.5-72B-Instruct',
+    'qwen2.5 coder 7b instruct': 'Qwen/Qwen2.5-Coder-7B-Instruct',
+    'qwen2.5 coder 32b instruct': 'Qwen/Qwen2.5-Coder-32B-Instruct',
+    'qwq 32b': 'Qwen/QwQ-32B',
+    'qwen3 4b': 'Qwen/Qwen3-4B',
+    'qwen3 8b': 'Qwen/Qwen3-8B',
+    'qwen3 14b': 'Qwen/Qwen3-14B',
+    'qwen3 32b': 'Qwen/Qwen3-32B',
+    'qwen3 30b a3b': 'Qwen/Qwen3-30B-A3B',
+    'deepseek r1': 'deepseek-ai/DeepSeek-R1',
+    'deepseek v3': 'deepseek-ai/DeepSeek-V3',
+    'deepseek r1 distill qwen 7b': 'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B',
+    'deepseek r1 distill qwen 14b': 'deepseek-ai/DeepSeek-R1-Distill-Qwen-14B',
+    'deepseek r1 distill qwen 32b': 'deepseek-ai/DeepSeek-R1-Distill-Qwen-32B',
+    'deepseek r1 distill llama 8b': 'deepseek-ai/DeepSeek-R1-Distill-Llama-8B',
+    'deepseek r1 distill llama 70b': 'deepseek-ai/DeepSeek-R1-Distill-Llama-70B',
+    'deepseek coder v2 instruct': 'deepseek-ai/DeepSeek-Coder-V2-Instruct',
+    'gemma 2 2b it': 'google/gemma-2-2b-it',
+    'gemma 2 9b it': 'google/gemma-2-9b-it',
+    'gemma 2 27b it': 'google/gemma-2-27b-it',
+    'gemma 3 4b it': 'google/gemma-3-4b-it',
+    'gemma 3 12b it': 'google/gemma-3-12b-it',
+    'gemma 3 27b it': 'google/gemma-3-27b-it',
+    'phi-3.5 mini instruct': 'microsoft/Phi-3.5-mini-instruct',
+    'phi-4': 'microsoft/Phi-4',
+    'phi-4 mini instruct': 'microsoft/phi-4-mini-instruct',
+  };
+
+  function resolveModelId(title, sub) {
+    // 1. Try exact AA_TO_HF map (normalized title)
+    const norm = title.toLowerCase().replace(/[^\w\s.]/g, '').replace(/\s+/g, ' ').trim();
+    if (AA_TO_HF[norm]) return AA_TO_HF[norm];
+    // 2. Partial match
+    for (const [k, v] of Object.entries(AA_TO_HF)) {
+      if (norm.includes(k) || k.includes(norm)) return v;
+    }
+    // 3. Use sub (AA slug) as a proxy — the server will do case-insensitive lookup
+    return sub || title;
+  }
+
+  // ── Find hardware ─────────────────────────────────────────────
+  findBtn.addEventListener('click', findHardware);
+
+  async function findHardware() {
+    if (!state.selectedModelId) return;
+    spinner.classList.add('active');
+    resultsEl.classList.remove('visible');
+    configsGrid.innerHTML = '';
+
+    try {
+      const params = new URLSearchParams({
+        model: state.selectedModelId,
+        targetTps: state.tps,
+        quantization: state.quantization,
+      });
+      const res = await fetch(`/api/hardware-for-model?${params}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        showError(data.error || 'Model not found. Try searching for a different model name.');
+        return;
+      }
+
+      state.configs = data.configs || [];
+      state.modelData = data.model;
+      renderResults(state.configs);
+    } catch (err) {
+      showError('Failed to fetch results. Please try again.');
+    } finally {
+      spinner.classList.remove('active');
+    }
+  }
+
+  function renderResults(configs) {
+    const modelData = state.modelData;
+    const sorted = [...configs].sort((a, b) => {
+      if (state.sort === 'price') return a.priceApprox - b.priceApprox || a.totalVramGb - b.totalVramGb;
+      if (state.sort === 'vram')  return a.totalVramGb - b.totalVramGb || a.priceApprox - b.priceApprox;
+      if (state.sort === 'tps')   return b.achievedTps - a.achievedTps;
+      return 0;
+    });
+
+    if (!sorted.length) {
+      configsGrid.innerHTML = `<div class="state-msg" style="grid-column:1/-1"><div class="icon">🔍</div><h3>No configurations found</h3><p>No single GPU or multi-GPU setup (up to 8×) can run this model at ${state.tps} tok/s with ${state.quantization.toUpperCase()} precision.<br>Try lowering the target TPS or switching to a smaller quantization (INT4/GGUF Q4).</p></div>`;
+      resultsTitle.textContent = `No results for ${state.selectedModelName}`;
+      resultsMeta.textContent = '';
+      resultsEl.classList.add('visible');
+      return;
+    }
+
+    const quantLabel = { fp16: 'FP16', bf16: 'BF16', int8: 'INT8', int4: 'INT4', gguf_q4: 'GGUF Q4', gguf_q8: 'GGUF Q8' }[state.quantization] || state.quantization.toUpperCase();
+    resultsTitle.textContent = `${sorted.length} configuration${sorted.length !== 1 ? 's' : ''} for ${state.selectedModelName}`;
+    resultsMeta.textContent = `at ${quantLabel} · ≥${state.tps} tok/s · ${modelData ? modelData.requiredVramGb + ' GB VRAM required' : ''}`;
+
+    configsGrid.innerHTML = sorted.map((cfg, i) => {
+      const rankBadge = i < 3 ? `<div class="rank-badge rank-${i+1}">${i === 0 ? '🥇 #1' : i === 1 ? '🥈 #2' : '🥉 #3'}</div>` : '';
+      const countPill = cfg.count > 1 ? `<span class="config-count-pill">${cfg.count}×</span>` : '';
+      const tierLabel = ({ '50-series': 'NVIDIA RTX 50-series', '40-series': 'NVIDIA RTX 40-series', '30-series': 'NVIDIA RTX 30-series', 'amd': 'AMD Radeon', 'apple': 'Apple Silicon', 'workstation': 'Workstation / Pro', 'datacenter': 'Data Center' })[cfg.tier] || cfg.tier;
+      const tpsBadge = `<span class="tps-badge tps-${cfg.tpsTier}">⚡ ~${cfg.achievedTps} tok/s</span>`;
+      const priceStr = cfg.priceApprox >= 1000 ? `$${(cfg.priceApprox / 1000).toFixed(1)}k` : `$${cfg.priceApprox}`;
+      const vramPct = Math.min(Math.round(cfg.requiredVramGb / cfg.totalVramGb * 100), 100);
+      const toolUrl = `/tool?vram=${cfg.totalVramGb}&usecase=llm&quantization=${state.quantization}`;
+      return `<div class="config-card">
+        ${rankBadge}
+        <div class="config-gpu-name">${escHtml(cfg.gpu)}${countPill}</div>
+        <div class="config-tier">${tierLabel}</div>
+        <div class="config-stats">
+          <div class="stat-box"><div class="stat-label">Total VRAM</div><div class="stat-val">${cfg.totalVramGb} GB</div></div>
+          <div class="stat-box"><div class="stat-label">Throughput</div><div class="stat-val">${cfg.achievedTps} t/s</div></div>
+          <div class="stat-box"><div class="stat-label">VRAM used</div><div class="stat-val">${vramPct}%</div></div>
+          <div class="stat-box"><div class="stat-label">Speed</div>${tpsBadge}</div>
+        </div>
+        <div class="config-footer">
+          <div><div class="price-label">Approx. price</div><div class="price-val">${priceStr}</div></div>
+          <a class="tool-link" href="${toolUrl}" target="_blank">Open in tool →</a>
+        </div>
+      </div>`;
+    }).join('');
+
+    resultsEl.classList.add('visible');
+  }
+
+  function showError(msg) {
+    configsGrid.innerHTML = `<div class="state-msg" style="grid-column:1/-1"><div class="icon">⚠️</div><h3>Not Found</h3><p>${escHtml(msg)}</p></div>`;
+    resultsTitle.textContent = 'Error';
+    resultsMeta.textContent = '';
+    resultsEl.classList.add('visible');
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+</script>
+</body>
+</html>

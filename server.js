@@ -12,9 +12,10 @@ app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use(express.json());
 
 // ── Page routes ────────────────────────────────────────────────
-// Landing page at root; the tool at /tool
+// Landing page at root; the tool at /tool; reverse search at /reverse
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'landing.html')));
 app.get('/tool', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('/reverse', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'reverse.html')));
 
 // ── Google Search Console HTML file verification ───────────────
 app.get('/googlek7zHklOtdojWKO-XlHJ8A0UwuKaDZRb3fq5LEdW2gAA.html', (_req, res) => {
@@ -36,6 +37,11 @@ Sitemap: ${host}/sitemap.xml`
 app.get('/sitemap.xml', (req, res) => {
   const host = `${req.protocol}://${req.get('host')}`;
   const now = new Date().toISOString().split('T')[0];
+  let featuredModels = [];
+  try { featuredModels = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'featured_models.json'), 'utf8')); } catch (_) {}
+  const modelUrls = featuredModels.map(m =>
+    `  <url>\n    <loc>${host}/models/${m.slug}</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`
+  ).join('\n');
   res.type('application/xml').send(
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -51,6 +57,13 @@ app.get('/sitemap.xml', (req, res) => {
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+  <url>
+    <loc>${host}/reverse</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+${modelUrls}
 </urlset>`
   );
 });
@@ -1248,6 +1261,317 @@ app.get('/api/search', (req, res) => {
   } catch (e) {
     res.status(500).json({ error: 'Failed to read model data', details: e.message });
   }
+});
+
+// ── Reference GPUs for model landing pages ─────────────────────
+// 10 popular GPUs used to show TPS estimates on /models/:slug pages
+const FEATURED_GPUS = [
+  { name: 'RTX 4060',       tier: 'consumer', vram: 8,   bw: 272  },
+  { name: 'RTX 4070',       tier: 'consumer', vram: 12,  bw: 504  },
+  { name: 'RTX 4090',       tier: 'consumer', vram: 24,  bw: 1008 },
+  { name: 'RTX 3090',       tier: 'consumer', vram: 24,  bw: 936  },
+  { name: 'M3 Max 128G',    tier: 'apple',    vram: 128, bw: 400  },
+  { name: 'M4 Ultra 192G',  tier: 'apple',    vram: 192, bw: 819  },
+  { name: 'RTX 6000 Ada',   tier: 'workstation', vram: 48, bw: 960 },
+  { name: 'A100 40G',       tier: 'datacenter', vram: 40, bw: 1600 },
+  { name: 'A100 80G',       tier: 'datacenter', vram: 80, bw: 2000 },
+  { name: 'H100 SXM',       tier: 'datacenter', vram: 80, bw: 3350 },
+];
+
+// ── All GPUs with approximate retail prices (for reverse search) ─
+// Prices are approximate retail/street estimates in USD as of 2025.
+// Multi-GPU configs add price * count.
+const ALL_GPUS = [
+  // 50-series
+  { name: 'RTX 5090',    tier: '50-series',  vram: 32,  bw: 1792, price: 2000 },
+  { name: 'RTX 5080',    tier: '50-series',  vram: 16,  bw: 960,  price: 1200 },
+  { name: 'RTX 5070 Ti', tier: '50-series',  vram: 16,  bw: 896,  price: 800  },
+  { name: 'RTX 5070',    tier: '50-series',  vram: 12,  bw: 672,  price: 600  },
+  { name: 'RTX 5060 Ti', tier: '50-series',  vram: 16,  bw: 448,  price: 450  },
+  // 40-series
+  { name: 'RTX 4090',         tier: '40-series',  vram: 24, bw: 1008, price: 1800 },
+  { name: 'RTX 4080 Super',   tier: '40-series',  vram: 16, bw: 736,  price: 1000 },
+  { name: 'RTX 4080',         tier: '40-series',  vram: 16, bw: 717,  price: 900  },
+  { name: 'RTX 4070 Ti Super',tier: '40-series',  vram: 16, bw: 672,  price: 800  },
+  { name: 'RTX 4070 Ti',      tier: '40-series',  vram: 12, bw: 504,  price: 750  },
+  { name: 'RTX 4070 Super',   tier: '40-series',  vram: 12, bw: 504,  price: 600  },
+  { name: 'RTX 4070',         tier: '40-series',  vram: 12, bw: 504,  price: 550  },
+  { name: 'RTX 4060 Ti 16G',  tier: '40-series',  vram: 16, bw: 288,  price: 450  },
+  { name: 'RTX 4060 Ti',      tier: '40-series',  vram: 8,  bw: 288,  price: 400  },
+  { name: 'RTX 4060',         tier: '40-series',  vram: 8,  bw: 272,  price: 300  },
+  // 30-series
+  { name: 'RTX 3090 Ti', tier: '30-series',  vram: 24, bw: 1008, price: 800  },
+  { name: 'RTX 3090',    tier: '30-series',  vram: 24, bw: 936,  price: 700  },
+  { name: 'RTX 3080 Ti', tier: '30-series',  vram: 12, bw: 912,  price: 500  },
+  { name: 'RTX 3080 12G',tier: '30-series',  vram: 12, bw: 912,  price: 450  },
+  { name: 'RTX 3080',    tier: '30-series',  vram: 10, bw: 760,  price: 400  },
+  { name: 'RTX 3070 Ti', tier: '30-series',  vram: 8,  bw: 608,  price: 300  },
+  { name: 'RTX 3070',    tier: '30-series',  vram: 8,  bw: 448,  price: 250  },
+  { name: 'RTX 3060 Ti', tier: '30-series',  vram: 8,  bw: 448,  price: 230  },
+  { name: 'RTX 3060',    tier: '30-series',  vram: 12, bw: 360,  price: 200  },
+  // AMD
+  { name: 'RX 9070 XT',  tier: 'amd',        vram: 16, bw: 640,  price: 600  },
+  { name: 'RX 9070',     tier: 'amd',        vram: 16, bw: 576,  price: 500  },
+  { name: 'RX 7900 XTX', tier: 'amd',        vram: 24, bw: 960,  price: 850  },
+  { name: 'RX 7900 XT',  tier: 'amd',        vram: 20, bw: 800,  price: 700  },
+  { name: 'RX 7900 GRE', tier: 'amd',        vram: 16, bw: 576,  price: 500  },
+  { name: 'RX 7800 XT',  tier: 'amd',        vram: 16, bw: 624,  price: 450  },
+  { name: 'RX 7700 XT',  tier: 'amd',        vram: 12, bw: 432,  price: 350  },
+  { name: 'RX 7600',     tier: 'amd',        vram: 8,  bw: 288,  price: 250  },
+  { name: 'RX 6950 XT',  tier: 'amd',        vram: 16, bw: 576,  price: 400  },
+  { name: 'RX 6900 XT',  tier: 'amd',        vram: 16, bw: 512,  price: 350  },
+  { name: 'RX 6800 XT',  tier: 'amd',        vram: 16, bw: 512,  price: 300  },
+  // Apple
+  { name: 'M4 Ultra 192G',  tier: 'apple', vram: 192, bw: 819,  price: 8000 },
+  { name: 'M4 Ultra 96G',   tier: 'apple', vram: 96,  bw: 819,  price: 5000 },
+  { name: 'M4 Max 128G',    tier: 'apple', vram: 128, bw: 546,  price: 5000 },
+  { name: 'M4 Max 64G',     tier: 'apple', vram: 64,  bw: 546,  price: 3500 },
+  { name: 'M4 Pro 48G',     tier: 'apple', vram: 48,  bw: 273,  price: 2500 },
+  { name: 'M4 Pro 24G',     tier: 'apple', vram: 24,  bw: 273,  price: 2000 },
+  { name: 'M3 Ultra 192G',  tier: 'apple', vram: 192, bw: 800,  price: 7000 },
+  { name: 'M3 Max 128G',    tier: 'apple', vram: 128, bw: 400,  price: 4500 },
+  { name: 'M3 Max 64G',     tier: 'apple', vram: 64,  bw: 400,  price: 3500 },
+  { name: 'M3 Pro 36G',     tier: 'apple', vram: 36,  bw: 150,  price: 2000 },
+  { name: 'M2 Ultra 192G',  tier: 'apple', vram: 192, bw: 800,  price: 5000 },
+  { name: 'M2 Max 96G',     tier: 'apple', vram: 96,  bw: 400,  price: 2500 },
+  // Workstation
+  { name: 'RTX 6000 Ada', tier: 'workstation', vram: 48,  bw: 960,  price: 7000  },
+  { name: 'RTX 5000 Ada', tier: 'workstation', vram: 32,  bw: 576,  price: 4500  },
+  { name: 'RTX 4500 Ada', tier: 'workstation', vram: 24,  bw: 432,  price: 2800  },
+  { name: 'RTX 4000 Ada', tier: 'workstation', vram: 20,  bw: 360,  price: 1800  },
+  { name: 'A40',           tier: 'workstation', vram: 48,  bw: 696,  price: 5000  },
+  { name: 'MI300X',        tier: 'workstation', vram: 192, bw: 5300, price: 15000 },
+  { name: 'MI250X',        tier: 'workstation', vram: 128, bw: 3277, price: 8000  },
+  // Datacenter
+  { name: 'GB200',     tier: 'datacenter', vram: 192, bw: 8000, price: 80000 },
+  { name: 'B200',      tier: 'datacenter', vram: 192, bw: 8000, price: 50000 },
+  { name: 'B100',      tier: 'datacenter', vram: 192, bw: 7200, price: 40000 },
+  { name: 'GH200',     tier: 'datacenter', vram: 96,  bw: 4000, price: 35000 },
+  { name: 'H200 SXM',  tier: 'datacenter', vram: 141, bw: 4800, price: 30000 },
+  { name: 'H100 SXM',  tier: 'datacenter', vram: 80,  bw: 3350, price: 25000 },
+  { name: 'H100 PCIe', tier: 'datacenter', vram: 80,  bw: 2000, price: 18000 },
+  { name: 'A100 80G',  tier: 'datacenter', vram: 80,  bw: 2000, price: 12000 },
+  { name: 'A100 40G',  tier: 'datacenter', vram: 40,  bw: 1600, price: 8000  },
+  { name: 'L40S',      tier: 'datacenter', vram: 48,  bw: 864,  price: 10000 },
+];
+
+// ── Model landing pages ────────────────────────────────────────
+// Server-side renders a static HTML page for each featured model.
+// Uses FLAGSHIP_VRAM_FP16 + BENCHMARK_DATA for accurate data.
+const MODEL_PAGE_TEMPLATE = fs.readFileSync(path.join(__dirname, 'public', 'model-page.html'), 'utf8');
+
+function renderModelPage(entry) {
+  const fp16 = entry.fp16Vram;
+
+  // VRAM table rows for each quantization
+  const quantRows = [
+    { fmt: 'FP32',      key: 'fp32',    factor: 2.0,  note: 'Full precision, largest footprint' },
+    { fmt: 'FP16/BF16', key: 'fp16',    factor: 1.0,  note: 'Standard inference precision' },
+    { fmt: 'INT8',      key: 'int8',    factor: 0.5,  note: '~50% smaller, minimal quality loss' },
+    { fmt: 'INT4',      key: 'int4',    factor: 0.25, note: '~75% smaller, slight quality loss' },
+    { fmt: 'GGUF Q8',   key: 'gguf_q8', factor: 0.5,  note: 'GGUF 8-bit — great for llama.cpp' },
+    { fmt: 'GGUF Q4',   key: 'gguf_q4', factor: 0.25, note: 'GGUF 4-bit — runs on consumer GPUs' },
+  ];
+  const maxVram = fp16 * 2; // fp32 is the largest
+  const vramRows = quantRows.map(q => {
+    const gb = Math.ceil(fp16 * q.factor * 10) / 10;
+    const barPct = Math.round((gb / maxVram) * 100);
+    const fits4090  = gb <= 24 ? '<span class="fits-chip fits-yes">RTX 4090</span>' : '';
+    const fits3090  = gb <= 24 && !fits4090 ? '<span class="fits-chip fits-yes">RTX 3090</span>' : '';
+    const fitsA100  = gb <= 80 ? '<span class="fits-chip fits-yes">A100</span>' : '';
+    const fitsM3Max = gb <= 128 ? '<span class="fits-chip fits-yes">M3 Max 128G</span>' : '';
+    let fitsLabel = '';
+    if (gb <= 8)   fitsLabel = '<span class="fits-chip fits-yes">Any 8GB+ GPU</span>';
+    else if (gb <= 12)  fitsLabel = '<span class="fits-chip fits-yes">Any 12GB+ GPU</span>';
+    else if (gb <= 16)  fitsLabel = '<span class="fits-chip fits-yes">Any 16GB+ GPU</span>';
+    else if (gb <= 24)  fitsLabel = '<span class="fits-chip fits-yes">RTX 4090 / 3090</span>';
+    else if (gb <= 40)  fitsLabel = '<span class="fits-chip fits-yes">A100 40G / M3 Max 64G</span>';
+    else if (gb <= 48)  fitsLabel = '<span class="fits-chip fits-yes">A40 / RTX 6000 Ada / M4 Pro 48G</span>';
+    else if (gb <= 80)  fitsLabel = '<span class="fits-chip fits-yes">A100 80G / H100</span>';
+    else if (gb <= 128) fitsLabel = '<span class="fits-chip fits-yes">M3 Max 128G / MI250X</span>';
+    else if (gb <= 192) fitsLabel = '<span class="fits-chip fits-yes">H200 / M4 Ultra / MI300X</span>';
+    else                fitsLabel = '<span class="fits-chip fits-no">Multi-node required</span>';
+    return `<tr><td><span class="quant-label">${q.fmt}</span></td><td><span class="vram-val">${gb} GB</span><div class="vram-bar-wrap"><div class="vram-bar-fill" style="width:${barPct}%"></div></div></td><td style="color:var(--text-muted);font-size:0.82rem">${q.note}</td><td>${fitsLabel}</td></tr>`;
+  }).join('\n');
+
+  // GPU compat cards
+  const int4Vram = Math.ceil(fp16 * 0.25 * 10) / 10;
+  const gpuCards = FEATURED_GPUS.map(gpu => {
+    let config = null;
+    let configLabel = '';
+    let tps = 0;
+    // Try single GPU at FP16
+    if (gpu.vram >= fp16) {
+      config = { count: 1, eff: 0.85, totalVram: gpu.vram };
+      configLabel = `${gpu.name} (FP16)`;
+    } else if (gpu.vram * 2 >= fp16) {
+      config = { count: 2, eff: 0.80, totalVram: gpu.vram * 2 };
+      configLabel = `2× ${gpu.name} (FP16)`;
+    } else if (gpu.vram >= int4Vram) {
+      // Fits at INT4
+      config = { count: 1, eff: 0.85, totalVram: gpu.vram, vramUsed: int4Vram };
+      configLabel = `${gpu.name} (INT4/GGUF)`;
+    }
+    let tier = 'no', badge = 'N/A', sub = 'Does not fit', icon = '💻';
+    if (config) {
+      const usedVram = config.vramUsed || fp16;
+      tps = Math.round((gpu.bw * config.count * config.eff) / usedVram);
+      tier = tps >= 50 ? 'fast' : tps >= 15 ? 'medium' : 'slow';
+      badge = `~${tps} tok/s`;
+      sub = configLabel;
+      icon = gpu.tier === 'apple' ? '🍎' : gpu.tier === 'datacenter' ? '🖥️' : '💚';
+    }
+    const fitsClass = config ? ' fits' : '';
+    return `<div class="gpu-compat-card${fitsClass}"><div class="gpu-icon">${icon}</div><div class="gpu-info"><div class="gpu-name">${gpu.name} <span style="color:var(--text-muted);font-weight:400;font-size:0.78rem">${gpu.vram} GB</span></div><div class="gpu-sub">${sub}</div></div><span class="tps-badge tps-${tier}">${badge}</span></div>`;
+  }).join('\n');
+
+  // Benchmark cells
+  const benchInfo = BENCHMARK_DATA[entry.id] || null;
+  let benchmarkSection = '';
+  if (benchInfo && Object.keys(benchInfo).length > 0) {
+    const BENCH_LABELS = { mmlu: 'MMLU', humaneval: 'HumanEval', math: 'MATH', gsm8k: 'GSM8K', arc: 'ARC', ifeval: 'IFEval', swebench: 'SWE-bench', gaia: 'GAIA', hle: 'HLE', gpqa: 'GPQA' };
+    const cells = Object.entries(benchInfo).filter(([k]) => BENCH_LABELS[k]).map(([key, val]) => {
+      const label = BENCH_LABELS[key] || key;
+      const tier = val >= 75 ? 'high' : val >= 50 ? 'medium' : 'low';
+      return `<div class="bench-cell bench-${tier}"><div class="bench-name">${label}</div><div class="bench-val">${val.toFixed(1)}%</div><div class="bench-bar"><div class="bench-bar-fill" style="width:${Math.min(val, 100)}%"></div></div></div>`;
+    }).join('\n');
+    benchmarkSection = `<div class="section"><h2 class="section-title">Benchmark Scores</h2><div class="bench-grid">${cells}</div></div>`;
+  }
+
+  // Related models (same family)
+  let relatedSection = '';
+  try {
+    const all = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'featured_models.json'), 'utf8'));
+    const related = all.filter(m => m.family === entry.family && m.slug !== entry.slug).slice(0, 4);
+    if (related.length > 0) {
+      const cards = related.map(r => `<a class="related-card" href="/models/${r.slug}"><div class="family">${r.family}</div><div class="name">${r.name}</div><div class="sub">${r.params} · ${r.fp16Vram} GB FP16</div></a>`).join('');
+      relatedSection = `<div class="section"><h2 class="section-title">More ${entry.family} Models</h2><div class="related-grid">${cards}</div></div>`;
+    }
+  } catch (_) {}
+
+  const int4Gb = Math.ceil(fp16 * 0.25 * 10) / 10;
+  const toolUrl = `/tool?vram=${int4Gb}&usecase=llm&quantization=int4`;
+  const canonicalUrl = `https://fit-to-metal.up.railway.app/models/${entry.slug}`;
+  const seoTitle = `${entry.name} GPU Requirements — VRAM Calculator | Fit to Metal`;
+  const seoDesc = `How much VRAM to run ${entry.name} (${entry.params})? FP16: ${fp16} GB · INT8: ${Math.ceil(fp16*0.5)} GB · INT4: ${int4Gb} GB. See GPU compatibility and tokens-per-second estimates.`;
+  const seoKeywords = `${entry.name} VRAM, ${entry.name} GPU requirements, how much VRAM for ${entry.name}, ${entry.name} GPU compatibility, ${entry.name} tokens per second, ${entry.family} VRAM requirements`;
+
+  const jsonLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    'name': `${entry.name} GPU Requirements`,
+    'description': seoDesc,
+    'url': canonicalUrl,
+    'about': { '@type': 'SoftwareApplication', 'name': entry.name, 'description': entry.description },
+  });
+
+  return MODEL_PAGE_TEMPLATE
+    .replace(/\{\{SEO_TITLE\}\}/g, seoTitle)
+    .replace(/\{\{SEO_DESCRIPTION\}\}/g, seoDesc)
+    .replace(/\{\{SEO_KEYWORDS\}\}/g, seoKeywords)
+    .replace(/\{\{CANONICAL_URL\}\}/g, canonicalUrl)
+    .replace(/\{\{JSON_LD\}\}/g, jsonLd)
+    .replace(/\{\{MODEL_NAME\}\}/g, entry.name)
+    .replace(/\{\{MODEL_FAMILY\}\}/g, entry.family)
+    .replace(/\{\{MODEL_PARAMS\}\}/g, entry.params)
+    .replace(/\{\{FP16_VRAM\}\}/g, fp16)
+    .replace(/\{\{INT4_VRAM\}\}/g, int4Gb)
+    .replace(/\{\{MODEL_DESCRIPTION\}\}/g, entry.description)
+    .replace('{{VRAM_TABLE_ROWS}}', vramRows)
+    .replace('{{GPU_CARDS}}', gpuCards)
+    .replace('{{BENCHMARK_SECTION}}', benchmarkSection)
+    .replace('{{RELATED_SECTION}}', relatedSection)
+    .replace(/\{\{TOOL_URL\}\}/g, toolUrl);
+}
+
+app.get('/models/:slug', (req, res) => {
+  let featuredModels = [];
+  try { featuredModels = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'featured_models.json'), 'utf8')); } catch (_) {}
+  const entry = featuredModels.find(m => m.slug === req.params.slug);
+  if (!entry) return res.status(404).type('text/html').send('<h1>404 — Model not found</h1><p><a href="/models">Browse all models</a></p>');
+  res.type('text/html').send(renderModelPage(entry));
+});
+
+// ── Model index page ───────────────────────────────────────────
+app.get('/models', (req, res) => {
+  let featuredModels = [];
+  try { featuredModels = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'featured_models.json'), 'utf8')); } catch (_) {}
+  const byFamily = {};
+  featuredModels.forEach(m => { if (!byFamily[m.family]) byFamily[m.family] = []; byFamily[m.family].push(m); });
+  const sections = Object.entries(byFamily).map(([fam, models]) => {
+    const cards = models.map(m => `<div style="border:1px solid #1e1e1e;border-radius:8px;padding:1rem;background:#0f0f0f"><div style="font-size:0.72rem;color:#76b900;text-transform:uppercase;font-weight:600;margin-bottom:0.3rem">${m.family}</div><a href="/models/${m.slug}" style="font-size:0.95rem;font-weight:600;color:#e0e0e0">${m.name}</a><div style="font-size:0.8rem;color:#606060;margin-top:0.2rem">${m.params} · FP16 ${m.fp16Vram} GB</div></div>`).join('');
+    return `<div style="margin-bottom:2rem"><h2 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:#e0e0e0">${fam}</h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.6rem">${cards}</div></div>`;
+  }).join('');
+  res.type('text/html').send(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Model GPU Requirements — Fit to Metal</title><meta name="description" content="GPU VRAM requirements for 50+ popular AI models including Llama, Mistral, Qwen, DeepSeek, Gemma and more."><link rel="canonical" href="https://fit-to-metal.up.railway.app/models"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"></head><body style="background:#0a0a0a;color:#e0e0e0;font-family:Inter,sans-serif;margin:0"><nav style="position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:60px;background:rgba(10,10,10,0.85);backdrop-filter:blur(12px);border-bottom:1px solid #1e1e1e"><a href="/" style="font-weight:700;color:#e0e0e0;text-decoration:none"><span style="color:#76b900">◈</span> Fit to Metal</a><a href="/tool" style="background:#76b900;color:#0a0a0a;font-weight:700;font-size:0.85rem;padding:0.45rem 1.1rem;border-radius:6px;text-decoration:none">Launch Tool →</a></nav><div style="max-width:960px;margin:0 auto;padding:2rem 1.5rem"><div style="margin-bottom:0.5rem;font-size:0.82rem;color:#606060"><a href="/" style="color:#606060">Home</a> › Models</div><h1 style="font-size:2rem;font-weight:800;letter-spacing:-0.025em;margin-bottom:0.5rem">AI Model GPU Requirements</h1><p style="color:#606060;margin-bottom:2rem">VRAM requirements, benchmark scores, and GPU compatibility for 50+ popular open-source models.</p>${sections}</div><footer style="padding:2rem;border-top:1px solid #1e1e1e;text-align:center;color:#606060;font-size:0.82rem">Model data from <a href="https://huggingface.co" target="_blank" style="color:#606060">HuggingFace</a> &amp; <a href="https://artificialanalysis.ai" target="_blank" style="color:#606060">ArtificialAnalysis</a>. Fit to Metal is free and open-source.</footer></body></html>`);
+});
+
+// ── Reverse search: find hardware for a model ─────────────────
+// GET /api/hardware-for-model?model=<hf-id>&targetTps=<n>&quantization=<q>
+app.get('/api/hardware-for-model', (req, res) => {
+  const modelId = (req.query.model || '').trim();
+  const targetTps = parseInt(req.query.targetTps, 10) || 10;
+  const quantization = req.query.quantization || 'fp16';
+
+  if (!modelId) return res.status(400).json({ error: 'Missing query param: model' });
+
+  // Look up model's FP16 VRAM
+  const fp16Vram = FLAGSHIP_VRAM_FP16[modelId];
+  if (!fp16Vram) {
+    // Try case-insensitive match
+    const lc = modelId.toLowerCase();
+    const match = Object.keys(FLAGSHIP_VRAM_FP16).find(k => k.toLowerCase() === lc);
+    if (!match) return res.status(404).json({ error: `Model not found in database: ${modelId}. Only flagship models are supported.` });
+    return res.redirect(307, `/api/hardware-for-model?model=${encodeURIComponent(match)}&targetTps=${targetTps}&quantization=${quantization}`);
+  }
+
+  // Scale VRAM for requested quantization
+  const factor = DTYPE_BYTES[quantization] != null ? DTYPE_BYTES[quantization] / 2 : 1;
+  const requiredVram = Math.ceil(fp16Vram * factor * 10) / 10;
+
+  // Get model name for response
+  const allFeatured = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'featured_models.json'), 'utf8')); } catch (_) { return []; } })();
+  const featuredEntry = allFeatured.find(m => m.id === modelId);
+  const modelName = featuredEntry ? featuredEntry.name : modelId.split('/').pop();
+  const modelParams = featuredEntry ? featuredEntry.params : null;
+
+  const configs = [];
+  for (const gpu of ALL_GPUS) {
+    for (const count of [1, 2, 4, 8]) {
+      const totalVram = gpu.vram * count;
+      if (totalVram < requiredVram) continue;
+
+      const efficiency = count > 1 ? 0.80 : 0.85;
+      const achievedTps = Math.floor((gpu.bw * count * efficiency) / requiredVram);
+      if (achievedTps < targetTps) continue;
+
+      const priceApprox = gpu.price * count;
+      const tpsTier = achievedTps >= 50 ? 'fast' : achievedTps >= 15 ? 'medium' : 'slow';
+
+      configs.push({
+        gpu: gpu.name,
+        tier: gpu.tier,
+        count,
+        totalVramGb: totalVram,
+        requiredVramGb: requiredVram,
+        achievedTps,
+        tpsTier,
+        priceApprox,
+        pricePer: gpu.price,
+        quantization,
+      });
+      break; // only keep lowest count that meets target for each GPU
+    }
+  }
+
+  // Sort: by price ascending, then totalVram ascending
+  configs.sort((a, b) => a.priceApprox - b.priceApprox || a.totalVramGb - b.totalVramGb);
+
+  res.json({
+    model: { id: modelId, name: modelName, params: modelParams, fp16VramGb: fp16Vram, requiredVramGb: requiredVram, quantization },
+    targetTps,
+    total: configs.length,
+    configs: configs.slice(0, 30),
+  });
 });
 
 const PORT = process.env.PORT ?? 4242;
