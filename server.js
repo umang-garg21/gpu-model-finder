@@ -791,69 +791,7 @@ app.get('/api/models', async (req, res) => {
       // Keep models that fit (or have unknown VRAM). If `includeAAOverBudget` is
       // enabled, also keep HF models that were matched to ArtificialAnalysis
       // pages (they are added to `aaAllowIds` above).
-      .filter(m => m.estimatedVRAM === null || m.estimatedVRAM <= vramGB)
-      // Sort priority:
-      //  1. Models with VRAM known before unknowns (we can confirm they fit)
-      //  2. Among those with benchmark scores: higher overall score first
-      //     (best performing models surface to the top regardless of size)
-      //  3. Large VRAM budget (≥48 GB): within the same score tier, prefer
-      //     bigger models — users with datacenter GPUs want the heavyweights
-      //  4. Fallback: user's chosen HF sort (downloads / likes / newest)
-      .sort((a, b) => {
-        const aK = a.estimatedVRAM !== null;
-        const bK = b.estimatedVRAM !== null;
-        if (aK !== bK) return aK ? -1 : 1;
-
-        // Prioritize models that have ArtificialAnalysis task-specific scores for this usecase
-        const aAA = typeof a.aaTaskScore === 'number' ? a.aaTaskScore : null;
-        const bAA = typeof b.aaTaskScore === 'number' ? b.aaTaskScore : null;
-        if (aAA !== null && bAA === null) return -1;
-        if (aAA === null && bAA !== null) return 1;
-        if (aAA !== null && bAA !== null) {
-          const diff = bAA - aAA;
-          if (Math.abs(diff) > 0.5) return diff;
-        }
-
-        // If no AA scores, fall back to HF task-specific scores
-        const aHF = typeof a.hfTaskScore === 'number' ? a.hfTaskScore : null;
-        const bHF = typeof b.hfTaskScore === 'number' ? b.hfTaskScore : null;
-        if (aHF !== null && bHF === null) return -1;
-        if (aHF === null && bHF !== null) return 1;
-        if (aHF !== null && bHF !== null) {
-          const diffHF = bHF - aHF;
-          if (Math.abs(diffHF) > 0.5) return diffHF;
-        }
-
-        // Benchmark tier: frontier models (with hard benchmark data) rank before models
-        // that only have easy benchmark data. Prevents distillation models with ceiling-level
-        // easy scores from outranking frontier models that have HLE/GPQA/SWE-bench data.
-        const aTier = a.benchmarkTier ?? 0;
-        const bTier = b.benchmarkTier ?? 0;
-        if (bTier !== aTier) return bTier - aTier;
-
-        // Benchmark quality: scored models first, then by score descending (overall)
-        const aS = a.overallScore;
-        const bS = b.overallScore;
-        if (aS !== null && bS === null) return -1;
-        if (aS === null && bS !== null) return 1;
-        if (aS !== null && bS !== null) {
-          const diff = bS - aS;
-          if (Math.abs(diff) > 1.5) return diff; // only separate meaningful gaps
-        }
-
-        // Size preference: only for very large VRAM budgets (>200 GB) with meaningful gap.
-        // Raised from ≥48 GB (was firing too early, overriding benchmark quality ranking).
-        if (aK && bK && vramGB > 200) {
-          const diff = b.estimatedVRAM - a.estimatedVRAM;
-          if (Math.abs(diff) > 20) return diff;
-        }
-
-        // Fallback: user's preferred sort signal
-        if (sort === 'likes')  return b.likes - a.likes;
-        if (sort === 'newest') return new Date(b.lastModified) - new Date(a.lastModified);
-        return b.downloads - a.downloads;
-      })
-      .slice(0, maxResults);
+      .filter(m => m.estimatedVRAM === null || m.estimatedVRAM <= vramGB);
 
       // Attach ArtificialAnalysis metrics when available (match by slug/title/url)
       // `aaList` is declared here so later sections (AA-only injection) can reuse it.
@@ -967,9 +905,14 @@ app.get('/api/models', async (req, res) => {
                             m.benchmarks[bk] = Math.max(prev, v);
                             // keep existing AA url (could be same or different); prefer existing
                           } else {
-                            // prev was 'hf' — override with AA
-                            m.benchmarks[bk] = v;
-                            m.benchmarks_source[bk] = { source: 'aa', url: found.url };
+                            // prev was 'hf' — only override if AA score is higher.
+                            // This prevents AA from replacing a good BENCHMARK_DATA score
+                            // (e.g. humaneval=83%) with a lower hard-benchmark score
+                            // (e.g. swebench=2%), which would collapse the domain score.
+                            if (v > prev) {
+                              m.benchmarks[bk] = v;
+                              m.benchmarks_source[bk] = { source: 'aa', url: found.url };
+                            }
                           }
                         }
                     }
@@ -1083,22 +1026,17 @@ app.get('/api/models', async (req, res) => {
       processed.forEach(m => {
         try {
           const allBenchmarks = m.benchmarks || {};
-          // Derive HF-sourced benchmarks for a separate hfTaskScore signal
-          let hfBenchmarks = m._hfBenchmarks || null;
-          if (!hfBenchmarks && m.benchmarks && m.benchmarks_source) {
-            hfBenchmarks = {};
-            for (const [k,v] of Object.entries(m.benchmarks)) {
-              if (m.benchmarks_source[k]?.source === 'hf') hfBenchmarks[k] = v;
-            }
-            if (!Object.keys(hfBenchmarks).length) hfBenchmarks = null;
-          }
-          // aaTaskScore: from merged benchmarks (AA data already folded in by merge block)
-          m.aaTaskScore  = m.artificialAnalysis?.metrics ? computeNormalizedTaskScore(allBenchmarks) : null;
-          m.hfTaskScore  = computeNormalizedTaskScore(hfBenchmarks);
+          // Single unified task score from ALL available benchmarks (BENCHMARK_DATA + AA merged).
+          // Previously aaTaskScore was gated on AA presence, causing every AA-listed model
+          // to sort above every BENCHMARK_DATA-only model regardless of actual quality.
+          // Collapsed to one score so ranking is purely benchmark-quality driven.
+          m.taskScore    = computeNormalizedTaskScore(allBenchmarks);
+          m.aaTaskScore  = m.taskScore; // alias kept for frontend compatibility
+          m.hfTaskScore  = null;
           m.hasAAmetrics = !!m.artificialAnalysis?.metrics;
           m.benchmarkTier = benchmarkTier(allBenchmarks);
         } catch (e) {
-          m.aaTaskScore = null; m.hfTaskScore = null; m.hasAAmetrics = false; m.benchmarkTier = 0;
+          m.taskScore = null; m.aaTaskScore = null; m.hfTaskScore = null; m.hasAAmetrics = false; m.benchmarkTier = 0;
         }
       });
 
@@ -1158,8 +1096,8 @@ app.get('/api/models', async (req, res) => {
             artificialAnalysis: { url: a.url, metrics: a.metrics, title: a.title },
           };
 
-          // Compute task score using the same normalized pipeline as processed models
-          modelStub.aaTaskScore  = computeNormalizedTaskScore(modelStub.benchmarks || {});
+          modelStub.taskScore    = computeNormalizedTaskScore(modelStub.benchmarks || {});
+          modelStub.aaTaskScore  = modelStub.taskScore;
           modelStub.hfTaskScore  = null;
           modelStub.hasAAmetrics = true;
           modelStub.benchmarkTier = benchmarkTier(modelStub.benchmarks || {});
@@ -1186,6 +1124,52 @@ app.get('/api/models', async (req, res) => {
       }
 
       processed = processed.filter(isOpenSourceModel);
+
+      // Sort AFTER all enrichment is done (AA merge + task-score annotation).
+      // Previously sort ran before annotation, so taskScore/benchmarkTier were
+      // always undefined at sort time — effective sort was just overallScore → downloads.
+      processed.sort((a, b) => {
+        const aK = a.estimatedVRAM !== null;
+        const bK = b.estimatedVRAM !== null;
+        if (aK !== bK) return aK ? -1 : 1;
+
+        // Unified task score — difficulty²-weighted, benchmark-quality driven.
+        const aTS = typeof a.taskScore === 'number' ? a.taskScore : null;
+        const bTS = typeof b.taskScore === 'number' ? b.taskScore : null;
+        if (aTS !== null && bTS === null) return -1;
+        if (aTS === null && bTS !== null) return 1;
+        if (aTS !== null && bTS !== null) {
+          const diff = bTS - aTS;
+          if (Math.abs(diff) > 0.5) return diff;
+        }
+
+        // Benchmark tier: frontier models rank above models with only easy benchmarks.
+        const aTier = a.benchmarkTier ?? 0;
+        const bTier = b.benchmarkTier ?? 0;
+        if (bTier !== aTier) return bTier - aTier;
+
+        // Overall score fallback for models without task-aligned benchmarks.
+        const aS = a.overallScore;
+        const bS = b.overallScore;
+        if (aS !== null && bS === null) return -1;
+        if (aS === null && bS !== null) return 1;
+        if (aS !== null && bS !== null) {
+          const diff = bS - aS;
+          if (Math.abs(diff) > 1.5) return diff;
+        }
+
+        // Size preference: only for very large VRAM budgets (>200 GB).
+        if (aK && bK && vramGB > 200) {
+          const diff = b.estimatedVRAM - a.estimatedVRAM;
+          if (Math.abs(diff) > 20) return diff;
+        }
+
+        // Fallback: user's preferred sort signal
+        if (sort === 'likes')  return b.likes - a.likes;
+        if (sort === 'newest') return new Date(b.lastModified) - new Date(a.lastModified);
+        return b.downloads - a.downloads;
+      });
+      processed = processed.slice(0, maxResults);
 
     // Remove internal preserved HF benchmarks before returning
     processed.forEach(m => { if (m && m._hfBenchmarks) delete m._hfBenchmarks; });

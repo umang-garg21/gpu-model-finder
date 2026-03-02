@@ -718,7 +718,9 @@ function computeOverallScore(benchmarks, usecase) {
 
 function getBenchmarkScore(model, key, usecase) {
   if (!model.benchmarks) return null;
-  if (key === 'overall') return computeOverallScore(model.benchmarks, usecase);
+  if (key === 'overall') return typeof model.overallScore === 'number'
+    ? model.overallScore
+    : computeOverallScore(model.benchmarks, usecase);
   return model.benchmarks[key] ?? null;
 }
 
@@ -841,7 +843,9 @@ function renderModalContent(model) {
   const latency = estimateLatency(model, state.selectedGpu, state.gpuCount, state.usecase);
   const competitors = findCompetitors(model);
   const deployOptions = getDeploymentOptions(model);
-  const overallScore = computeOverallScore(model.benchmarks, state.usecase);
+  const overallScore = typeof model.overallScore === 'number'
+    ? model.overallScore
+    : computeOverallScore(model.benchmarks, state.usecase);
   const taskDesc = TASK_DESCRIPTIONS[model.pipeline] ?? `${model.task} model.`;
 
   // Format numbers
@@ -883,7 +887,9 @@ function renderModalContent(model) {
   // Competitor cards
   const competitorHtml = competitors.length
     ? competitors.map(c => {
-        const cScore = computeOverallScore(c.benchmarks, state.usecase);
+        const cScore = typeof c.overallScore === 'number'
+          ? c.overallScore
+          : computeOverallScore(c.benchmarks, state.usecase);
         const cVram  = c.estimatedVRAM ? `~${c.estimatedVRAM} GB` : 'VRAM ?';
         return `
           <div class="competitor-card" data-id="${escapeHtml(c.id)}">
