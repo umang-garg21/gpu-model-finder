@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 const app   = express();
 const cache = new NodeCache({ stdTTL: 600 }); // 10-minute cache
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use(express.json());
 
 // ── Page routes ────────────────────────────────────────────────
