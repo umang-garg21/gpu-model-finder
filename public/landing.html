@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- ── Favicon ──────────────────────────────────────────────── -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/favicon.svg">
+
   <!-- ── SEO ──────────────────────────────────────────────────── -->
   <meta name="google-site-verification" content="k7zHklOtdojWKO-XlHJ8A0UwuKaDZRb3fq5LEdW2gAA" />
   <title>Fit to Metal — Free VRAM Calculator for AI Models & LLMs</title>
@@ -31,7 +35,7 @@
     "@type": "WebApplication",
     "name": "Fit to Metal",
     "description": "Free VRAM calculator and GPU compatibility checker for open-source AI models including LLMs, image generators, and audio models.",
-    "url": "https://fittometal.com",
+    "url": "https://fit-to-metal.up.railway.app",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Web",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -360,6 +364,29 @@
       color: var(--accent);
     }
 
+    /* ── Model pills bar ───────────────────────────────────────── */
+    .model-links-bar {
+      padding: 2rem 1.5rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .model-links-bar .bar-label {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-muted); margin-bottom: 1rem;
+    }
+    .model-pills-row { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; max-width: 900px; margin: 0 auto; }
+    .model-pill {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.3rem 0.75rem; border-radius: 999px;
+      border: 1px solid var(--border-hi); background: var(--surface2);
+      font-size: 0.8rem; color: var(--text-muted);
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .model-pill:hover { border-color: rgba(118,185,0,0.4); color: var(--accent); background: var(--accent-low); }
+    .model-pill .mparam { font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .model-pill:hover .mparam { color: var(--accent); opacity: 0.7; }
+
     /* ── Section wrapper ───────────────────────────────────────── */
     .section {
       max-width: 1100px;
@@ -677,6 +704,25 @@
     <span class="gpu-pill">2× RTX 3090 <span class="vram-tag">48 GB</span></span>
     <span class="gpu-pill">4× A100 <span class="vram-tag">320 GB</span></span>
     <span class="gpu-pill">Custom VRAM <span class="vram-tag">any</span></span>
+  </div>
+</div>
+
+<!-- ── Model pills ──────────────────────────────────────────────── -->
+<div class="model-links-bar">
+  <p class="bar-label">GPU requirements for popular models</p>
+  <div class="model-pills-row">
+    <a class="model-pill" href="/models/llama-3-3-70b-instruct">Llama 3.3 70B <span class="mparam">141 GB</span></a>
+    <a class="model-pill" href="/models/llama-3-1-8b-instruct">Llama 3.1 8B <span class="mparam">16 GB</span></a>
+    <a class="model-pill" href="/models/deepseek-r1">DeepSeek R1 <span class="mparam">671B</span></a>
+    <a class="model-pill" href="/models/deepseek-r1-distill-qwen-7b">DeepSeek R1 7B <span class="mparam">14 GB</span></a>
+    <a class="model-pill" href="/models/qwen2-5-72b-instruct">Qwen 2.5 72B <span class="mparam">145 GB</span></a>
+    <a class="model-pill" href="/models/qwen2-5-7b-instruct">Qwen 2.5 7B <span class="mparam">14 GB</span></a>
+    <a class="model-pill" href="/models/qwen3-32b">Qwen3 32B <span class="mparam">65 GB</span></a>
+    <a class="model-pill" href="/models/mistral-7b-instruct">Mistral 7B <span class="mparam">14 GB</span></a>
+    <a class="model-pill" href="/models/gemma-3-12b-it">Gemma 3 12B <span class="mparam">24 GB</span></a>
+    <a class="model-pill" href="/models/phi-4">Phi-4 14B <span class="mparam">28 GB</span></a>
+    <a class="model-pill" href="/models/mixtral-8x7b-instruct">Mixtral 8x7B <span class="mparam">93 GB</span></a>
+    <a class="model-pill" href="/models/qwq-32b">QwQ 32B <span class="mparam">65 GB</span></a>
   </div>
 </div>
 

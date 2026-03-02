@@ -1465,12 +1465,63 @@ function renderModelPage(entry) {
     'about': { '@type': 'SoftwareApplication', 'name': entry.name, 'description': entry.description },
   });
 
+  // BreadcrumbList — helps Google show breadcrumbs in SERPs
+  const jsonLdBreadcrumb = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://fit-to-metal.up.railway.app/' },
+      { '@type': 'ListItem', 'position': 2, 'name': 'Models', 'item': 'https://fit-to-metal.up.railway.app/models' },
+      { '@type': 'ListItem', 'position': 3, 'name': entry.name, 'item': canonicalUrl },
+    ],
+  });
+
+  // FAQPage — unlocks Google FAQ rich results for each model page
+  const int8Gb = Math.ceil(fp16 * 0.5 * 10) / 10;
+  const singleGpuAnswer = int4Gb <= 8
+    ? `Yes. At 4-bit (GGUF Q4/INT4) it only needs ${int4Gb} GB VRAM — fits on any 8 GB+ GPU including the RTX 4060 and RX 6650 XT.`
+    : int4Gb <= 16
+    ? `Yes at 4-bit quantization (${int4Gb} GB VRAM required). An RTX 4070 Ti (16 GB) or M4 Pro 24G will handle it comfortably.`
+    : int4Gb <= 24
+    ? `Yes at 4-bit quantization (${int4Gb} GB VRAM). A single RTX 4090 (24 GB) or M3 Max can run it.`
+    : int4Gb <= 48
+    ? `At 4-bit (${int4Gb} GB VRAM) it fits on an RTX 6000 Ada (48 GB) or M4 Pro 48G. Consumer GPUs require two cards.`
+    : `At 4-bit (${int4Gb} GB VRAM) you need a high-end workstation or server GPU, or multiple consumer GPUs combined.`;
+  const bestQuantAnswer = fp16 <= 24
+    ? `FP16 (${fp16} GB) works on a single RTX 4090 or M3 Max and gives full quality. Use GGUF Q4 (${int4Gb} GB) for 8–12 GB GPUs.`
+    : fp16 <= 80
+    ? `INT8 (${int8Gb} GB) balances quality and VRAM use. For single-GPU deployment on consumer hardware, GGUF Q4 (${int4Gb} GB) is the practical choice.`
+    : `GGUF Q4 (${int4Gb} GB) is the recommended starting point for consumer hardware. INT8 (${int8Gb} GB) is better if you have the VRAM.`;
+  const jsonLdFaq = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': [
+      {
+        '@type': 'Question',
+        'name': `How much VRAM do I need to run ${entry.name}?`,
+        'acceptedAnswer': { '@type': 'Answer', 'text': `${entry.name} (${entry.params}) requires ${fp16} GB VRAM in FP16, ${int8Gb} GB in INT8, and ${int4Gb} GB in 4-bit (INT4/GGUF Q4). FP32 needs ${Math.ceil(fp16*2)} GB.` },
+      },
+      {
+        '@type': 'Question',
+        'name': `Can I run ${entry.name} on a single consumer GPU?`,
+        'acceptedAnswer': { '@type': 'Answer', 'text': singleGpuAnswer },
+      },
+      {
+        '@type': 'Question',
+        'name': `What is the best quantization for ${entry.name} on consumer hardware?`,
+        'acceptedAnswer': { '@type': 'Answer', 'text': bestQuantAnswer },
+      },
+    ],
+  });
+
   return MODEL_PAGE_TEMPLATE
     .replace(/\{\{SEO_TITLE\}\}/g, seoTitle)
     .replace(/\{\{SEO_DESCRIPTION\}\}/g, seoDesc)
     .replace(/\{\{SEO_KEYWORDS\}\}/g, seoKeywords)
     .replace(/\{\{CANONICAL_URL\}\}/g, canonicalUrl)
     .replace(/\{\{JSON_LD\}\}/g, jsonLd)
+    .replace('{{JSON_LD_BREADCRUMB}}', jsonLdBreadcrumb)
+    .replace('{{JSON_LD_FAQ}}', jsonLdFaq)
     .replace(/\{\{MODEL_NAME\}\}/g, entry.name)
     .replace(/\{\{MODEL_FAMILY\}\}/g, entry.family)
     .replace(/\{\{MODEL_PARAMS\}\}/g, entry.params)

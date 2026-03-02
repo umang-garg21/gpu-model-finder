@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/favicon.svg">
   <title>Find Hardware for Any AI Model — Reverse GPU Search | Fit to Metal</title>
   <meta name="description" content="Pick an AI model and target tokens-per-second, and instantly find the cheapest GPU configuration that can run it. Supports Llama, Mistral, Qwen, DeepSeek and 150+ models." />
   <meta name="keywords" content="GPU for AI model, cheapest GPU to run Llama, minimum hardware for LLM, AI inference hardware calculator, tokens per second GPU, LLM hardware requirements" />
@@ -14,6 +16,54 @@
   <meta property="og:title"       content="Find Hardware for Any AI Model | Fit to Metal" />
   <meta property="og:description" content="Pick a model + target TPS → see the cheapest GPU configs that can run it." />
   <meta property="og:image"       content="https://fit-to-metal.up.railway.app/og-image.png" />
+
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Find Hardware for Any AI Model | Fit to Metal" />
+  <meta name="twitter:description" content="Pick a model + target TPS → see the cheapest GPU configs that can run it." />
+  <meta name="twitter:image"       content="https://fit-to-metal.up.railway.app/og-image.png" />
+
+  <meta name="google-site-verification" content="k7zHklOtdojWKO-XlHJ8A0UwuKaDZRb3fq5LEdW2gAA" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Fit to Metal — Reverse Hardware Search",
+    "description": "Find the minimum GPU configuration needed to run any open-source AI model at a target tokens-per-second. Supports 150+ models including Llama, Mistral, Qwen, DeepSeek and more.",
+    "url": "https://fit-to-metal.up.railway.app/reverse",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to find the cheapest GPU to run an AI model",
+    "description": "Use Fit to Metal's Reverse Search to find every GPU configuration that can run your chosen model at a target speed.",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Search for your model",
+        "text": "Type the name of the AI model you want to run (e.g. Llama 3.1 70B, DeepSeek R1, Qwen 2.5 72B). Select it from the autocomplete results."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Set your target speed",
+        "text": "Use the slider to set the minimum tokens per second you need. 20 tok/s is comfortable for interactive chat; 50+ tok/s feels very fast."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "See cheapest hardware configs",
+        "text": "Click Find Hardware to see every single GPU and multi-GPU setup that achieves your target, sorted from cheapest to most expensive with approximate retail prices."
+      }
+    ]
+  }
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
