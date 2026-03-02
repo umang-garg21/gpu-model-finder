@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#111111"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#76b900" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#76b900" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle accent glow top-left -->
+  <ellipse cx="200" cy="200" rx="400" ry="300" fill="url(#glow)"/>
+
+  <!-- Border -->
+  <rect x="1" y="1" width="1198" height="628" rx="0" fill="none" stroke="#222" stroke-width="2"/>
+
+  <!-- Logo mark: diamond -->
+  <polygon points="90,200 150,140 210,200 150,260" fill="none" stroke="#76b900" stroke-width="5" stroke-linejoin="round"/>
+  <!-- Logo mark: center dot -->
+  <circle cx="150" cy="200" r="14" fill="#76b900"/>
+
+  <!-- Site name -->
+  <text x="210" y="218" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="68" font-weight="700" fill="#f0f0f0" letter-spacing="-2">Fit to Metal</text>
+
+  <!-- Divider -->
+  <rect x="90" y="295" width="1020" height="2" fill="#222"/>
+
+  <!-- Tagline -->
+  <text x="90" y="360" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="34" font-weight="400" fill="#aaa" letter-spacing="0">Free GPU VRAM calculator for 500+ open-source AI models</text>
+
+  <!-- Feature pills -->
+  <!-- Pill 1 -->
+  <rect x="90" y="410" width="290" height="52" rx="26" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+  <text x="235" y="442" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="22" fill="#76b900" text-anchor="middle" font-weight="600">200+ GPUs</text>
+
+  <!-- Pill 2 -->
+  <rect x="400" y="410" width="290" height="52" rx="26" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+  <text x="545" y="442" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="22" fill="#76b900" text-anchor="middle" font-weight="600">500+ Models</text>
+
+  <!-- Pill 3 -->
+  <rect x="710" y="410" width="290" height="52" rx="26" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+  <text x="855" y="442" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="22" fill="#76b900" text-anchor="middle" font-weight="600">All Quants</text>
+
+  <!-- URL -->
+  <text x="90" y="570" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="24" fill="#555" letter-spacing="1">fit-to-metal.up.railway.app</text>
+</svg>
