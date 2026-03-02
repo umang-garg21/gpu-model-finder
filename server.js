@@ -16,6 +16,45 @@ app.use(express.json());
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'landing.html')));
 app.get('/tool', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
+// ── Google Search Console HTML file verification ───────────────
+app.get('/googlek7zHklOtdojWKO-XlHJ8A0UwuKaDZRb3fq5LEdW2gAA.html', (_req, res) => {
+  res.type('text/html').send('google-site-verification: googlek7zHklOtdojWKO-XlHJ8A0UwuKaDZRb3fq5LEdW2gAA.html');
+});
+
+// ── SEO: robots.txt + sitemap.xml ──────────────────────────────
+app.get('/robots.txt', (req, res) => {
+  const host = `${req.protocol}://${req.get('host')}`;
+  res.type('text/plain').send(
+`User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: ${host}/sitemap.xml`
+  );
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  const host = `${req.protocol}://${req.get('host')}`;
+  const now = new Date().toISOString().split('T')[0];
+  res.type('application/xml').send(
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${host}/</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${host}/tool</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+</urlset>`
+  );
+});
+
 // ── Constants ──────────────────────────────────────────────────
 const DTYPE_BYTES = { fp32: 4, fp16: 2, bf16: 2, int8: 1, int4: 0.5, gguf_q4: 0.5, gguf_q8: 1 };
 
