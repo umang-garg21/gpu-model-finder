@@ -1453,7 +1453,7 @@ function renderModelPage(entry) {
   const int4Gb = Math.ceil(fp16 * 0.25 * 10) / 10;
   const toolUrl = `/tool?vram=${int4Gb}&usecase=llm&quantization=int4`;
   const canonicalUrl = `https://fit-to-metal.up.railway.app/models/${entry.slug}`;
-  const seoTitle = `${entry.name} GPU Requirements — VRAM Calculator | Fit to Metal`;
+  const seoTitle = `${entry.name} GPU Requirements — VRAM Calculator | Bring your own GPU (BYOG)`;
   const seoDesc = `How much VRAM to run ${entry.name} (${entry.params})? FP16: ${fp16} GB · INT8: ${Math.ceil(fp16*0.5)} GB · INT4: ${int4Gb} GB. See GPU compatibility and tokens-per-second estimates.`;
   const seoKeywords = `${entry.name} VRAM, ${entry.name} GPU requirements, how much VRAM for ${entry.name}, ${entry.name} GPU compatibility, ${entry.name} tokens per second, ${entry.family} VRAM requirements`;
 
@@ -1554,7 +1554,7 @@ app.get('/models', (req, res) => {
     const cards = models.map(m => `<div style="border:1px solid #1e1e1e;border-radius:8px;padding:1rem;background:#0f0f0f"><div style="font-size:0.72rem;color:#76b900;text-transform:uppercase;font-weight:600;margin-bottom:0.3rem">${m.family}</div><a href="/models/${m.slug}" style="font-size:0.95rem;font-weight:600;color:#e0e0e0">${m.name}</a><div style="font-size:0.8rem;color:#606060;margin-top:0.2rem">${m.params} · FP16 ${m.fp16Vram} GB</div></div>`).join('');
     return `<div style="margin-bottom:2rem"><h2 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:#e0e0e0">${fam}</h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.6rem">${cards}</div></div>`;
   }).join('');
-  res.type('text/html').send(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Model GPU Requirements — Fit to Metal</title><meta name="description" content="GPU VRAM requirements for 50+ popular AI models including Llama, Mistral, Qwen, DeepSeek, Gemma and more."><link rel="canonical" href="https://fit-to-metal.up.railway.app/models"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"></head><body style="background:#0a0a0a;color:#e0e0e0;font-family:Inter,sans-serif;margin:0"><nav style="position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:60px;background:rgba(10,10,10,0.85);backdrop-filter:blur(12px);border-bottom:1px solid #1e1e1e"><a href="/" style="font-weight:700;color:#e0e0e0;text-decoration:none"><span style="color:#76b900">◈</span> Fit to Metal</a><a href="/tool" style="background:#76b900;color:#0a0a0a;font-weight:700;font-size:0.85rem;padding:0.45rem 1.1rem;border-radius:6px;text-decoration:none">Launch Tool →</a></nav><div style="max-width:960px;margin:0 auto;padding:2rem 1.5rem"><div style="margin-bottom:0.5rem;font-size:0.82rem;color:#606060"><a href="/" style="color:#606060">Home</a> › Models</div><h1 style="font-size:2rem;font-weight:800;letter-spacing:-0.025em;margin-bottom:0.5rem">AI Model GPU Requirements</h1><p style="color:#606060;margin-bottom:2rem">VRAM requirements, benchmark scores, and GPU compatibility for 50+ popular open-source models.</p>${sections}</div><footer style="padding:2rem;border-top:1px solid #1e1e1e;text-align:center;color:#606060;font-size:0.82rem">Model data from <a href="https://huggingface.co" target="_blank" style="color:#606060">HuggingFace</a> &amp; <a href="https://artificialanalysis.ai" target="_blank" style="color:#606060">ArtificialAnalysis</a>. Fit to Metal is free and open-source.</footer></body></html>`);
+  res.type('text/html').send(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Model GPU Requirements — Bring your own GPU (BYOG)</title><meta name="description" content="GPU VRAM requirements for 50+ popular AI models including Llama, Mistral, Qwen, DeepSeek, Gemma and more."><link rel="canonical" href="https://fit-to-metal.up.railway.app/models"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"></head><body style="background:#0a0a0a;color:#e0e0e0;font-family:Inter,sans-serif;margin:0"><nav style="position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:60px;background:rgba(10,10,10,0.85);backdrop-filter:blur(12px);border-bottom:1px solid #1e1e1e"><a href="/" style="font-weight:700;color:#e0e0e0;text-decoration:none"><span style="color:#76b900">◈</span> Bring your own GPU</a><a href="/tool" style="background:#76b900;color:#0a0a0a;font-weight:700;font-size:0.85rem;padding:0.45rem 1.1rem;border-radius:6px;text-decoration:none">Launch Tool →</a></nav><div style="max-width:960px;margin:0 auto;padding:2rem 1.5rem"><div style="margin-bottom:0.5rem;font-size:0.82rem;color:#606060"><a href="/" style="color:#606060">Home</a> › Models</div><h1 style="font-size:2rem;font-weight:800;letter-spacing:-0.025em;margin-bottom:0.5rem">AI Model GPU Requirements</h1><p style="color:#606060;margin-bottom:2rem">VRAM requirements, benchmark scores, and GPU compatibility for 50+ popular open-source models.</p>${sections}</div><footer style="padding:2rem;border-top:1px solid #1e1e1e;text-align:center;color:#606060;font-size:0.82rem">Model data from <a href="https://huggingface.co" target="_blank" style="color:#606060">HuggingFace</a> &amp; <a href="https://artificialanalysis.ai" target="_blank" style="color:#606060">ArtificialAnalysis</a>. Bring your own GPU (BYOG) is free and open-source.</footer></body></html>`);
 });
 
 // ── Reverse search: find hardware for a model ─────────────────
@@ -1653,10 +1653,10 @@ app.post('/api/contact', async (req, res) => {
     });
 
     await transporter.sendMail({
-      from: `"Fit to Metal Contact" <${smtpUser}>`,
+      from: `"Bring your own GPU Contact" <${smtpUser}>`,
       to: 'umanggarg78@gmail.com',
       replyTo: `"${name}" <${email}>`,
-      subject: `[Fit to Metal] ${subject || 'Contact form'}`,
+      subject: `[BYOG] ${subject || 'Contact form'}`,
       text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject || 'N/A'}\n\n${message}`,
       html: `<p><strong>Name:</strong> ${name}</p>
              <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
@@ -1691,9 +1691,9 @@ app.post('/api/subscribe', async (req, res) => {
         auth: { user: smtpUser, pass: smtpPass },
       });
       await transporter.sendMail({
-        from: `"Fit to Metal" <${smtpUser}>`,
+        from: `"Bring your own GPU" <${smtpUser}>`,
         to: 'umanggarg78@gmail.com',
-        subject: `[Fit to Metal] New subscriber: ${trimmed}`,
+        subject: `[BYOG] New subscriber: ${trimmed}`,
         text: `New newsletter subscriber:\n\n${trimmed}\n\n${new Date().toISOString()}`,
       });
     } catch (err) {

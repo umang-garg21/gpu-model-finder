@@ -1,8 +1,8 @@
-# Fit to Metal
+# Bring your own GPU (BYOG)
 
 > Free GPU VRAM calculator and hardware compatibility checker for 500+ open-source AI models.
 
-Fit to Metal helps AI developers, researchers, and hobbyists instantly find which open-source models fit their GPU. Given a GPU (or custom VRAM budget), a quantization format, and a use case, it returns a ranked list of compatible models sorted by benchmark quality.
+Bring your own GPU (BYOG) helps AI developers, researchers, and hobbyists instantly find which open-source models fit their GPU. Given a GPU (or custom VRAM budget), a quantization format, and a use case, it returns a ranked list of compatible models sorted by benchmark quality.
 
 It also offers a reverse search: pick a model and a target tokens-per-second, and the tool shows every GPU configuration (single or multi-GPU) that can achieve that speed, sorted by approximate price.
 
