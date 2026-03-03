@@ -118,7 +118,9 @@ const USE_CASE_BENCHMARKS = {
   embed: [
     { key: 'mteb',          label: 'MTEB',       desc: 'Massive Text Embedding Benchmark avg (%)' },
   ],
-  video: [],
+  video: [
+    { key: 'video_quality', label: 'Quality',    desc: 'VBench composite score — motion quality, temporal consistency, aesthetics (0–100)' },
+  ],
 };
 
 // Benchmarks where lower score = better rank

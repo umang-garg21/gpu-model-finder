@@ -231,27 +231,145 @@ const BENCHMARK_DATA = {
   'zai-org/GLM-5':                      { swebench: 77.8, gpqa: 86.0, hle: 30.5 },
   'zai-org/GLM-4.7':                    { swebench: 73.8, gpqa: 85.7, hle: 24.8 },
   'zai-org/GLM-4.7-Flash':              { swebench: 59.2, gpqa: 75.2, hle: 14.4 },
-  // ── Embeddings: mteb ──────────────────────────────────────────
-  'BAAI/bge-large-en-v1.5':                     { mteb: 64.2 },
-  'BAAI/bge-m3':                                { mteb: 62.8 },
-  'BAAI/bge-base-en-v1.5':                      { mteb: 63.6 },
-  'sentence-transformers/all-MiniLM-L6-v2':     { mteb: 56.3 },
-  'sentence-transformers/all-mpnet-base-v2':    { mteb: 57.8 },
-  'thenlper/gte-large':                         { mteb: 63.1 },
-  'intfloat/multilingual-e5-large-instruct':    { mteb: 65.4 },
-  'intfloat/e5-mistral-7b-instruct':            { mteb: 66.6 },
-  'Alibaba-NLP/gte-Qwen2-7B-instruct':          { mteb: 70.2 },
-  'Alibaba-NLP/gte-large-en-v1.5':              { mteb: 65.4 },
-  // ── Audio: wer (lower is better, %) ──────────────────────────
-  'openai/whisper-tiny':                         { wer: 18.1 },
-  'openai/whisper-base':                         { wer: 13.7 },
-  'openai/whisper-small':                        { wer: 9.9  },
-  'openai/whisper-medium':                       { wer: 6.7  },
-  'openai/whisper-large-v2':                     { wer: 5.5  },
-  'openai/whisper-large-v3':                     { wer: 4.2  },
-  'openai/whisper-large-v3-turbo':               { wer: 4.8  },
-  'distil-whisper/distil-large-v3':              { wer: 5.8  },
-  'distil-whisper/distil-medium.en':             { wer: 7.8  },
+  // ── Embeddings: mteb (MTEB leaderboard average, %) ─────────────
+  'BAAI/bge-large-en-v1.5':                             { mteb: 64.2 },
+  'BAAI/bge-m3':                                        { mteb: 62.8 },
+  'BAAI/bge-base-en-v1.5':                              { mteb: 63.6 },
+  'BAAI/bge-small-en-v1.5':                             { mteb: 62.0 },
+  'BAAI/bge-reranker-v2-m3':                            { mteb: 67.0 },
+  'sentence-transformers/all-MiniLM-L6-v2':             { mteb: 56.3 },
+  'sentence-transformers/all-MiniLM-L12-v2':            { mteb: 56.5 },
+  'sentence-transformers/all-mpnet-base-v2':            { mteb: 57.8 },
+  'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2': { mteb: 53.7 },
+  'thenlper/gte-large':                                 { mteb: 63.1 },
+  'intfloat/multilingual-e5-large-instruct':            { mteb: 65.4 },
+  'intfloat/e5-mistral-7b-instruct':                    { mteb: 66.6 },
+  'intfloat/e5-large-v2':                               { mteb: 62.2 },
+  'intfloat/e5-base-v2':                                { mteb: 61.5 },
+  'intfloat/e5-large-instruct':                         { mteb: 65.5 },
+  'Alibaba-NLP/gte-Qwen2-7B-instruct':                  { mteb: 70.2 },
+  'Alibaba-NLP/gte-Qwen2-1.5B-instruct':                { mteb: 67.4 },
+  'Alibaba-NLP/gte-large-en-v1.5':                      { mteb: 65.4 },
+  'nomic-ai/nomic-embed-text-v1':                       { mteb: 62.4 },
+  'nomic-ai/nomic-embed-text-v1.5':                     { mteb: 62.6 },
+  'jinaai/jina-embeddings-v3':                          { mteb: 65.3 },
+  'jinaai/jina-embeddings-v2-base-en':                  { mteb: 60.4 },
+  'mixedbread-ai/mxbai-embed-large-v1':                 { mteb: 64.7 },
+  'dunzhang/stella_en_1.5B_v5':                         { mteb: 71.0 },
+  'dunzhang/stella_en_400M_v5':                         { mteb: 69.0 },
+  'Salesforce/SFR-Embedding-Mistral':                   { mteb: 67.6 },
+  'Salesforce/SFR-Embedding-2_R':                       { mteb: 68.0 },
+  'WhereIsAI/UAE-Large-V1':                             { mteb: 64.7 },
+  'nvidia/NV-Embed-v2':                                 { mteb: 72.3 },
+  'infgrad/stella-base-en-v2':                          { mteb: 60.0 },
+  // ── Audio: wer (Word Error Rate, % — lower is better) ────────
+  // Whisper family
+  'openai/whisper-tiny':                                { wer: 18.1 },
+  'openai/whisper-base':                                { wer: 13.7 },
+  'openai/whisper-small':                               { wer: 9.9  },
+  'openai/whisper-medium':                              { wer: 6.7  },
+  'openai/whisper-large-v2':                            { wer: 5.5  },
+  'openai/whisper-large-v3':                            { wer: 4.2  },
+  'openai/whisper-large-v3-turbo':                      { wer: 4.8  },
+  'distil-whisper/distil-large-v3':                     { wer: 5.8  },
+  'distil-whisper/distil-large-v2':                     { wer: 6.9  },
+  'distil-whisper/distil-medium.en':                    { wer: 7.8  },
+  'distil-whisper/distil-small.en':                     { wer: 10.5 },
+  'SYSTRAN/faster-whisper-large-v3':                    { wer: 4.2  },
+  'SYSTRAN/faster-whisper-medium':                      { wer: 6.7  },
+  'SYSTRAN/faster-whisper-small':                       { wer: 9.9  },
+  // Wav2Vec2 / HuBERT (Meta)
+  'facebook/wav2vec2-large-960h':                       { wer: 3.4  },
+  'facebook/wav2vec2-large-960h-lv60-self':             { wer: 1.9  },
+  'facebook/wav2vec2-base-960h':                        { wer: 6.5  },
+  'facebook/hubert-large-ls960-ft':                     { wer: 2.4  },
+  'facebook/hubert-xlarge-ls960-ft':                    { wer: 1.7  },
+  // Seamless / MMS (Meta)
+  'facebook/seamless-m4t-v2-large':                     { wer: 5.9  },
+  'facebook/seamless-m4t-large':                        { wer: 6.8  },
+  'facebook/mms-1b-all':                                { wer: 5.0  },
+  'facebook/mms-1b-fl102':                              { wer: 7.0  },
+  'facebook/mms-300m':                                  { wer: 8.0  },
+  // NVIDIA NeMo
+  'nvidia/parakeet-tdt-1.1b':                           { wer: 4.1  },
+  'nvidia/parakeet-ctc-1.1b':                           { wer: 5.1  },
+  'nvidia/parakeet-tdt-0.6b-v2':                        { wer: 4.5  },
+  'nvidia/canary-1b':                                   { wer: 5.5  },
+  // Moonshine (Useful Sensors)
+  'usefulsensors/moonshine-base':                       { wer: 6.5  },
+  'usefulsensors/moonshine-tiny':                       { wer: 9.8  },
+  // Microsoft
+  'microsoft/speecht5_asr':                             { wer: 7.5  },
+  'microsoft/wavlm-large':                              { wer: 2.1  },
+  // ── Vision: imagenet_top1 (classification accuracy %) ─────────
+  // ViT (Google)
+  'google/vit-base-patch16-224':                        { imagenet_top1: 81.8 },
+  'google/vit-large-patch16-224':                       { imagenet_top1: 86.7 },
+  'google/vit-huge-patch14-224-in21k':                  { imagenet_top1: 88.6 },
+  // DeiT (Meta)
+  'facebook/deit-base-distilled-patch16-224':           { imagenet_top1: 83.4 },
+  'facebook/deit-large-distilled-patch16-224':          { imagenet_top1: 85.4 },
+  // DINOv2 (Meta)
+  'facebook/dinov2-small':                              { imagenet_top1: 81.1 },
+  'facebook/dinov2-base':                               { imagenet_top1: 86.2 },
+  'facebook/dinov2-large':                              { imagenet_top1: 87.6 },
+  'facebook/dinov2-giant':                              { imagenet_top1: 88.5 },
+  // ResNet / ConvNeXT (Microsoft/Meta)
+  'microsoft/resnet-50':                                { imagenet_top1: 80.9 },
+  'microsoft/resnet-101':                               { imagenet_top1: 81.9 },
+  'facebook/convnext-base-224':                         { imagenet_top1: 83.8 },
+  'facebook/convnext-large-224':                        { imagenet_top1: 84.3 },
+  'facebook/convnext-xlarge-224-22k-1k':                { imagenet_top1: 87.0 },
+  // Swin Transformer (Microsoft)
+  'microsoft/swin-base-patch4-window7-224':             { imagenet_top1: 83.3 },
+  'microsoft/swin-large-patch4-window7-224':            { imagenet_top1: 86.3 },
+  'microsoft/swin-tiny-patch4-window7-224':             { imagenet_top1: 81.2 },
+  'microsoft/swinv2-base-patch4-window8-256':           { imagenet_top1: 84.2 },
+  'microsoft/swinv2-large-patch4-window12-192-22k':     { imagenet_top1: 87.6 },
+  // BEiT (Microsoft)
+  'microsoft/beit-large-patch16-224-pt22k-ft22k':       { imagenet_top1: 88.6 },
+  'microsoft/beit-base-patch16-224':                    { imagenet_top1: 85.2 },
+  // CLIP (OpenAI)
+  'openai/clip-vit-base-patch32':                       { imagenet_top1: 63.3 },
+  'openai/clip-vit-large-patch14':                      { imagenet_top1: 75.5 },
+  'openai/clip-vit-large-patch14-336':                  { imagenet_top1: 76.6 },
+  // SigLIP (Google)
+  'google/siglip-base-patch16-224':                     { imagenet_top1: 84.4 },
+  'google/siglip-so400m-patch14-384':                   { imagenet_top1: 88.4 },
+  'google/siglip-large-patch16-256':                    { imagenet_top1: 86.9 },
+  // EVA-CLIP (BAAI)
+  'BAAI/EVA-CLIP-18B':                                  { imagenet_top1: 80.7 },  // zero-shot
+  // Florence (Microsoft)
+  'microsoft/Florence-2-base':                          { imagenet_top1: 83.0 },
+  'microsoft/Florence-2-large':                         { imagenet_top1: 85.7 },
+  // EfficientNet (Google)
+  'google/efficientnet-b7':                             { imagenet_top1: 84.7 },
+  'google/efficientnet-b4':                             { imagenet_top1: 83.0 },
+  // InternViT (Shanghai AI Lab)
+  'OpenGVLab/InternViT-300M-448px':                     { imagenet_top1: 88.5 },
+  // ── Video: video_quality (VBench composite score 0–100) ──────
+  // Higher = better quality, temporal consistency, motion, aesthetics.
+  // Scores are approximate VBench totals from published evaluations (early 2026).
+  'tencent/HunyuanVideo':                               { video_quality: 85.9 },
+  'Wan-AI/Wan2.1-T2V-14B':                              { video_quality: 84.5 },
+  'Wan-AI/Wan2.1-T2V-1.3B':                             { video_quality: 80.0 },
+  'Wan-AI/Wan2.1-I2V-14B-480P':                         { video_quality: 83.4 },
+  'Wan-AI/Wan2.1-I2V-14B-720P':                         { video_quality: 84.0 },
+  'Wan-AI/Wan2.1-VACE-1.3B':                            { video_quality: 79.5 },
+  'Wan-AI/Wan2.1-VACE-14B':                             { video_quality: 83.0 },
+  'THUDM/CogVideoX1.5-5B':                              { video_quality: 82.8 },
+  'THUDM/CogVideoX-5b':                                 { video_quality: 81.0 },
+  'THUDM/CogVideoX-2b':                                 { video_quality: 78.5 },
+  'THUDM/CogVideoX1.5-5B-I2V':                          { video_quality: 82.0 },
+  'THUDM/CogVideoX-5b-I2V':                             { video_quality: 80.5 },
+  'Lightricks/LTX-Video':                               { video_quality: 79.5 },
+  'genmo/mochi-1-preview':                              { video_quality: 78.5 },
+  'stabilityai/stable-video-diffusion-img2vid-xt':      { video_quality: 73.5 },
+  'stabilityai/stable-video-diffusion-img2vid':         { video_quality: 71.0 },
+  'hpcai-tech/Open-Sora-v1.2':                          { video_quality: 71.5 },
+  'guoyww/animatediff-motion-adapter-v1-5-2':           { video_quality: 66.0 },
+  'ByteDance/AnimateDiff-Lightning':                    { video_quality: 72.0 },
+  'openai/sora':                                        { video_quality: 89.0 },
   // ── Image Gen: image_quality (0-100 human preference), clip_score (text-image alignment) ──
   // SD 1.x / 2.x
   'CompVis/stable-diffusion-v1-4':                          { image_quality: 42, clip_score: 28.5 },
@@ -444,8 +562,13 @@ const FLAGSHIP_VRAM_FP16 = {
   'microsoft/Phi-4':                              16,
   'microsoft/phi-4-mini-instruct':                 8,  // 3.8B
   'nvidia/Llama-3.1-Nemotron-51B-Instruct':      102,
-  // ── Image generation models (FP16 VRAM) ──────────────────────
-  // FLUX.1: 12B DiT + 3 text encoders (CLIP-L, CLIP-G, T5-XXL)
+};
+
+// ── Flagship VRAM for image generation models (FP16, GB) ───────
+// Kept separate from FLAGSHIP_VRAM_FP16 so LLM stub injection
+// never pulls in diffusion models and vice-versa.
+const FLAGSHIP_IMAGE_VRAM_FP16 = {
+  // FLUX.1 family: 12B DiT + T5-XXL + CLIP-L + CLIP-G text encoders
   'black-forest-labs/FLUX.1-dev':                          30,
   'black-forest-labs/FLUX.1-schnell':                      30,
   'black-forest-labs/FLUX.1-Canny-dev':                    30,
@@ -458,21 +581,91 @@ const FLAGSHIP_VRAM_FP16 = {
   'stabilityai/stable-diffusion-3.5-large-turbo':          20,
   'stabilityai/stable-diffusion-3.5-medium':                7,
   'stabilityai/stable-diffusion-3-medium-diffusers':        7,
-  // HiDream (17B DiT + Llama text encoder)
+  // HiDream (17B DiT + Llama-3 text encoder)
   'HiDream-ai/HiDream-I1-Full':                            45,
   'HiDream-ai/HiDream-I1-Dev':                             45,
   'HiDream-ai/HiDream-I1-Fast':                            22,
   // Stable Cascade (two-stage: prior + decoder)
   'stabilityai/stable-cascade':                            20,
-  // CogView4 (6B DiT)
+  // CogView4
   'THUDM/CogView4-6B':                                     14,
   'THUDM/CogView3-Plus-3B':                                 9,
   // HunyuanDiT (Tencent)
   'Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers':            15,
-  // AuraFlow (6.8B)
+  // AuraFlow (6.8B DiT)
   'fal-ai/aura-flow':                                      15,
-  // Playground v2.5
+  // Playground v2.5 (SDXL-based)
   'playgroundai/playground-v2.5-1024px-aesthetic':         10,
+};
+
+// ── Flagship VRAM for audio models (FP16, GB) ─────────────────
+const FLAGSHIP_AUDIO_VRAM_FP16 = {
+  // Whisper: encoder-decoder transformer; VRAM scales with model size
+  'openai/whisper-tiny':                                    0.2,
+  'openai/whisper-base':                                    0.3,
+  'openai/whisper-small':                                   0.6,
+  'openai/whisper-medium':                                  1.4,
+  'openai/whisper-large-v2':                                2.9,
+  'openai/whisper-large-v3':                                2.9,
+  'openai/whisper-large-v3-turbo':                          1.6,
+  'distil-whisper/distil-large-v3':                         1.5,
+  'SYSTRAN/faster-whisper-large-v3':                        2.9,
+  // Wav2Vec2 / HuBERT (inference only)
+  'facebook/wav2vec2-large-960h-lv60-self':                 1.2,
+  'facebook/wav2vec2-large-960h':                           1.2,
+  'facebook/hubert-large-ls960-ft':                         1.2,
+  // Seamless M4T v2
+  'facebook/seamless-m4t-v2-large':                         4.5,
+  // NeMo Parakeet
+  'nvidia/parakeet-tdt-1.1b':                               2.5,
+  'nvidia/parakeet-ctc-1.1b':                               2.5,
+  'nvidia/canary-1b':                                       2.5,
+  // Moonshine
+  'usefulsensors/moonshine-base':                           0.5,
+  'usefulsensors/moonshine-tiny':                           0.2,
+  // TTS (generation models are heavier)
+  'suno-ai/bark':                                           6.0,
+  'myshell-ai/MeloTTS-English':                             0.5,
+};
+
+// ── Flagship VRAM for video generation models (FP16, GB) ───────
+const FLAGSHIP_VIDEO_VRAM_FP16 = {
+  // Wan2.1 (diffusion transformer)
+  'Wan-AI/Wan2.1-T2V-14B':                                 28,
+  'Wan-AI/Wan2.1-T2V-1.3B':                                 5,
+  'Wan-AI/Wan2.1-I2V-14B-480P':                            28,
+  'Wan-AI/Wan2.1-I2V-14B-720P':                            28,
+  'Wan-AI/Wan2.1-VACE-1.3B':                                5,
+  'Wan-AI/Wan2.1-VACE-14B':                                28,
+  // HunyuanVideo (13B)
+  'tencent/HunyuanVideo':                                  26,
+  // CogVideoX
+  'THUDM/CogVideoX1.5-5B':                                 12,
+  'THUDM/CogVideoX-5b':                                    12,
+  'THUDM/CogVideoX-2b':                                     6,
+  'THUDM/CogVideoX1.5-5B-I2V':                             12,
+  'THUDM/CogVideoX-5b-I2V':                                12,
+  // LTX-Video (~2B)
+  'Lightricks/LTX-Video':                                   6,
+  // Mochi-1 (~10B)
+  'genmo/mochi-1-preview':                                 20,
+  // Stable Video Diffusion
+  'stabilityai/stable-video-diffusion-img2vid-xt':         14,
+  'stabilityai/stable-video-diffusion-img2vid':            14,
+  // Open-Sora
+  'hpcai-tech/Open-Sora-v1.2':                             16,
+  // AnimateDiff
+  'guoyww/animatediff-motion-adapter-v1-5-2':               4,
+  'ByteDance/AnimateDiff-Lightning':                        4,
+};
+
+// Combined lookup: maps usecase → its curated VRAM table.
+// Injection code uses this to avoid leaking image stubs into LLM results.
+const FLAGSHIP_VRAM_BY_USECASE = {
+  llm:    FLAGSHIP_VRAM_FP16,
+  image:  FLAGSHIP_IMAGE_VRAM_FP16,
+  audio:  FLAGSHIP_AUDIO_VRAM_FP16,
+  video:  FLAGSHIP_VIDEO_VRAM_FP16,
 };
 
 // Known parameter counts for models whose names don't embed a size token.
@@ -521,10 +714,16 @@ const PRIORITY_AUTHORS = {
   image:  ['black-forest-labs', 'stabilityai', 'ByteDance', 'Tencent-Hunyuan', 'shuttleai',
            'PixArt-alpha', 'Efficient-Large-Model', 'HiDream-ai', 'Kwai-Kolors',
            'THUDM', 'fal-ai', 'playgroundai', 'warp-ai', 'dataautogpt3'],
-  audio:  ['openai', 'speechbrain', 'facebook', 'suno-ai'],
-  vision: ['google', 'microsoft', 'facebook', 'openai', 'Salesforce'],
-  video:  ['Wan-AI', 'ByteDance', 'genmo', 'hpcai-tech'],
-  embed:  ['BAAI', 'sentence-transformers', 'Alibaba-NLP', 'mixedbread-ai'],
+  audio:  ['openai', 'facebook', 'SYSTRAN', 'distil-whisper', 'usefulsensors',
+           'nvidia', 'microsoft', 'speechbrain', 'pyannote', 'kotoba-tech',
+           'suno-ai', 'parler-tts', 'myshell-ai'],
+  vision: ['google', 'microsoft', 'facebook', 'openai', 'Salesforce',
+           'apple', 'BAAI', 'OpenGVLab', 'ultralytics', 'depth-anything'],
+  video:  ['Wan-AI', 'tencent', 'THUDM', 'ByteDance', 'genmo',
+           'Lightricks', 'hpcai-tech', 'stabilityai', 'guoyww'],
+  embed:  ['BAAI', 'sentence-transformers', 'Alibaba-NLP', 'mixedbread-ai',
+           'nomic-ai', 'jinaai', 'intfloat', 'dunzhang', 'Salesforce',
+           'nvidia', 'WhereIsAI', 'tomaarsen'],
 };
 
 // ── VRAM helpers ───────────────────────────────────────────────
@@ -564,6 +763,294 @@ function paramsFromShards(siblings) {
   const shards = siblings.filter(s => /\.safetensors$/.test(s.rfilename ?? ''));
   if (!shards.length) return null;
   return shards.length * 2.5e9; // ~2.5B params per 5 GB shard
+}
+
+/**
+ * Infer WER score for ASR models not in BENCHMARK_DATA.
+ * Returns estimated WER (%, lower = better) based on architecture family,
+ * or null if the family can't be determined.
+ */
+function inferAudioWerScore(modelId) {
+  const id = (modelId || '').toLowerCase();
+  // Whisper variants
+  if (id.includes('whisper')) {
+    if (id.includes('large-v3'))                        return 4.5;
+    if (id.includes('large-v2') || id.includes('large')) return 5.6;
+    if (id.includes('medium'))                          return 6.7;
+    if (id.includes('small'))                           return 9.9;
+    if (id.includes('base'))                            return 13.7;
+    if (id.includes('tiny'))                            return 18.0;
+    return 7.0;
+  }
+  if (id.includes('wav2vec2')) {
+    if (id.includes('large'))                           return 3.0;
+    return 6.5;
+  }
+  if (id.includes('hubert')) {
+    if (id.includes('xlarge'))                          return 1.7;
+    if (id.includes('large'))                           return 2.4;
+    return 5.5;
+  }
+  if (id.includes('wavlm')) {
+    if (id.includes('large'))                           return 2.1;
+    return 4.5;
+  }
+  if (id.includes('seamless'))                          return 6.0;
+  if (id.includes('mms'))                               return 6.5;
+  if (id.includes('parakeet'))                          return 4.8;
+  if (id.includes('canary'))                            return 5.5;
+  if (id.includes('moonshine')) {
+    if (id.includes('tiny'))                            return 9.8;
+    return 6.5;
+  }
+  if (id.includes('speecht5'))                          return 7.5;
+  if (id.includes('conformer'))                         return 5.5;
+  if (id.includes('distil'))                            return 6.5;
+  return null;
+}
+
+/**
+ * Infer imagenet_top1 for vision models not in BENCHMARK_DATA.
+ * Returns null for detection/segmentation/depth models where ImageNet doesn't apply.
+ */
+function inferVisionScore(modelId) {
+  const id = (modelId || '').toLowerCase();
+  if (id.includes('yolo') || id.includes('detr') || id.includes('grounding') ||
+      id.includes('sam') || id.includes('segment') || id.includes('depth') ||
+      id.includes('marigold') || id.includes('zoedepth') || id.includes('dpt') ||
+      id.includes('detection') || id.includes('object-detect'))   return null;
+  if (id.includes('dinov2')) {
+    if (id.includes('giant'))                           return 88.0;
+    if (id.includes('large'))                           return 87.5;
+    if (id.includes('base'))                            return 86.0;
+    return 81.0;
+  }
+  if (id.includes('siglip')) {
+    if (id.includes('so400m') || id.includes('400m'))   return 88.0;
+    if (id.includes('large'))                           return 86.8;
+    return 84.0;
+  }
+  if (id.includes('convnext') || id.includes('convnextv2')) {
+    if (id.includes('xlarge') || id.includes('xxlarge')) return 87.0;
+    if (id.includes('large'))                            return 84.3;
+    if (id.includes('base'))                             return 83.8;
+    return 82.0;
+  }
+  if (id.includes('swin')) {
+    if (id.includes('large'))                           return 86.3;
+    if (id.includes('base'))                            return 83.3;
+    if (id.includes('small') || id.includes('tiny'))    return 81.5;
+    return 83.0;
+  }
+  if (id.includes('efficientnet') || id.includes('efficientnetv2')) {
+    if (id.includes('b7') || id.includes('xl') || id.includes('l'))  return 85.0;
+    if (id.includes('b4') || id.includes('b5') || id.includes('b6')) return 83.5;
+    return 80.0;
+  }
+  if (id.includes('beit')) {
+    if (id.includes('large'))                           return 88.0;
+    return 85.0;
+  }
+  if (id.includes('vit')) {
+    if (id.includes('huge'))                            return 88.5;
+    if (id.includes('large'))                           return 86.5;
+    if (id.includes('base'))                            return 81.5;
+    if (id.includes('small'))                           return 78.0;
+    return 81.0;
+  }
+  if (id.includes('clip')) {
+    if (id.includes('bigg') || id.includes('big-g'))    return 78.0;
+    if (id.includes('large'))                           return 75.5;
+    if (id.includes('base'))                            return 63.0;
+    return 70.0;
+  }
+  if (id.includes('florence')) {
+    if (id.includes('large'))                           return 85.7;
+    return 83.0;
+  }
+  if (id.includes('resnet')) {
+    if (id.includes('152'))                             return 82.0;
+    if (id.includes('101'))                             return 81.9;
+    return 80.5;
+  }
+  return null;
+}
+
+/**
+ * Infer MTEB score for embedding models not in BENCHMARK_DATA.
+ */
+function inferEmbedMtebScore(modelId) {
+  const id = (modelId || '').toLowerCase();
+  if (id.includes('stella')) {
+    if (id.includes('1.5b'))                            return 71.0;
+    if (id.includes('400m'))                            return 69.0;
+    return 66.0;
+  }
+  if (id.includes('nv-embed'))                          return 72.0;
+  if (id.includes('sfr-embedding'))                    return 68.0;
+  if (id.includes('gte-qwen2') || id.includes('gte-qwen')) {
+    if (id.includes('7b'))                              return 70.2;
+    if (id.includes('1.5b'))                            return 67.4;
+    return 65.0;
+  }
+  if (id.includes('gte')) {
+    if (id.includes('large'))                           return 63.1;
+    if (id.includes('base'))                            return 62.0;
+    return 61.0;
+  }
+  if (id.includes('bge')) {
+    if (id.includes('large'))                           return 64.2;
+    if (id.includes('base'))                            return 63.6;
+    if (id.includes('small'))                           return 62.0;
+    if (id.includes('m3'))                              return 62.8;
+    return 62.0;
+  }
+  if (id.includes('e5')) {
+    if (id.includes('mistral'))                         return 66.6;
+    if (id.includes('large-instruct'))                  return 65.5;
+    if (id.includes('large'))                           return 62.2;
+    if (id.includes('base'))                            return 61.5;
+    return 62.0;
+  }
+  if (id.includes('nomic-embed') || id.includes('nomic'))  return 62.5;
+  if (id.includes('jina')) {
+    if (id.includes('v3'))                              return 65.3;
+    if (id.includes('v2'))                              return 60.4;
+    return 62.0;
+  }
+  if (id.includes('mxbai'))                             return 64.7;
+  if (id.includes('uae'))                               return 64.7;
+  if (id.includes('all-minilm'))                        return 56.0;
+  if (id.includes('all-mpnet'))                         return 57.8;
+  if (id.includes('paraphrase'))                        return 53.0;
+  return null;
+}
+
+/**
+ * Infer video_quality for generation models not in BENCHMARK_DATA.
+ * Based on VBench composite scores / published benchmarks (early 2026).
+ */
+function inferVideoQualityScore(modelId) {
+  const id = (modelId || '').toLowerCase();
+  if (id.includes('hunyuanvideo') || id.includes('hunyuan-video')) return 85.0;
+  if (id.includes('wan2') || id.includes('wan-2')) {
+    if (id.includes('14b'))                             return 84.0;
+    return 79.5;
+  }
+  if (id.includes('cogvideox') || id.includes('cogvideo')) {
+    if (id.includes('1.5'))                             return 82.5;
+    if (id.includes('5b'))                              return 81.0;
+    if (id.includes('2b'))                              return 78.5;
+    return 79.0;
+  }
+  if (id.includes('ltx-video') || id.includes('ltxvideo'))    return 79.0;
+  if (id.includes('mochi'))                             return 78.5;
+  if (id.includes('animatediff'))                       return 68.5;
+  if (id.includes('stable-video') || id.includes('svd'))      return 73.5;
+  if (id.includes('open-sora') || id.includes('opensora'))    return 71.5;
+  if (id.includes('kling'))                             return 83.0;
+  return null;
+}
+
+/**
+ * Infer a tier-based image_quality score (0–100) for models not in BENCHMARK_DATA.
+ * Based on architecture family detected from the model ID / name string.
+ * Returns null for architectures we can't classify, so they sort below scored models
+ * rather than being assigned a misleading score.
+ *
+ * Tier rationale (approximate human-preference elo ordering as of 2026):
+ *   FLUX.1 Kontext          ~86  (best prompt adherence + editing)
+ *   FLUX.1 dev/fill/depth   ~84
+ *   SD 3.5 Large            ~83
+ *   FLUX.1 schnell           ~78
+ *   SD 3.5 / SD3 medium      ~74
+ *   SDXL fine-tunes          ~67
+ *   SDXL base                ~65
+ *   SD 2.x                   ~50
+ *   SD 1.x / SD 1.5          ~45
+ */
+function inferImageQualityScore(modelId) {
+  const id = (modelId || '').toLowerCase();
+
+  // FLUX family
+  if (id.includes('flux')) {
+    if (id.includes('kontext'))           return 86;
+    if (id.includes('schnell'))           return 78;
+    // dev, fill, depth, canny, redux, etc.
+    return 84;
+  }
+
+  // Stable Diffusion 3.x
+  if (id.includes('stable-diffusion-3') || id.includes('sd3') || id.includes('sd-3')) {
+    if (id.includes('3.5') || id.includes('35')) {
+      if (id.includes('large'))           return 83;
+      return 76;  // medium / turbo
+    }
+    return 70;    // SD3 base
+  }
+
+  // Stable Cascade (two-stage latent)
+  if (id.includes('stable-cascade') || id.includes('wuerstchen')) return 63;
+
+  // SDXL and its derivatives
+  if (id.includes('sdxl') || id.includes('xl-base') || id.includes('xl_base') ||
+      id.includes('playground') || id.includes('juggernaut') || id.includes('dreamshaperxl') ||
+      id.includes('realvisxl') || id.includes('animagine-xl') || id.includes('pony')) {
+    if (id.includes('turbo') || id.includes('lightning')) return 61;
+    return 67;
+  }
+
+  // PixArt
+  if (id.includes('pixart')) {
+    if (id.includes('sigma'))             return 72;
+    return 66;
+  }
+
+  // HiDream
+  if (id.includes('hidream')) {
+    if (id.includes('full'))              return 85;
+    if (id.includes('fast'))             return 82;
+    return 80;
+  }
+
+  // Kolors
+  if (id.includes('kolors'))             return 74;
+
+  // HunyuanDiT
+  if (id.includes('hunyuan'))            return 72;
+
+  // CogView
+  if (id.includes('cogview')) {
+    if (id.includes('4'))                return 78;
+    if (id.includes('3'))                return 73;
+    return 68;
+  }
+
+  // AuraFlow
+  if (id.includes('aura-flow') || id.includes('auraflow')) return 70;
+
+  // SANA
+  if (id.includes('sana')) {
+    if (id.includes('1600') || id.includes('1.5')) return 77;
+    return 68;
+  }
+
+  // SD 2.x
+  if (id.includes('stable-diffusion-2') || id.includes('sd2') || id.includes('sd-2') ||
+      id.includes('v2-1') || id.includes('v2_1'))    return 50;
+
+  // SD 1.x (including community fine-tunes that don't match above)
+  if (id.includes('stable-diffusion-v1') || id.includes('stable-diffusion-1') ||
+      id.includes('sd1') || id.includes('sd-1') ||
+      id.includes('v1-5') || id.includes('v1_5') ||
+      id.includes('dreamshaper') || id.includes('deliberate') ||
+      id.includes('realistic-vision') || id.includes('realisticvision') ||
+      id.includes('epicrealism') || id.includes('anything-v') || id.includes('counterfeit')) {
+    return 46;
+  }
+
+  // Cannot classify — return null so it sorts below scored models
+  return null;
 }
 
 function estimateVRAM(totalParams, quantization) {
@@ -667,7 +1154,7 @@ function computeOverallScore(benchmarks, usecase) {
 
   // Non-LLM usecases: keep original single-metric logic unchanged
   if (usecase !== 'llm') {
-    const primary = { embed: 'mteb', vision: 'imagenet_top1', image: 'image_quality', audio: 'wer' };
+    const primary = { embed: 'mteb', vision: 'imagenet_top1', image: 'image_quality', audio: 'wer', video: 'video_quality' };
     const pk = primary[usecase];
     if (!pk || benchmarks[pk] == null) return null;
     return usecase === 'audio' ? 100 - benchmarks[pk] : benchmarks[pk];
@@ -802,8 +1289,10 @@ app.get('/api/models', async (req, res) => {
     // 1b. Inject flagship models that fit the VRAM budget but weren't returned by HF.
     //     This guarantees large, important models surface when the user has the hardware,
     //     rather than being hidden behind thousands of smaller, higher-download models.
+    //     Use the usecase-scoped table so image models never appear in LLM results.
     const quantScale = (DTYPE_BYTES[quantization] ?? 2) / 2; // scale relative to fp16
-    const flagshipStubs = Object.entries(FLAGSHIP_VRAM_FP16)
+    const activeFlagshipTable = FLAGSHIP_VRAM_BY_USECASE[usecase] ?? FLAGSHIP_VRAM_FP16;
+    const flagshipStubs = Object.entries(activeFlagshipTable)
       .filter(([id, vramFp16]) => !seen.has(id) && vramFp16 * quantScale <= vramGB)
       .map(([id]) => {
         seen.add(id);
@@ -820,7 +1309,7 @@ app.get('/api/models', async (req, res) => {
     //    For flagships with a curated fp16 VRAM value, use that directly (scales with quant).
     //    The heuristic adds 20% overhead which can push 70B models just over tight budgets.
     const candidates = [...allModels, ...flagshipStubs].map(m => {
-      const curatedFp16 = FLAGSHIP_VRAM_FP16[m.id];
+      const curatedFp16 = activeFlagshipTable[m.id] ?? FLAGSHIP_VRAM_FP16[m.id] ?? FLAGSHIP_IMAGE_VRAM_FP16[m.id];
       if (curatedFp16 !== undefined) {
         const estimatedVRAM = parseFloat((curatedFp16 * quantScale).toFixed(2));
         const knownParams = FLAGSHIP_PARAMS[m.id] ?? paramsFromName(m.id);
@@ -885,6 +1374,41 @@ app.get('/api/models', async (req, res) => {
         const benchmarks_source = {};
         for (const [k,v] of Object.entries(bmLookup)) { if (typeof v === 'number') { benchmarks[k]=v; benchmarks_source[k]={ source: 'hf', url: `https://huggingface.co/${m.id}` }; } }
         for (const [k,v] of Object.entries(bmCard))   { if (typeof v === 'number') { benchmarks[k]=v; benchmarks_source[k]={ source: 'hf', url: `https://huggingface.co/${m.id}` }; } }
+
+        // For non-LLM models with no explicit benchmark score, infer from architecture family
+        // so they rank instead of showing N/A across the board.
+        if (usecase === 'image' && benchmarks.image_quality == null) {
+          const inferred = inferImageQualityScore(m.id);
+          if (inferred !== null) {
+            benchmarks.image_quality = inferred;
+            benchmarks_source.image_quality = { source: 'inferred', url: null };
+          }
+        } else if (usecase === 'audio' && benchmarks.wer == null) {
+          const inferred = inferAudioWerScore(m.id);
+          if (inferred !== null) {
+            benchmarks.wer = inferred;
+            benchmarks_source.wer = { source: 'inferred', url: null };
+          }
+        } else if (usecase === 'vision' && benchmarks.imagenet_top1 == null) {
+          const inferred = inferVisionScore(m.id);
+          if (inferred !== null) {
+            benchmarks.imagenet_top1 = inferred;
+            benchmarks_source.imagenet_top1 = { source: 'inferred', url: null };
+          }
+        } else if (usecase === 'embed' && benchmarks.mteb == null) {
+          const inferred = inferEmbedMtebScore(m.id);
+          if (inferred !== null) {
+            benchmarks.mteb = inferred;
+            benchmarks_source.mteb = { source: 'inferred', url: null };
+          }
+        } else if (usecase === 'video' && benchmarks.video_quality == null) {
+          const inferred = inferVideoQualityScore(m.id);
+          if (inferred !== null) {
+            benchmarks.video_quality = inferred;
+            benchmarks_source.video_quality = { source: 'inferred', url: null };
+          }
+        }
+
         const hasBench = Object.keys(benchmarks).length > 0;
 
         const overallScore = computeOverallScore(hasBench ? benchmarks : null, usecase);
@@ -1640,12 +2164,13 @@ app.get('/api/hardware-for-model', (req, res) => {
 
   if (!modelId) return res.status(400).json({ error: 'Missing query param: model' });
 
-  // Look up model's FP16 VRAM
-  const fp16Vram = FLAGSHIP_VRAM_FP16[modelId];
+  // Look up model's FP16 VRAM (check both LLM and image tables)
+  const FLAGSHIP_ALL_VRAM = { ...FLAGSHIP_VRAM_FP16, ...FLAGSHIP_IMAGE_VRAM_FP16 };
+  const fp16Vram = FLAGSHIP_ALL_VRAM[modelId];
   if (!fp16Vram) {
     // Try case-insensitive match
     const lc = modelId.toLowerCase();
-    const match = Object.keys(FLAGSHIP_VRAM_FP16).find(k => k.toLowerCase() === lc);
+    const match = Object.keys(FLAGSHIP_ALL_VRAM).find(k => k.toLowerCase() === lc);
     if (!match) return res.status(404).json({ error: `Model not found in database: ${modelId}. Only flagship models are supported.` });
     return res.redirect(307, `/api/hardware-for-model?model=${encodeURIComponent(match)}&targetTps=${targetTps}&quantization=${quantization}`);
   }
