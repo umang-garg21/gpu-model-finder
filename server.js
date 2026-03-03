@@ -1673,22 +1673,35 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // ── Email newsletter subscription ───────────────────────────
-app.post('/api/subscribe', (req, res) => {
+app.post('/api/subscribe', async (req, res) => {
   const { email } = req.body || {};
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Valid email required.' });
   }
-  const csvPath = path.join(__dirname, 'data', 'subscribers.csv');
-  const line = `${new Date().toISOString()},${email.trim()}\n`;
-  try {
-    if (!fs.existsSync(csvPath)) fs.writeFileSync(csvPath, 'timestamp,email\n', 'utf8');
-    fs.appendFileSync(csvPath, line, 'utf8');
-    console.log('NEW_SUBSCRIBER:', email.trim());  // durable in Railway logs
-    res.json({ ok: true });
-  } catch (err) {
-    console.error('Subscribe error:', err.message);
-    res.status(500).json({ error: 'Failed to save. Please try again.' });
+  const trimmed = email.trim();
+  console.log('NEW_SUBSCRIBER:', trimmed);
+
+  // Send to Gmail inbox — durable across all redeploys
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  if (smtpUser && smtpPass) {
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: smtpUser, pass: smtpPass },
+      });
+      await transporter.sendMail({
+        from: `"Fit to Metal" <${smtpUser}>`,
+        to: 'umanggarg78@gmail.com',
+        subject: `[Fit to Metal] New subscriber: ${trimmed}`,
+        text: `New newsletter subscriber:\n\n${trimmed}\n\n${new Date().toISOString()}`,
+      });
+    } catch (err) {
+      console.error('Subscribe email error:', err.message);
+    }
   }
+
+  res.json({ ok: true });
 });
 
 app.listen(PORT, () => {
