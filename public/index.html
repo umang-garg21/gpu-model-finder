@@ -6,6 +6,8 @@
   <meta name="google-site-verification" content="k7zHklOtdojWKO-XlHJ8A0UwuKaDZRb3fq5LEdW2gAA" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/favicon.svg">
+  <!-- Analytics (Umami) — replace placeholders after deploying Umami on Railway -->
+  <!-- <script defer src="https://YOUR-UMAMI-DOMAIN/script.js" data-website-id="YOUR-SITE-ID"></script> -->
   <title>Fit to Metal — GPU VRAM Calculator for AI Models</title>
   <meta name="description" content="Free tool to find every open-source AI model that fits your GPU. Pick your GPU, quantization format, and use case — see ranked results instantly." />
   <link rel="canonical" href="https://fit-to-metal.up.railway.app/tool" />
@@ -1481,6 +1483,19 @@
       padding: 0 4px;
       font-family: 'JetBrains Mono', monospace;
     }
+    .share-pill {
+      background: var(--surface2); border: 1px solid var(--border-hi);
+      color: var(--text-muted); border-radius: 6px; padding: 4px 12px;
+      font-size: 0.78rem; cursor: pointer; font-family: inherit;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .share-pill:hover { border-color: var(--accent); color: var(--accent); }
+    @keyframes results-flash {
+      0%   { box-shadow: 0 0 0 0 rgba(118,185,0,0); }
+      40%  { box-shadow: 0 0 28px 6px rgba(118,185,0,0.18); }
+      100% { box-shadow: 0 0 0 0 rgba(118,185,0,0); }
+    }
+    .results-flash { animation: results-flash 0.7s ease-out; }
   </style>
 </head>
 <body>
@@ -1631,6 +1646,13 @@
         <button class="sort-btn active" data-s="newest">Newest</button>
       </div>
     </div>
+
+    <div id="shareBar" style="display:none; align-items:center; gap:8px; padding:4px 0 8px;">
+      <span style="font-size:0.8rem; color:var(--text-muted);">Share:</span>
+      <button id="copyLinkBtn" class="share-pill">Copy link</button>
+      <button id="tweetBtn" class="share-pill">Share on X</button>
+    </div>
+    <div id="resultsSummary" style="display:none; font-size:0.85rem; color:var(--accent); margin-bottom:6px; font-weight:500;"></div>
 
     <div class="benchmark-bar" id="benchmarkBar" style="display:none">
       <span class="benchmark-bar-label">Rank by</span>

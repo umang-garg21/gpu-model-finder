@@ -6,6 +6,8 @@
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/favicon.svg">
+  <!-- Analytics (Umami) — replace placeholders after deploying Umami on Railway -->
+  <!-- <script defer src="https://YOUR-UMAMI-DOMAIN/script.js" data-website-id="YOUR-SITE-ID"></script> -->
   <title>Find Hardware for Any AI Model — Reverse GPU Search | Fit to Metal</title>
   <meta name="description" content="Pick an AI model and target tokens-per-second, and instantly find the cheapest GPU configuration that can run it. Supports Llama, Mistral, Qwen, DeepSeek and 150+ models." />
   <meta name="keywords" content="GPU for AI model, cheapest GPU to run Llama, minimum hardware for LLM, AI inference hardware calculator, tokens per second GPU, LLM hardware requirements" />
@@ -462,6 +464,11 @@
 </footer>
 
 <script>
+  // ── Analytics helper (Umami) ──────────────────────────────────
+  function trackEvent(name, props) {
+    if (typeof window.umami !== 'undefined') window.umami.track(name, props);
+  }
+
   // ── State ────────────────────────────────────────────────────
   const state = {
     selectedModelId: null,
@@ -694,6 +701,12 @@
     const quantLabel = { fp16: 'FP16', bf16: 'BF16', int8: 'INT8', int4: 'INT4', gguf_q4: 'GGUF Q4', gguf_q8: 'GGUF Q8' }[state.quantization] || state.quantization.toUpperCase();
     resultsTitle.textContent = `${sorted.length} configuration${sorted.length !== 1 ? 's' : ''} for ${state.selectedModelName}`;
     resultsMeta.textContent = `at ${quantLabel} · ≥${state.tps} tok/s · ${modelData ? modelData.requiredVramGb + ' GB VRAM required' : ''}`;
+    trackEvent('Hardware Lookup', {
+      modelName: state.selectedModelName,
+      targetTps: state.tps,
+      quantization: state.quantization,
+      configCount: sorted.length,
+    });
 
     configsGrid.innerHTML = sorted.map((cfg, i) => {
       const rankBadge = i < 3 ? `<div class="rank-badge rank-${i+1}">${i === 0 ? '🥇 #1' : i === 1 ? '🥈 #2' : '🥉 #3'}</div>` : '';

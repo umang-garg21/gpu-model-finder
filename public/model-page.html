@@ -6,6 +6,8 @@
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/favicon.svg">
+  <!-- Analytics (Umami) — replace placeholders after deploying Umami on Railway -->
+  <!-- <script defer src="https://YOUR-UMAMI-DOMAIN/script.js" data-website-id="YOUR-SITE-ID"></script> -->
   <title>{{SEO_TITLE}}</title>
   <meta name="description" content="{{SEO_DESCRIPTION}}" />
   <meta name="keywords" content="{{SEO_KEYWORDS}}" />
@@ -107,6 +109,21 @@
     }
     .meta-chip .val { color: var(--text); font-weight: 500; }
     .model-desc { font-size: 1rem; color: var(--text-muted); max-width: 700px; line-height: 1.7; }
+    .model-share-bar { display: flex; gap: 8px; margin-top: 1.2rem; flex-wrap: wrap; }
+    .model-share-bar button, .model-share-bar a {
+      background: var(--surface2); border: 1px solid var(--border-hi);
+      color: var(--text-muted); border-radius: 6px; padding: 5px 14px;
+      font-size: 0.8rem; cursor: pointer; font-family: inherit;
+      text-decoration: none; display: inline-flex; align-items: center;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .model-share-bar button:hover, .model-share-bar a:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-vram-btn {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 0.85rem; padding: 2px 6px; border-radius: 4px;
+      transition: color 0.15s; line-height: 1;
+    }
+    .copy-vram-btn:hover { color: var(--accent); }
 
     /* ── Section ─────────────────────────────────────────── */
     .section { padding: 2.5rem 0; border-bottom: 1px solid var(--border); }
@@ -245,6 +262,10 @@
       <span class="meta-chip">INT4 VRAM <span class="val">{{INT4_VRAM}} GB</span></span>
     </div>
     <p class="model-desc">{{MODEL_DESCRIPTION}}</p>
+    <div class="model-share-bar">
+      <button id="copyModelUrl" onclick="copyModelUrl()">Copy URL</button>
+      <a id="tweetModel" href="#" target="_blank" rel="noopener">Share on X</a>
+    </div>
   </div>
 
   <!-- ── VRAM Requirements ─────────────────────────────────── -->
@@ -257,6 +278,7 @@
           <th>VRAM Needed</th>
           <th>Compression</th>
           <th>Fits On</th>
+          <th style="width:2.5rem"></th>
         </tr>
       </thead>
       <tbody>
@@ -308,6 +330,40 @@
     Fit to Metal is free and open-source.
   </div>
 </footer>
+
+<script>
+function trackEvent(name, props) {
+  if (typeof window.umami !== 'undefined') window.umami.track(name, props);
+}
+
+// Wire tweet button with actual model data from server-rendered tokens
+(function() {
+  const modelName = '{{MODEL_NAME}}';
+  const fp16Vram  = '{{FP16_VRAM}}';
+  const tweetLink = document.getElementById('tweetModel');
+  if (tweetLink) {
+    const text = modelName + ' needs ' + fp16Vram + ' GB VRAM at FP16 — see if it fits your GPU:';
+    tweetLink.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(window.location.href);
+    tweetLink.addEventListener('click', () => trackEvent('Share Click', { modelName, method: 'twitter' }));
+  }
+})();
+
+function copyModelUrl() {
+  navigator.clipboard.writeText(window.location.href);
+  const btn = document.getElementById('copyModelUrl');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy URL', 2000);
+  trackEvent('Share Click', { method: 'copy', page: 'model' });
+}
+
+function copyVram(quant, vram, modelName) {
+  navigator.clipboard.writeText(modelName + ' at ' + quant + ': ' + vram + ' GB VRAM');
+  const btn = event.currentTarget;
+  btn.textContent = '✓';
+  setTimeout(() => btn.textContent = '⧉', 1500);
+  trackEvent('Copy VRAM', { modelName, quantization: quant, vramGB: vram });
+}
+</script>
 
 </body>
 </html>

@@ -1391,7 +1391,8 @@ function renderModelPage(entry) {
     else if (gb <= 128) fitsLabel = '<span class="fits-chip fits-yes">M3 Max 128G / MI250X</span>';
     else if (gb <= 192) fitsLabel = '<span class="fits-chip fits-yes">H200 / M4 Ultra / MI300X</span>';
     else                fitsLabel = '<span class="fits-chip fits-no">Multi-node required</span>';
-    return `<tr><td><span class="quant-label">${q.fmt}</span></td><td><span class="vram-val">${gb} GB</span><div class="vram-bar-wrap"><div class="vram-bar-fill" style="width:${barPct}%"></div></div></td><td style="color:var(--text-muted);font-size:0.82rem">${q.note}</td><td>${fitsLabel}</td></tr>`;
+    const safeName = entry.name.replace(/'/g, '&#39;');
+    return `<tr><td><span class="quant-label">${q.fmt}</span></td><td><span class="vram-val">${gb} GB</span><div class="vram-bar-wrap"><div class="vram-bar-fill" style="width:${barPct}%"></div></div></td><td style="color:var(--text-muted);font-size:0.82rem">${q.note}</td><td>${fitsLabel}</td><td style="text-align:center"><button class="copy-vram-btn" onclick="copyVram('${q.fmt}', '${gb}', '${safeName}')">⧉</button></td></tr>`;
   }).join('\n');
 
   // GPU compat cards
@@ -1668,6 +1669,25 @@ app.post('/api/contact', async (req, res) => {
   } catch (err) {
     console.error('Contact form send error:', err.message);
     res.status(500).json({ error: 'Failed to send message. Please try again.' });
+  }
+});
+
+// ── Email newsletter subscription ───────────────────────────
+app.post('/api/subscribe', (req, res) => {
+  const { email } = req.body || {};
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Valid email required.' });
+  }
+  const csvPath = path.join(__dirname, 'data', 'subscribers.csv');
+  const line = `${new Date().toISOString()},${email.trim()}\n`;
+  try {
+    if (!fs.existsSync(csvPath)) fs.writeFileSync(csvPath, 'timestamp,email\n', 'utf8');
+    fs.appendFileSync(csvPath, line, 'utf8');
+    console.log('NEW_SUBSCRIBER:', email.trim());  // durable in Railway logs
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Subscribe error:', err.message);
+    res.status(500).json({ error: 'Failed to save. Please try again.' });
   }
 });
 

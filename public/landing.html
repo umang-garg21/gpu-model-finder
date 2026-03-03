@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- ── Analytics (Umami) — replace placeholders after deploying Umami on Railway ── -->
+  <!-- <script defer src="https://YOUR-UMAMI-DOMAIN/script.js" data-website-id="YOUR-SITE-ID"></script> -->
+
   <!-- ── Favicon ──────────────────────────────────────────────── -->
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/favicon.svg">
@@ -629,6 +632,33 @@
       border: none;
       border-top: 1px solid var(--border);
     }
+
+    /* ── Subscribe section ────────────────────────────────────── */
+    .subscribe-section {
+      text-align: center;
+      padding: 3.5rem 1.5rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .subscribe-section h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .subscribe-section > p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .subscribe-form { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .subscribe-form input[type="email"] {
+      padding: 0.65rem 1rem; border-radius: 7px;
+      border: 1px solid var(--border-hi); background: var(--surface2);
+      color: var(--text); font-size: 0.9rem; font-family: inherit;
+      width: 280px; outline: none; transition: border-color 0.15s;
+    }
+    .subscribe-form input:focus { border-color: var(--accent); }
+    .subscribe-form button {
+      padding: 0.65rem 1.4rem; background: var(--accent); color: #0a0a0a;
+      font-weight: 700; border: none; border-radius: 7px; font-size: 0.9rem;
+      cursor: pointer; font-family: inherit; transition: opacity 0.15s;
+    }
+    .subscribe-form button:hover { opacity: 0.88; }
+    .subscribe-status { margin-top: 0.75rem; font-size: 0.85rem; }
+    .subscribe-status.success { color: var(--accent); }
+    .subscribe-status.error { color: #f43f5e; }
   </style>
 </head>
 <body>
@@ -667,19 +697,19 @@
   </div>
   <div class="hero-stats">
     <div class="hero-stat">
-      <span class="num">500+</span>
+      <span class="num" data-target="500">500+</span>
       <span class="label">AI Models</span>
     </div>
     <div class="hero-stat">
-      <span class="num">200+</span>
+      <span class="num" data-target="200">200+</span>
       <span class="label">GPU Profiles</span>
     </div>
     <div class="hero-stat">
-      <span class="num">7</span>
+      <span class="num" data-target="7">7</span>
       <span class="label">Quantizations</span>
     </div>
     <div class="hero-stat">
-      <span class="num">100%</span>
+      <span class="num" data-target="100">100%</span>
       <span class="label">Free & Open</span>
     </div>
   </div>
@@ -790,6 +820,38 @@
       <h3>See your ranked shortlist</h3>
       <p>Every model that fits appears, sorted by a difficulty-normalised benchmark quality score. Frontier models with hard benchmark data always surface above those with easy-benchmark inflation.</p>
     </div>
+  </div>
+</section>
+
+<hr class="section-divider" />
+
+<!-- ── Try it ─────────────────────────────────────────────────────── -->
+<section class="section">
+  <p class="section-label">Try it</p>
+  <h2 class="section-title">See it in action</h2>
+  <p class="section-sub">Click any example to launch a preloaded search instantly.</p>
+  <div class="features-grid">
+    <a href="/tool?vram=24&usecase=llm&quantization=fp16" class="feature-card" style="cursor:pointer;text-decoration:none;"
+       onclick="if(typeof window.umami!=='undefined')window.umami.track('Example Search Click',{preset:'rtx4090-llm-fp16'})">
+      <div class="feature-icon">🎮</div>
+      <h3>RTX 4090 → Top LLMs at FP16</h3>
+      <p>24 GB VRAM. Every frontier LLM that runs at full precision on a single consumer GPU, ranked by benchmark.</p>
+      <span style="color:var(--accent);font-size:0.82rem;margin-top:0.75rem;display:block;font-weight:600;">Try this search →</span>
+    </a>
+    <a href="/tool?vram=128&usecase=llm&quantization=int4" class="feature-card" style="cursor:pointer;text-decoration:none;"
+       onclick="if(typeof window.umami!=='undefined')window.umami.track('Example Search Click',{preset:'m4max-llm-int4'})">
+      <div class="feature-icon">🍎</div>
+      <h3>M4 Max → Coding models at INT4</h3>
+      <p>128 GB unified memory. Every coding LLM that fits, ranked by HumanEval score. Apple Silicon's sweet spot.</p>
+      <span style="color:var(--accent);font-size:0.82rem;margin-top:0.75rem;display:block;font-weight:600;">Try this search →</span>
+    </a>
+    <a href="/tool?vram=8&usecase=llm&quantization=gguf_q4" class="feature-card" style="cursor:pointer;text-decoration:none;"
+       onclick="if(typeof window.umami!=='undefined')window.umami.track('Example Search Click',{preset:'8gb-llm-q4'})">
+      <div class="feature-icon">💡</div>
+      <h3>8 GB Budget → Best at GGUF Q4</h3>
+      <p>RTX 4060 territory. Squeeze serious benchmark quality into 8 GB VRAM with 4-bit quantization.</p>
+      <span style="color:var(--accent);font-size:0.82rem;margin-top:0.75rem;display:block;font-weight:600;">Try this search →</span>
+    </a>
   </div>
 </section>
 
@@ -954,6 +1016,17 @@
   </div>
 </section>
 
+<!-- ── Subscribe ──────────────────────────────────────────────────── -->
+<section class="subscribe-section">
+  <h2>Stay updated on new models</h2>
+  <p>Get notified when major new open-source models drop.</p>
+  <form class="subscribe-form" id="subscribeForm">
+    <input type="email" id="subscribeEmail" placeholder="you@example.com" required />
+    <button type="submit">Notify me</button>
+  </form>
+  <p id="subscribeStatus" hidden class="subscribe-status"></p>
+</section>
+
 <!-- ── CTA ────────────────────────────────────────────────────────── -->
 <div class="cta-section">
   <h2>Stop guessing. Start running.</h2>
@@ -988,6 +1061,55 @@
       if (!wasOpen) item.classList.add('open');
     });
   });
+
+  // Stats counter animation (count up when scrolled into view)
+  const counters = document.querySelectorAll('.hero-stat .num[data-target]');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const end = parseInt(el.dataset.target, 10);
+      const suffix = el.textContent.replace(/[\d]/g, '');
+      let n = 0;
+      const step = Math.ceil(end / 60);
+      const t = setInterval(() => {
+        n = Math.min(n + step, end);
+        el.textContent = n + suffix;
+        if (n >= end) clearInterval(t);
+      }, 16);
+      io.unobserve(el);
+    });
+  }, { threshold: 0.6 });
+  counters.forEach(el => io.observe(el));
+
+  // Email subscribe form
+  const subscribeForm = document.getElementById('subscribeForm');
+  if (subscribeForm) {
+    subscribeForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const email = document.getElementById('subscribeEmail').value.trim();
+      const status = document.getElementById('subscribeStatus');
+      status.hidden = true;
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        status.textContent = res.ok ? "You're on the list!" : (data.error || 'Something went wrong.');
+        status.className = 'subscribe-status ' + (res.ok ? 'success' : 'error');
+        if (res.ok) {
+          subscribeForm.reset();
+          if (typeof window.umami !== 'undefined') window.umami.track('Email Subscribe', { source: 'landing' });
+        }
+      } catch (_) {
+        status.textContent = 'Network error. Try again.';
+        status.className = 'subscribe-status error';
+      }
+      status.hidden = false;
+    });
+  }
 </script>
 </body>
 </html>

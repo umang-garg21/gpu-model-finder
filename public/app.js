@@ -2,6 +2,11 @@
    Fit to Metal — Frontend
    ───────────────────────────────────────────────────────────── */
 
+// ── Analytics helper (Umami) ──────────────────────────────────
+function trackEvent(name, props) {
+  if (typeof window.umami !== 'undefined') window.umami.track(name, props);
+}
+
 // ── GPU data (NVIDIA, AMD, Apple Silicon) ───────────────────────
 const NVIDIA_GPUS = {
   '50-series': [
@@ -459,6 +464,27 @@ function showPage(hash) {
   if (isStatic) window.scrollTo(0, 0);
 }
 
+// ── Share bar buttons ─────────────────────────────────────────
+document.getElementById('copyLinkBtn')?.addEventListener('click', () => {
+  navigator.clipboard.writeText(window.location.href);
+  const btn = document.getElementById('copyLinkBtn');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy link', 2000);
+  trackEvent('Share Click', { method: 'copy', page: 'tool' });
+});
+
+document.getElementById('tweetBtn')?.addEventListener('click', () => {
+  const count = state.models.length;
+  const gpu = state.selectedGpu
+    ? `${state.gpuCount > 1 ? `${state.gpuCount}× ` : ''}${state.selectedGpu.name}`
+    : `${state.vram} GB VRAM`;
+  const quant = state.quantization.toUpperCase();
+  const text = `I can run ${count} AI models on my ${gpu} at ${quant} — find yours:`;
+  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://fit-to-metal.up.railway.app/tool')}`;
+  window.open(url, '_blank', 'noopener');
+  trackEvent('Share Click', { method: 'twitter', page: 'tool', resultsCount: count });
+});
+
 // Wire up all "back" links inside static pages to go home
 document.querySelectorAll('.back-link').forEach(a => {
   a.addEventListener('click', e => { e.preventDefault(); window.location.hash = ''; showPage(''); });
@@ -781,6 +807,7 @@ function estimateLatency(model, gpu, gpuCount, usecase) {
 function openModal(modelId) {
   const model = state.models.find(m => m.id === modelId);
   if (!model) return;
+  trackEvent('Model Click', { modelId });
   modalBody.innerHTML = renderModalContent(model);
   modalOverlay.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1075,6 +1102,12 @@ async function fetchModels() {
     state.models = data.models ?? [];
     renderModels(state.models, state.vram);
     renderBenchmarkTabs();
+    trackEvent('GPU Search', {
+      vram: state.vram,
+      usecase: state.usecase,
+      quantization: state.quantization,
+      resultsCount: state.models.length,
+    });
 
     const count  = state.models.length;
     const qLabel = quantSel.options[quantSel.selectedIndex].text.split('—')[0].trim();
@@ -1086,6 +1119,21 @@ async function fetchModels() {
       `that fit in <strong>${state.vram} GB</strong> at <strong>${qLabel}</strong>${gpuLabel}`;
     sortBar.style.display = count ? 'flex' : 'none';
     syncSortBar();
+
+    const shareBar = document.getElementById('shareBar');
+    const summaryEl = document.getElementById('resultsSummary');
+    if (shareBar) shareBar.style.display = count > 0 ? 'flex' : 'none';
+    if (summaryEl) {
+      if (count > 0) {
+        const gpu = state.selectedGpu
+          ? `${state.gpuCount > 1 ? `${state.gpuCount}× ` : ''}${state.selectedGpu.name}`
+          : `${state.vram} GB VRAM`;
+        summaryEl.textContent = `${count} model${count !== 1 ? 's' : ''} fit${count === 1 ? 's' : ''} your ${gpu}`;
+        summaryEl.style.display = 'block';
+      } else {
+        summaryEl.style.display = 'none';
+      }
+    }
   } catch (err) {
     console.error(err);
     modelGrid.innerHTML = `
@@ -1134,6 +1182,13 @@ function renderModels(models, maxVram) {
   const page = sorted.slice(startIdx, startIdx + PAGE_SIZE);
   modelGrid.innerHTML = page.map((m, i) => modelCardHTML(m, maxVram, startIdx + i + 1)).join('');
   renderPagination(sorted.length, state.page, totalPages);
+  // "Fits!" glow animation on new results
+  if (state.page === 1) {
+    modelGrid.classList.remove('results-flash');
+    void modelGrid.offsetWidth;
+    modelGrid.classList.add('results-flash');
+    setTimeout(() => modelGrid.classList.remove('results-flash'), 700);
+  }
 }
 
 function renderPagination(total, currentPage, totalPages) {
