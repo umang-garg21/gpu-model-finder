@@ -101,7 +101,7 @@ const USE_CASE_BENCHMARKS = {
     { key: 'math',          label: 'Math',       desc: 'MATH competition problems (%)' },
     { key: 'humaneval',     label: 'Coding',     desc: 'HumanEval — Python code generation pass@1 (%)' },
     { key: 'gsm8k',         label: 'GSM8K',      desc: 'Grade school math word problems (%)' },
-    { key: 'mmlu',          label: 'General',    desc: 'MMLU 5-shot — broad general knowledge (%)' },
+    { key: 'mmlu',          label: 'MMLU',       desc: 'MMLU 5-shot — broad general knowledge across 57 academic subjects (%)' },
     { key: 'arc',           label: 'Reasoning',  desc: 'ARC-Challenge — science reasoning (%)' },
     { key: 'ifeval',        label: 'Instruct',   desc: 'IFEval — instruction-following accuracy (%)' },
   ],
