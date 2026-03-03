@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────
-   Bring your own GPU (BYOG) — Frontend
+   BYOG: Bring your own GPU — Frontend
    ───────────────────────────────────────────────────────────── */
 
 // ── Analytics helper (Umami) ──────────────────────────────────
@@ -480,7 +480,7 @@ document.getElementById('tweetBtn')?.addEventListener('click', () => {
     : `${state.vram} GB VRAM`;
   const quant = state.quantization.toUpperCase();
   const text = `I can run ${count} AI models on my ${gpu} at ${quant} — find yours:`;
-  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://fit-to-metal.up.railway.app/tool')}`;
+  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://byog.up.railway.app/tool')}`;
   window.open(url, '_blank', 'noopener');
   trackEvent('Share Click', { method: 'twitter', page: 'tool', resultsCount: count });
 });

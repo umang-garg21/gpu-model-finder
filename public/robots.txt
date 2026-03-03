@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fit-to-metal.up.railway.app/sitemap.xml
+Sitemap: https://byog.up.railway.app/sitemap.xml
