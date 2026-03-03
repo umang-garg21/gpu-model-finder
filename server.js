@@ -214,15 +214,20 @@ const BENCHMARK_DATA = {
   'nvidia/Llama-3.1-Nemotron-51B-Instruct':    { mmlu:80.2, humaneval:72.0, math:68.0, gsm8k:90.0, arc:65.0, ifeval:78.0 },
   // Apple — OpenELM
   'apple/OpenELM-3B-Instruct':                 { mmlu:28.0, humaneval:16.0, math:4.0,  gsm8k:8.0,  arc:36.0, ifeval:24.0 },
-  // Google — Gemma 3 (March 2025)
-  'google/gemma-3-1b-it':                      { mmlu:45.2, humaneval:35.4, math:39.6, gsm8k:49.8, arc:42.1, ifeval:41.8 },
-  'google/gemma-3-4b-it':                      { mmlu:59.6, humaneval:60.4, math:62.1, gsm8k:68.0, arc:54.3, ifeval:52.2 },
-  'google/gemma-3-12b-it':                     { mmlu:74.5, humaneval:79.2, math:79.5, gsm8k:89.2, arc:64.5, ifeval:73.0 },
-  'google/gemma-3-27b-it':                     { mmlu:83.2, humaneval:82.0, math:89.2, gsm8k:93.0, arc:70.4, ifeval:76.5 },
-  // Mistral — Small 3.1 (March 2025)
+  // Google — Gemma 3 (March 2025) — also VLMs; mmmu added for vlm usecase
+  'google/gemma-3-1b-it':                      { mmlu:45.2, humaneval:35.4, math:39.6, gsm8k:49.8, arc:42.1, ifeval:41.8, mmmu:33.0 },
+  'google/gemma-3-4b-it':                      { mmlu:59.6, humaneval:60.4, math:62.1, gsm8k:68.0, arc:54.3, ifeval:52.2, mmmu:46.0 },
+  'google/gemma-3-12b-it':                     { mmlu:74.5, humaneval:79.2, math:79.5, gsm8k:89.2, arc:64.5, ifeval:73.0, mmmu:56.3 },
+  'google/gemma-3-27b-it':                     { mmlu:83.2, humaneval:82.0, math:89.2, gsm8k:93.0, arc:70.4, ifeval:76.5, mmmu:64.5 },
+  // Mistral — Small 3.1 / 3.2 (2025)
   'mistralai/Mistral-Small-3.1-24B-Instruct-2503': { mmlu:81.5, humaneval:71.2, math:57.8, gsm8k:92.5, arc:66.2, ifeval:74.8 },
-  // Microsoft — Phi-4-mini (April 2025, 3.8B) — note: HF id uses lowercase 'phi'
+  'mistralai/Mistral-Small-3.2-24B-Instruct-2506': { mmlu:82.3, humaneval:73.5, math:63.0, gsm8k:93.0, arc:67.0, ifeval:76.0 },
+  // Microsoft — Phi-4 family (2025)
   'microsoft/phi-4-mini-instruct':             { mmlu:67.1, humaneval:75.4, math:71.3, gsm8k:83.0, arc:60.2, ifeval:67.5 },
+  'microsoft/phi-4-reasoning-plus':            { mmlu:88.5, humaneval:85.2, math:97.3, gsm8k:96.5, arc:74.0, ifeval:80.0, gpqa:75.1, hle:18.1, swebench:45.0 },
+  'microsoft/phi-4-mini-reasoning':            { mmlu:72.0, humaneval:78.0, math:82.0, gsm8k:84.0, arc:63.0, ifeval:68.0 },
+  // Cohere — Command A (March 2025, 111B MoE)
+  'CohereForAI/c4ai-command-a-03-2025':        { mmlu:77.0, humaneval:68.5, math:62.0, gsm8k:89.5, arc:65.0, ifeval:72.0, swebench:38.0 },
   // DeepSeek — V3.2 (2025 thinking/reasoning model; official model card benchmarks)
   'deepseek-ai/DeepSeek-V3.2':          { swebench: 73.1, gpqa: 82.4, hle: 25.1 },
   'deepseek-ai/DeepSeek-V3.2-Speciale': { swebench: 73.1, gpqa: 82.4, hle: 25.1 },
@@ -428,7 +433,87 @@ const BENCHMARK_DATA = {
   'openai/clip-vit-large-patch14':              { imagenet_top1: 75.5 },
   'microsoft/resnet-50':                        { imagenet_top1: 80.9 },
   'facebook/deit-base-distilled-patch16-224':   { imagenet_top1: 83.4 },
+  // ── VLMs: mmmu (MMMU %, higher=better), textvqa (TextVQA %), docvqa (DocVQA %) ──
+  // Based on published Open VLM Leaderboard / model card figures (early 2026).
+  // Qwen2.5-VL family (best-in-class multimodal)
+  'Qwen/Qwen2.5-VL-72B-Instruct':              { mmmu:74.0, textvqa:85.5, docvqa:95.7 },
+  'Qwen/Qwen2.5-VL-32B-Instruct':              { mmmu:70.5, textvqa:84.9, docvqa:95.1 },
+  'Qwen/Qwen2.5-VL-7B-Instruct':               { mmmu:58.6, textvqa:84.3, docvqa:93.1 },
+  'Qwen/Qwen2.5-VL-3B-Instruct':               { mmmu:54.1, textvqa:81.0, docvqa:91.0 },
+  'Qwen/Qwen2.5-VL-2B-Instruct':               { mmmu:50.5, textvqa:79.0, docvqa:89.0 },
+  // Qwen2-VL family
+  'Qwen/Qwen2-VL-72B-Instruct':                { mmmu:64.5, textvqa:85.5, docvqa:96.5 },
+  'Qwen/Qwen2-VL-7B-Instruct':                 { mmmu:54.1, textvqa:84.3, docvqa:94.5 },
+  'Qwen/Qwen2-VL-2B-Instruct':                 { mmmu:41.1, textvqa:79.7, docvqa:89.2 },
+  // Llama 4 (natively multimodal MoE)
+  'meta-llama/Llama-4-Scout-17B-16E-Instruct':    { mmmu:69.4, textvqa:81.0 },
+  'meta-llama/Llama-4-Maverick-17B-128E-Instruct':{ mmmu:73.5, textvqa:84.5 },
+  // Llama 3.2 Vision
+  'meta-llama/Llama-3.2-90B-Vision-Instruct':  { mmmu:60.3, textvqa:73.5 },
+  'meta-llama/Llama-3.2-11B-Vision-Instruct':  { mmmu:50.7, textvqa:66.4 },
+  // Pixtral (Mistral multimodal)
+  'mistralai/Pixtral-Large-Instruct-2411':      { mmmu:72.0, docvqa:91.0 },
+  'mistralai/Pixtral-12B-2409':                 { mmmu:52.5, docvqa:87.0 },
+  // InternVL2.5 (Shanghai AI Lab)
+  'OpenGVLab/InternVL2_5-78B':                  { mmmu:72.3, textvqa:84.5, docvqa:94.7 },
+  'OpenGVLab/InternVL2_5-38B':                  { mmmu:70.2, textvqa:83.6, docvqa:93.8 },
+  'OpenGVLab/InternVL2_5-26B':                  { mmmu:65.8, textvqa:82.3, docvqa:93.0 },
+  'OpenGVLab/InternVL2_5-8B':                   { mmmu:56.0, textvqa:79.1, docvqa:91.6 },
+  'OpenGVLab/InternVL2_5-4B':                   { mmmu:52.3, textvqa:76.4, docvqa:89.5 },
+  'OpenGVLab/InternVL2_5-2B':                   { mmmu:43.9, textvqa:73.7, docvqa:87.9 },
+  'OpenGVLab/InternVL2_5-1B':                   { mmmu:39.0, textvqa:70.0, docvqa:84.9 },
+  // InternVL2
+  'OpenGVLab/InternVL2-Llama3-76B':             { mmmu:68.2, textvqa:84.4, docvqa:94.1 },
+  'OpenGVLab/InternVL2-40B':                    { mmmu:65.5, textvqa:82.6, docvqa:93.0 },
+  'OpenGVLab/InternVL2-26B':                    { mmmu:58.9, textvqa:81.2, docvqa:92.0 },
+  'OpenGVLab/InternVL2-8B':                     { mmmu:51.2, textvqa:77.4, docvqa:91.6 },
+  'OpenGVLab/InternVL2-4B':                     { mmmu:47.9, textvqa:74.8 },
+  'OpenGVLab/InternVL2-2B':                     { mmmu:36.3, textvqa:73.4 },
+  'OpenGVLab/InternVL2-1B':                     { mmmu:36.7, textvqa:72.5 },
+  // PaliGemma (Google)
+  'google/paligemma2-10b-pt-448':               { mmmu:55.8 },
+  'google/paligemma2-3b-pt-448':                { mmmu:44.2 },
+  'google/paligemma-3b-mix-448':                { mmmu:34.9, textvqa:73.1 },
+  // Phi-3.5 / 4 Vision (Microsoft)
+  'microsoft/Phi-3.5-vision-instruct':          { mmmu:43.9, textvqa:72.0 },
+  'microsoft/phi-4-multimodal-instruct':        { mmmu:60.5, textvqa:80.3, docvqa:91.5 },
+  // Molmo (Allen AI)
+  'allenai/Molmo-72B-0924':                     { mmmu:64.0, textvqa:89.1 },
+  'allenai/Molmo-7B-D-0924':                    { mmmu:55.3, textvqa:81.2 },
+  'allenai/Molmo-7B-O-0924':                    { mmmu:52.6, textvqa:80.5 },
+  // MiniCPM-V (openbmb)
+  'openbmb/MiniCPM-V-2_6':                      { mmmu:49.8, textvqa:84.0 },
+  'openbmb/MiniCPM-o-2_6':                      { mmmu:50.4, textvqa:84.0 },
+  // SmolVLM (HuggingFaceTB)
+  'HuggingFaceTB/SmolVLM-Instruct':             { mmmu:38.8 },
+  'HuggingFaceTB/SmolVLM-500M-Instruct':        { mmmu:30.9 },
+  'HuggingFaceTB/SmolVLM2-2.2B-Instruct':       { mmmu:46.8 },
+  'HuggingFaceTB/SmolVLM2-256M-Instruct':       { mmmu:28.8 },
+  // Idefics (HuggingFaceM4)
+  'HuggingFaceM4/idefics3-8b-llama3':           { mmmu:44.3 },
+  // LLaVA-OneVision
+  'llava-hf/llava-onevision-qwen2-72b-ov-hf':   { mmmu:68.4, textvqa:85.5 },
+  'llava-hf/llava-onevision-qwen2-7b-ov-hf':    { mmmu:58.0, textvqa:80.0 },
+  'llava-hf/llava-onevision-qwen2-0.5b-ov-hf':  { mmmu:40.0 },
+  // LLaVA 1.6
+  'liuhaotian/llava-v1.6-34b':                  { mmmu:51.1, textvqa:69.5 },
+  'liuhaotian/llava-v1.6-mistral-7b':           { mmmu:36.8, textvqa:65.7 },
+  'llava-hf/llava-v1.6-mistral-7b-hf':          { mmmu:36.8, textvqa:65.7 },
+  // CogVLM2
+  'THUDM/cogvlm2-llama3-chat-19B':              { mmmu:45.2 },
 };
+
+// ── Dynamic benchmark overrides ────────────────────────────────
+// Loaded from data/benchmark_overrides.json which is auto-updated
+// by scripts/update_benchmarks.py (run weekly via GitHub Actions).
+// Overrides are merged on top of BENCHMARK_DATA so new scores win.
+try {
+  const _overrPath = require('path').join(__dirname, 'data', 'benchmark_overrides.json');
+  const _overrides = JSON.parse(fs.readFileSync(_overrPath, 'utf8'));
+  for (const [_id, _bm] of Object.entries(_overrides))
+    BENCHMARK_DATA[_id] = Object.assign(BENCHMARK_DATA[_id] ?? {}, _bm);
+  console.log(`[benchmarks] Loaded ${Object.keys(_overrides).length} dynamic override entries`);
+} catch { /* file may not exist on first deploy */ }
 
 // ── Benchmark difficulty calibration ──────────────────────────
 // floor:      score a random/weak model achieves (normalization lower bound)
@@ -659,6 +744,68 @@ const FLAGSHIP_VIDEO_VRAM_FP16 = {
   'ByteDance/AnimateDiff-Lightning':                        4,
 };
 
+// ── Flagship VRAM for Vision Language Models (FP16, GB) ────────────
+const FLAGSHIP_VLM_VRAM_FP16 = {
+  // Qwen2.5-VL
+  'Qwen/Qwen2.5-VL-72B-Instruct':              144,
+  'Qwen/Qwen2.5-VL-32B-Instruct':               65,
+  'Qwen/Qwen2.5-VL-7B-Instruct':                15,
+  'Qwen/Qwen2.5-VL-3B-Instruct':                 7,
+  'Qwen/Qwen2.5-VL-2B-Instruct':                 5,
+  // Qwen2-VL
+  'Qwen/Qwen2-VL-72B-Instruct':                145,
+  'Qwen/Qwen2-VL-7B-Instruct':                  15,
+  'Qwen/Qwen2-VL-2B-Instruct':                   5,
+  // Llama 4 (MoE — fp16 weight size, not activation memory)
+  'meta-llama/Llama-4-Scout-17B-16E-Instruct':        220,  // ~109B total params fp16
+  'meta-llama/Llama-4-Maverick-17B-128E-Instruct':    800,  // ~400B total params fp16
+  // Llama 3.2 Vision
+  'meta-llama/Llama-3.2-90B-Vision-Instruct':   182,
+  'meta-llama/Llama-3.2-11B-Vision-Instruct':    23,
+  // Pixtral (Mistral)
+  'mistralai/Pixtral-Large-Instruct-2411':       248,
+  'mistralai/Pixtral-12B-2409':                   24,
+  // InternVL2.5
+  'OpenGVLab/InternVL2_5-78B':                  156,
+  'OpenGVLab/InternVL2_5-38B':                   76,
+  'OpenGVLab/InternVL2_5-26B':                   52,
+  'OpenGVLab/InternVL2_5-8B':                    17,
+  'OpenGVLab/InternVL2_5-4B':                     9,
+  'OpenGVLab/InternVL2_5-2B':                     5,
+  'OpenGVLab/InternVL2_5-1B':                     3,
+  // InternVL2
+  'OpenGVLab/InternVL2-Llama3-76B':             152,
+  'OpenGVLab/InternVL2-40B':                     80,
+  'OpenGVLab/InternVL2-26B':                     52,
+  'OpenGVLab/InternVL2-8B':                      17,
+  'OpenGVLab/InternVL2-4B':                       9,
+  'OpenGVLab/InternVL2-2B':                       5,
+  // Gemma 3 vision (same model used for LLM + VLM tasks)
+  'google/gemma-3-27b-it':                       54,
+  'google/gemma-3-12b-it':                       24,
+  'google/gemma-3-4b-it':                         9,
+  'google/gemma-3-1b-it':                         3,
+  // Phi-3.5 / 4 vision (Microsoft)
+  'microsoft/Phi-3.5-vision-instruct':           10,
+  'microsoft/phi-4-multimodal-instruct':         10,
+  // Molmo (Allen AI)
+  'allenai/Molmo-72B-0924':                     145,
+  'allenai/Molmo-7B-D-0924':                     15,
+  'allenai/Molmo-7B-O-0924':                     15,
+  // MiniCPM-V
+  'openbmb/MiniCPM-V-2_6':                       16,
+  'openbmb/MiniCPM-o-2_6':                       16,
+  // Idefics
+  'HuggingFaceM4/idefics3-8b-llama3':            17,
+  // LLaVA-OneVision
+  'llava-hf/llava-onevision-qwen2-72b-ov-hf':   145,
+  'llava-hf/llava-onevision-qwen2-7b-ov-hf':     15,
+  // SmolVLM
+  'HuggingFaceTB/SmolVLM2-2.2B-Instruct':         5,
+  'HuggingFaceTB/SmolVLM-Instruct':               4,
+  'HuggingFaceTB/SmolVLM-500M-Instruct':          2,
+};
+
 // Combined lookup: maps usecase → its curated VRAM table.
 // Injection code uses this to avoid leaking image stubs into LLM results.
 const FLAGSHIP_VRAM_BY_USECASE = {
@@ -666,6 +813,7 @@ const FLAGSHIP_VRAM_BY_USECASE = {
   image:  FLAGSHIP_IMAGE_VRAM_FP16,
   audio:  FLAGSHIP_AUDIO_VRAM_FP16,
   video:  FLAGSHIP_VIDEO_VRAM_FP16,
+  vlm:    FLAGSHIP_VLM_VRAM_FP16,
 };
 
 // Known parameter counts for models whose names don't embed a size token.
@@ -679,6 +827,7 @@ const FLAGSHIP_PARAMS = {
   'Qwen/Qwen3-Coder-Next':                     100e9,  // ~100B MoE (estimated)
   'mistralai/Mistral-Large-Instruct-2411':      123e9,
   'mistralai/Mistral-Small-3.1-24B-Instruct-2503': 24e9,
+  'mistralai/Mistral-Small-3.2-24B-Instruct-2506': 24e9,
   'CohereForAI/c4ai-command-r-plus-08-2024':   104e9,
   'CohereForAI/c4ai-command-a-03-2025':        111e9,
   'nvidia/Llama-3.1-Nemotron-51B-Instruct':     51e9,
@@ -687,15 +836,24 @@ const FLAGSHIP_PARAMS = {
   'zai-org/GLM-5':                             700e9,  // ~700B MoE
   'zai-org/GLM-4.7':                           232e9,  // ~232B MoE
   'zai-org/GLM-4.7-Flash':                     120e9,  // ~120B MoE
+  // VLMs with non-obvious param counts
+  'meta-llama/Llama-4-Scout-17B-16E-Instruct':    109e9,   // sparse MoE total
+  'meta-llama/Llama-4-Maverick-17B-128E-Instruct': 400e9,  // sparse MoE total (est.)
+  'mistralai/Pixtral-Large-Instruct-2411':         123e9,
+  'OpenGVLab/InternVL2-Llama3-76B':                76e9,
+  'OpenGVLab/InternVL2_5-78B':                     78e9,
+  'OpenGVLab/InternVL2_5-38B':                     38e9,
+  'allenai/Molmo-72B-0924':                        72e9,
 };
 
 const USECASE_PIPELINES = {
   llm:    ['text-generation', 'text2text-generation'],
   image:  ['text-to-image', 'image-to-image'],
   audio:  ['automatic-speech-recognition', 'text-to-speech', 'audio-to-audio'],
-  vision: ['image-classification', 'object-detection', 'image-segmentation', 'depth-estimation', 'image-to-text'],
+  vision: ['image-classification', 'object-detection', 'image-segmentation', 'depth-estimation'],
   video:  ['text-to-video', 'video-classification'],
   embed:  ['feature-extraction', 'sentence-similarity'],
+  vlm:    ['image-text-to-text', 'visual-question-answering', 'image-to-text'],
 };
 
 // ── Priority authors per use case ──────────────────────────────
@@ -724,6 +882,9 @@ const PRIORITY_AUTHORS = {
   embed:  ['BAAI', 'sentence-transformers', 'Alibaba-NLP', 'mixedbread-ai',
            'nomic-ai', 'jinaai', 'intfloat', 'dunzhang', 'Salesforce',
            'nvidia', 'WhereIsAI', 'tomaarsen'],
+  vlm:    ['Qwen', 'meta-llama', 'OpenGVLab', 'mistralai', 'google',
+           'microsoft', 'allenai', 'HuggingFaceTB', 'HuggingFaceM4',
+           'openbmb', 'THUDM', 'llava-hf', 'liuhaotian'],
 };
 
 // ── VRAM helpers ───────────────────────────────────────────────
@@ -953,6 +1114,123 @@ function inferVideoQualityScore(modelId) {
 }
 
 /**
+ * Infer mmmu score (0–100) for VLMs not in BENCHMARK_DATA.
+ * Based on Open VLM Leaderboard family tiers (early 2026).
+ */
+function inferVlmScore(modelId) {
+  const id = (modelId || '').toLowerCase();
+  // Qwen2.5-VL
+  if (id.includes('qwen2.5-vl') || id.includes('qwen2_5-vl') || id.includes('qwen2-5-vl')) {
+    if (id.includes('72b'))                              return 74.0;
+    if (id.includes('32b'))                              return 70.5;
+    if (id.includes('7b'))                               return 58.6;
+    if (id.includes('3b'))                               return 54.1;
+    if (id.includes('2b'))                               return 50.5;
+    return 58.0;
+  }
+  // Qwen2-VL
+  if (id.includes('qwen2-vl') || id.includes('qwen2_vl')) {
+    if (id.includes('72b'))                              return 64.5;
+    if (id.includes('7b'))                               return 54.1;
+    if (id.includes('2b'))                               return 41.1;
+    return 54.0;
+  }
+  // InternVL2.5
+  if (id.includes('internvl2_5') || id.includes('internvl2-5')) {
+    if (id.includes('78b'))                              return 72.3;
+    if (id.includes('38b'))                              return 70.2;
+    if (id.includes('26b'))                              return 65.8;
+    if (id.includes('8b'))                               return 56.0;
+    if (id.includes('4b'))                               return 52.3;
+    if (id.includes('2b'))                               return 43.9;
+    if (id.includes('1b'))                               return 39.0;
+    return 56.0;
+  }
+  // InternVL2
+  if (id.includes('internvl2') || id.includes('internvl-2')) {
+    if (id.includes('76b') || id.includes('llama3'))     return 68.2;
+    if (id.includes('40b'))                              return 65.5;
+    if (id.includes('26b'))                              return 58.9;
+    if (id.includes('8b'))                               return 51.2;
+    if (id.includes('4b'))                               return 47.9;
+    if (id.includes('2b'))                               return 36.3;
+    if (id.includes('1b'))                               return 36.7;
+    return 51.0;
+  }
+  // LLaVA-OneVision
+  if (id.includes('llava-onevision') || id.includes('llavaonevision')) {
+    if (id.includes('72b'))                              return 68.4;
+    if (id.includes('7b'))                               return 58.0;
+    if (id.includes('0.5b'))                             return 40.0;
+    return 55.0;
+  }
+  // LLaVA 1.6 / Next
+  if (id.includes('llava') && (id.includes('1.6') || id.includes('v1.6') || id.includes('next'))) {
+    if (id.includes('34b'))                              return 51.1;
+    return 36.8;
+  }
+  // Pixtral
+  if (id.includes('pixtral')) {
+    if (id.includes('large') || id.includes('124b'))     return 72.0;
+    return 52.5;
+  }
+  // Llama-4
+  if (id.includes('llama-4') || id.includes('llama4')) {
+    if (id.includes('maverick'))                         return 73.5;
+    if (id.includes('scout'))                            return 69.4;
+    return 65.0;
+  }
+  // Llama-3.2 Vision
+  if ((id.includes('llama-3.2') || id.includes('llama3.2')) && id.includes('vision')) {
+    if (id.includes('90b'))                              return 60.3;
+    if (id.includes('11b'))                              return 50.7;
+    return 50.7;
+  }
+  // Molmo
+  if (id.includes('molmo')) {
+    if (id.includes('72b'))                              return 64.0;
+    if (id.includes('7b'))                               return 55.3;
+    return 52.0;
+  }
+  // Gemma-3 vision
+  if ((id.includes('gemma-3') || id.includes('gemma3')) && !id.includes('gemma-3n')) {
+    if (id.includes('27b'))                              return 64.5;
+    if (id.includes('12b'))                              return 56.3;
+    if (id.includes('4b'))                               return 46.0;
+    if (id.includes('1b'))                               return 33.0;
+    return 46.0;
+  }
+  // Phi vision
+  if (id.includes('phi') && id.includes('vision'))      return 43.9;
+  if (id.includes('phi-4-multimodal'))                  return 60.5;
+  // MiniCPM-V
+  if (id.includes('minicpm') && (id.includes('-v') || id.includes('-o'))) {
+    if (id.includes('2_6') || id.includes('2.6'))        return 49.8;
+    return 45.0;
+  }
+  // SmolVLM
+  if (id.includes('smolvlm')) {
+    if (id.includes('2.2b') || id.includes('2_2b'))      return 46.8;
+    if (id.includes('500m'))                             return 30.9;
+    if (id.includes('256m'))                             return 28.8;
+    return 38.8;
+  }
+  // Idefics
+  if (id.includes('idefics')) {
+    if (id.includes('8b'))                               return 44.3;
+    return 38.0;
+  }
+  // CogVLM
+  if (id.includes('cogvlm'))                            return 45.0;
+  // PaliGemma
+  if (id.includes('paligemma')) {
+    if (id.includes('10b'))                              return 55.8;
+    return 44.2;
+  }
+  return null;
+}
+
+/**
  * Infer a tier-based image_quality score (0–100) for models not in BENCHMARK_DATA.
  * Based on architecture family detected from the model ID / name string.
  * Returns null for architectures we can't classify, so they sort below scored models
@@ -1154,7 +1432,7 @@ function computeOverallScore(benchmarks, usecase) {
 
   // Non-LLM usecases: keep original single-metric logic unchanged
   if (usecase !== 'llm') {
-    const primary = { embed: 'mteb', vision: 'imagenet_top1', image: 'image_quality', audio: 'wer', video: 'video_quality' };
+    const primary = { embed: 'mteb', vision: 'imagenet_top1', image: 'image_quality', audio: 'wer', video: 'video_quality', vlm: 'mmmu' };
     const pk = primary[usecase];
     if (!pk || benchmarks[pk] == null) return null;
     return usecase === 'audio' ? 100 - benchmarks[pk] : benchmarks[pk];
@@ -1407,6 +1685,12 @@ app.get('/api/models', async (req, res) => {
             benchmarks.video_quality = inferred;
             benchmarks_source.video_quality = { source: 'inferred', url: null };
           }
+        } else if (usecase === 'vlm' && benchmarks.mmmu == null) {
+          const inferred = inferVlmScore(m.id);
+          if (inferred !== null) {
+            benchmarks.mmmu = inferred;
+            benchmarks_source.mmmu = { source: 'inferred', url: null };
+          }
         }
 
         const hasBench = Object.keys(benchmarks).length > 0;
@@ -1645,6 +1929,7 @@ app.get('/api/models', async (req, res) => {
         vision: ['vision'],
         video: ['vision'],
         embed: ['instruction_following','reasoning'],
+        vlm:   ['reasoning','vision','instruction_following'],
       };
       // Allow explicit `task` query to focus ranking on a single canonical task
       const taskParam = (req.query.task || '').toString().toLowerCase();

@@ -121,6 +121,11 @@ const USE_CASE_BENCHMARKS = {
   video: [
     { key: 'video_quality', label: 'Quality',    desc: 'VBench composite score — motion quality, temporal consistency, aesthetics (0–100)' },
   ],
+  vlm: [
+    { key: 'mmmu',     label: 'MMMU',    desc: 'Massive Multitask Multimodal Understanding — college-level multimodal questions (%)' },
+    { key: 'textvqa',  label: 'TextVQA', desc: 'Text-reading VQA benchmark — answering questions about text in images (%)' },
+    { key: 'docvqa',   label: 'DocVQA',  desc: 'Document VQA — answering questions about scanned document images (%)' },
+  ],
 };
 
 // Benchmarks where lower score = better rank
@@ -434,6 +439,8 @@ const TASK_DESCRIPTIONS = {
   'image-to-text':               'Generates text descriptions from images (captioning/VQA). Ideal for: accessibility, image search, and content understanding.',
   'text-to-video':               'Generates video clips from text prompts. Ideal for: creative production, storyboarding, and marketing content.',
   'video-classification':        'Classifies or understands video sequences. Ideal for: content moderation, sports analytics, and surveillance.',
+  'image-text-to-text':          'Multimodal generation — accepts image+text input, produces text output. Ideal for: visual question answering, image captioning, OCR, document understanding, and visual reasoning.',
+  'visual-question-answering':   'Answers natural-language questions about images. Ideal for: accessibility, document analysis, and vision-grounded chat.',
 };
 
 // ── State ──────────────────────────────────────────────────────

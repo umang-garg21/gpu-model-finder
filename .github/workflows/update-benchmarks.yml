@@ -1,0 +1,38 @@
+name: Update Benchmark Data
+
+on:
+  # Run every Monday at 04:00 UTC
+  schedule:
+    - cron: '0 4 * * 1'
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to push the updated JSON
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Run benchmark updater
+        run: python scripts/update_benchmarks.py
+
+      - name: Commit and push updated benchmark data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: update benchmark_overrides.json [automated]'
+          file_pattern: 'data/benchmark_overrides.json'
+          commit_user_name: 'github-actions[bot]'
+          commit_user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_author: 'github-actions[bot] <github-actions[bot]@users.noreply.github.com>'
