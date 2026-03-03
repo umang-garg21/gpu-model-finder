@@ -252,14 +252,57 @@ const BENCHMARK_DATA = {
   'openai/whisper-large-v3-turbo':               { wer: 4.8  },
   'distil-whisper/distil-large-v3':              { wer: 5.8  },
   'distil-whisper/distil-medium.en':             { wer: 7.8  },
-  // ── Image Gen: image_quality (0-100 preference), clip_score ──
-  'CompVis/stable-diffusion-v1-4':              { image_quality: 42, clip_score: 28.5 },
-  'runwayml/stable-diffusion-v1-5':             { image_quality: 45, clip_score: 29.0 },
-  'stabilityai/stable-diffusion-2-1':           { image_quality: 50, clip_score: 29.5 },
-  'stabilityai/stable-diffusion-xl-base-1.0':  { image_quality: 65, clip_score: 31.2 },
-  'stabilityai/sdxl-turbo':                    { image_quality: 60, clip_score: 30.5 },
-  'black-forest-labs/FLUX.1-schnell':           { image_quality: 78, clip_score: 33.2 },
-  'black-forest-labs/FLUX.1-dev':               { image_quality: 84, clip_score: 34.1 },
+  // ── Image Gen: image_quality (0-100 human preference), clip_score (text-image alignment) ──
+  // SD 1.x / 2.x
+  'CompVis/stable-diffusion-v1-4':                          { image_quality: 42, clip_score: 28.5 },
+  'runwayml/stable-diffusion-v1-5':                         { image_quality: 45, clip_score: 29.0 },
+  'stabilityai/stable-diffusion-2-1':                       { image_quality: 50, clip_score: 29.5 },
+  // Würstchen / Stable Cascade
+  'stabilityai/stable-cascade':                             { image_quality: 64, clip_score: 30.8 },
+  // SDXL family
+  'stabilityai/stable-diffusion-xl-base-1.0':               { image_quality: 65, clip_score: 31.2 },
+  'stabilityai/sdxl-turbo':                                 { image_quality: 60, clip_score: 30.5 },
+  // SD3 / SD3.5
+  'stabilityai/stable-diffusion-3-medium-diffusers':        { image_quality: 70, clip_score: 31.5 },
+  'stabilityai/stable-diffusion-3.5-medium':                { image_quality: 76, clip_score: 32.0 },
+  'stabilityai/stable-diffusion-3.5-large':                 { image_quality: 83, clip_score: 33.8 },
+  'stabilityai/stable-diffusion-3.5-large-turbo':           { image_quality: 80, clip_score: 33.4 },
+  // FLUX.1 (Black Forest Labs)
+  'black-forest-labs/FLUX.1-schnell':                       { image_quality: 78, clip_score: 33.2 },
+  'black-forest-labs/FLUX.1-dev':                           { image_quality: 84, clip_score: 34.1 },
+  'black-forest-labs/FLUX.1-Canny-dev':                     { image_quality: 82, clip_score: 34.0 },
+  'black-forest-labs/FLUX.1-Depth-dev':                     { image_quality: 82, clip_score: 33.8 },
+  'black-forest-labs/FLUX.1-Fill-dev':                      { image_quality: 81, clip_score: 33.5 },
+  'black-forest-labs/FLUX.1-Redux-dev':                     { image_quality: 80, clip_score: 33.2 },
+  'black-forest-labs/FLUX.1-Kontext-dev':                   { image_quality: 86, clip_score: 34.5 },
+  // PixArt
+  'PixArt-alpha/PixArt-XL-2-1024-MS':                      { image_quality: 66, clip_score: 30.8 },
+  'PixArt-alpha/PixArt-Sigma-XL-2-1024-MS':                { image_quality: 72, clip_score: 32.0 },
+  'PixArt-alpha/PixArt-Sigma-XL-2-2K-MS':                  { image_quality: 73, clip_score: 32.2 },
+  // SANA (NVIDIA / Efficient-Large-Model)
+  'Efficient-Large-Model/Sana_600M_1024px_diffusers':       { image_quality: 68, clip_score: 31.2 },
+  'Efficient-Large-Model/Sana_1600M_1024px_diffusers':      { image_quality: 75, clip_score: 32.4 },
+  'Efficient-Large-Model/Sana_1600M_2Kpx_diffusers':        { image_quality: 76, clip_score: 32.6 },
+  'Efficient-Large-Model/SANA1.5_1.6B_1024px_diffusers':    { image_quality: 77, clip_score: 32.8 },
+  // HiDream (HiDream-ai)
+  'HiDream-ai/HiDream-I1-Full':                             { image_quality: 85, clip_score: 34.5 },
+  'HiDream-ai/HiDream-I1-Dev':                              { image_quality: 80, clip_score: 33.6 },
+  'HiDream-ai/HiDream-I1-Fast':                             { image_quality: 82, clip_score: 34.0 },
+  // Kolors (Kwai)
+  'Kwai-Kolors/Kolors':                                     { image_quality: 74, clip_score: 32.2 },
+  'Kwai-Kolors/Kolors-diffusers':                           { image_quality: 74, clip_score: 32.2 },
+  // HunyuanDiT (Tencent)
+  'Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers':             { image_quality: 72, clip_score: 31.5 },
+  'Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers-Distilled':   { image_quality: 70, clip_score: 31.5 },
+  // CogView (ZhipuAI / THUDM)
+  'THUDM/CogView3-Plus-3B':                                 { image_quality: 73, clip_score: 31.8 },
+  'THUDM/CogView4-6B':                                      { image_quality: 78, clip_score: 32.8 },
+  // AuraFlow
+  'fal-ai/aura-flow':                                       { image_quality: 70, clip_score: 31.2 },
+  // Playground
+  'playgroundai/playground-v2.5-1024px-aesthetic':          { image_quality: 71, clip_score: 32.0 },
+  // Wuerstchen v2
+  'warp-ai/wuerstchen':                                     { image_quality: 60, clip_score: 30.2 },
   // ── Vision: imagenet_top1 ─────────────────────────────────────
   'google/vit-base-patch16-224':                { imagenet_top1: 81.8 },
   'google/vit-large-patch16-224':               { imagenet_top1: 86.7 },
@@ -401,6 +444,35 @@ const FLAGSHIP_VRAM_FP16 = {
   'microsoft/Phi-4':                              16,
   'microsoft/phi-4-mini-instruct':                 8,  // 3.8B
   'nvidia/Llama-3.1-Nemotron-51B-Instruct':      102,
+  // ── Image generation models (FP16 VRAM) ──────────────────────
+  // FLUX.1: 12B DiT + 3 text encoders (CLIP-L, CLIP-G, T5-XXL)
+  'black-forest-labs/FLUX.1-dev':                          30,
+  'black-forest-labs/FLUX.1-schnell':                      30,
+  'black-forest-labs/FLUX.1-Canny-dev':                    30,
+  'black-forest-labs/FLUX.1-Depth-dev':                    30,
+  'black-forest-labs/FLUX.1-Fill-dev':                     30,
+  'black-forest-labs/FLUX.1-Redux-dev':                    30,
+  'black-forest-labs/FLUX.1-Kontext-dev':                  30,
+  // SD 3.5: 8B MMDiT + T5-XXL + CLIP encoders
+  'stabilityai/stable-diffusion-3.5-large':                20,
+  'stabilityai/stable-diffusion-3.5-large-turbo':          20,
+  'stabilityai/stable-diffusion-3.5-medium':                7,
+  'stabilityai/stable-diffusion-3-medium-diffusers':        7,
+  // HiDream (17B DiT + Llama text encoder)
+  'HiDream-ai/HiDream-I1-Full':                            45,
+  'HiDream-ai/HiDream-I1-Dev':                             45,
+  'HiDream-ai/HiDream-I1-Fast':                            22,
+  // Stable Cascade (two-stage: prior + decoder)
+  'stabilityai/stable-cascade':                            20,
+  // CogView4 (6B DiT)
+  'THUDM/CogView4-6B':                                     14,
+  'THUDM/CogView3-Plus-3B':                                 9,
+  // HunyuanDiT (Tencent)
+  'Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers':            15,
+  // AuraFlow (6.8B)
+  'fal-ai/aura-flow':                                      15,
+  // Playground v2.5
+  'playgroundai/playground-v2.5-1024px-aesthetic':         10,
 };
 
 // Known parameter counts for models whose names don't embed a size token.
@@ -446,7 +518,9 @@ const PRIORITY_AUTHORS = {
            'microsoft', 'nvidia', 'internlm', 'EleutherAI', 'allenai',
            'tiiuae', 'NousResearch', '01-ai', 'baichuan-inc', 'open-thoughts',
            'HuggingFaceTB', 'bigcode', 'zai-org'],
-  image:  ['black-forest-labs', 'stabilityai', 'ByteDance', 'Tencent-Hunyuan', 'shuttleai'],
+  image:  ['black-forest-labs', 'stabilityai', 'ByteDance', 'Tencent-Hunyuan', 'shuttleai',
+           'PixArt-alpha', 'Efficient-Large-Model', 'HiDream-ai', 'Kwai-Kolors',
+           'THUDM', 'fal-ai', 'playgroundai', 'warp-ai', 'dataautogpt3'],
   audio:  ['openai', 'speechbrain', 'facebook', 'suno-ai'],
   vision: ['google', 'microsoft', 'facebook', 'openai', 'Salesforce'],
   video:  ['Wan-AI', 'ByteDance', 'genmo', 'hpcai-tech'],
