@@ -27226,5 +27226,786 @@
     "gpqa": 6.9,
     "musr": 10.4,
     "mmlu_pro": 50.2
+  },
+  "mlabonne/BigQwen2.5-Echo-47B-Instruct": {
+    "ifeval": 73.6,
+    "bbh": 44.5,
+    "math": 43.8,
+    "gpqa": 8.6,
+    "musr": 10.2,
+    "mmlu_pro": 41.5
+  },
+  "mlabonne/ChimeraLlama-3-8B-v2": {
+    "ifeval": 44.7,
+    "bbh": 28.5,
+    "math": 9.1,
+    "gpqa": 4.7,
+    "musr": 5.3,
+    "mmlu_pro": 28.5
+  },
+  "mlabonne/ChimeraLlama-3-8B-v3": {
+    "ifeval": 44.1,
+    "bbh": 27.6,
+    "math": 8.8,
+    "gpqa": 5.6,
+    "musr": 8.4,
+    "mmlu_pro": 29.7
+  },
+  "mlabonne/Daredevil-8B": {
+    "ifeval": 45.5,
+    "bbh": 31.6,
+    "math": 10.6,
+    "gpqa": 7.7,
+    "musr": 7.5,
+    "mmlu_pro": 31.5
+  },
+  "mlabonne/Daredevil-8B-abliterated": {
+    "ifeval": 44.3,
+    "bbh": 19.9,
+    "math": 9.4,
+    "gpqa": 5.4,
+    "musr": 9.2,
+    "mmlu_pro": 30.0
+  },
+  "mlabonne/Hermes-3-Llama-3.1-70B-lorablated": {
+    "ifeval": 34.2,
+    "bbh": 52.8,
+    "math": 22.4,
+    "gpqa": 15.4,
+    "musr": 24.7,
+    "mmlu_pro": 40.9
+  },
+  "mlabonne/Meta-Llama-3.1-8B-Instruct-abliterated": {
+    "ifeval": 73.3,
+    "bbh": 27.1,
+    "math": 6.9,
+    "gpqa": 0.9,
+    "musr": 3.2,
+    "mmlu_pro": 27.8
+  },
+  "mlabonne/NeuralBeagle14-7B": {
+    "ifeval": 49.4,
+    "bbh": 24.0,
+    "math": 5.2,
+    "gpqa": 4.3,
+    "musr": 12.9,
+    "mmlu_pro": 17.8
+  },
+  "mlabonne/NeuralDaredevil-8B-abliterated": {
+    "ifeval": 41.6,
+    "bbh": 29.8,
+    "math": 8.5,
+    "gpqa": 7.0,
+    "musr": 10.9,
+    "mmlu_pro": 31.1
+  },
+  "mlabonne/OrpoLlama-3-8B": {
+    "ifeval": 36.5,
+    "bbh": 22.0,
+    "math": 5.6,
+    "gpqa": 3.9,
+    "musr": 4.0,
+    "mmlu_pro": 18.9
+  },
+  "mlabonne/phixtral-2x2_8": {
+    "ifeval": 34.3,
+    "bbh": 28.5,
+    "math": 3.5,
+    "gpqa": 2.0,
+    "musr": 7.7,
+    "mmlu_pro": 17.2
+  },
+  "mlx-community/Josiefied-Qwen2.5-0.5B-Instruct-abliterated-v1-float32": {
+    "ifeval": 33.7,
+    "bbh": 7.2,
+    "math": 8.5,
+    "gpqa": 1.0,
+    "musr": 0.8,
+    "mmlu_pro": 7.1
+  },
+  "mlx-community/Mistral-Small-24B-Instruct-2501-bf16": {
+    "ifeval": 62.8,
+    "bbh": 52.4,
+    "math": 32.3,
+    "gpqa": 19.4,
+    "musr": 16.4,
+    "mmlu_pro": 48.8
+  },
+  "mmnga/Llama-3-70B-japanese-suzume-vector-v0.1": {
+    "ifeval": 46.5,
+    "bbh": 50.0,
+    "math": 23.3,
+    "gpqa": 4.8,
+    "musr": 10.8,
+    "mmlu_pro": 46.9
+  },
+  "mobiuslabsgmbh/DeepSeek-R1-ReDistill-Llama3-8B-v1.1": {
+    "ifeval": 37.0,
+    "bbh": 7.9,
+    "math": 32.9,
+    "gpqa": 2.8,
+    "musr": 0.9,
+    "mmlu_pro": 13.3
+  },
+  "mobiuslabsgmbh/DeepSeek-R1-ReDistill-Qwen-7B-v1.1": {
+    "ifeval": 34.7,
+    "bbh": 11.6,
+    "math": 35.0,
+    "gpqa": 2.0,
+    "musr": 8.4,
+    "mmlu_pro": 14.7
+  },
+  "moeru-ai/L3.1-Moe-2x8B-v0.2": {
+    "ifeval": 73.5,
+    "bbh": 32.9,
+    "math": 17.0,
+    "gpqa": 6.7,
+    "musr": 11.4,
+    "mmlu_pro": 31.8
+  },
+  "moeru-ai/L3.1-Moe-4x8B-v0.1": {
+    "ifeval": 43.3,
+    "bbh": 27.9,
+    "math": 13.0,
+    "gpqa": 1.2,
+    "musr": 4.0,
+    "mmlu_pro": 27.3
+  },
+  "moeru-ai/L3.1-Moe-4x8B-v0.2": {
+    "ifeval": 54.1,
+    "bbh": 21.3,
+    "math": 10.3,
+    "gpqa": 2.2,
+    "musr": 2.3,
+    "mmlu_pro": 19.6
+  },
+  "monsterapi/Llama-3_1-8B-Instruct-orca-ORPO": {
+    "ifeval": 22.7,
+    "bbh": 1.3,
+    "musr": 3.1,
+    "mmlu_pro": 1.9
+  },
+  "monsterapi/gemma-2-2b-LoRA-MonsterInstruct": {
+    "ifeval": 39.0,
+    "bbh": 12.0,
+    "math": 5.1,
+    "gpqa": 2.7,
+    "musr": 5.4,
+    "mmlu_pro": 11.0
+  },
+  "mosaicml/mpt-7b": {
+    "ifeval": 21.5,
+    "bbh": 6.6,
+    "math": 1.6,
+    "gpqa": 1.3,
+    "musr": 2.9,
+    "mmlu_pro": 2.3
+  },
+  "mosama/Qwen2.5-1.5B-Instruct-CoT-Reflection": {
+    "ifeval": 28.7,
+    "bbh": 18.0,
+    "math": 2.7,
+    "gpqa": 1.6,
+    "musr": 1.9,
+    "mmlu_pro": 18.3
+  },
+  "mrdayl/OpenCogito": {
+    "ifeval": 39.3,
+    "bbh": 26.3,
+    "math": 21.8,
+    "gpqa": 6.7,
+    "musr": 11.5,
+    "mmlu_pro": 27.2
+  },
+  "mrdayl/OpenCognito": {
+    "ifeval": 40.6,
+    "bbh": 26.0,
+    "math": 21.1,
+    "gpqa": 6.4,
+    "musr": 12.4,
+    "mmlu_pro": 27.1
+  },
+  "mrdayl/OpenCognito-r1": {
+    "ifeval": 42.4,
+    "bbh": 25.6,
+    "math": 19.0,
+    "gpqa": 6.6,
+    "musr": 11.8,
+    "mmlu_pro": 27.5
+  },
+  "mrdayl/OpenCognito-r2": {
+    "ifeval": 39.6,
+    "bbh": 25.8,
+    "math": 20.2,
+    "gpqa": 7.5,
+    "musr": 11.4,
+    "mmlu_pro": 27.4
+  },
+  "mrdayl/OpenThink": {
+    "ifeval": 20.5,
+    "bbh": 9.2,
+    "math": 28.9,
+    "gpqa": 4.4,
+    "musr": 2.0,
+    "mmlu_pro": 9.4
+  },
+  "mrm8488/phi-4-14B-grpo-gsm8k-3e": {
+    "ifeval": 68.9,
+    "bbh": 54.0,
+    "math": 45.2,
+    "gpqa": 11.4,
+    "musr": 8.3,
+    "mmlu_pro": 47.4
+  },
+  "mrm8488/phi-4-14B-grpo-limo": {
+    "ifeval": 68.1,
+    "bbh": 53.7,
+    "math": 45.7,
+    "gpqa": 11.5,
+    "musr": 8.0,
+    "mmlu_pro": 47.3
+  },
+  "mukaj/Llama-3.1-Hawkish-8B": {
+    "ifeval": 67.2,
+    "bbh": 28.1,
+    "math": 24.3,
+    "gpqa": 5.4,
+    "musr": 8.6,
+    "mmlu_pro": 25.9
+  },
+  "natong19/Mistral-Nemo-Instruct-2407-abliterated": {
+    "ifeval": 63.9,
+    "bbh": 29.9,
+    "math": 13.2,
+    "gpqa": 4.9,
+    "musr": 10.1,
+    "mmlu_pro": 28.0
+  },
+  "natong19/Qwen2-7B-Instruct-abliterated": {
+    "ifeval": 58.4,
+    "bbh": 37.7,
+    "math": 27.6,
+    "gpqa": 6.8,
+    "musr": 8.9,
+    "mmlu_pro": 31.6
+  },
+  "nazimali/Mistral-Nemo-Kurdish": {
+    "ifeval": 34.0,
+    "bbh": 29.9,
+    "math": 9.6,
+    "gpqa": 6.8,
+    "musr": 11.8,
+    "mmlu_pro": 24.8
+  },
+  "nazimali/Mistral-Nemo-Kurdish-Instruct": {
+    "ifeval": 48.6,
+    "bbh": 26.0,
+    "math": 8.5,
+    "gpqa": 4.6,
+    "musr": 8.8,
+    "mmlu_pro": 23.2
+  },
+  "nbeerbower/BigKartoffel-mistral-nemo-20B": {
+    "ifeval": 58.6,
+    "bbh": 35.8,
+    "math": 2.6,
+    "gpqa": 4.9,
+    "musr": 12.5,
+    "mmlu_pro": 28.1
+  },
+  "nbeerbower/DoppelKartoffel-Mistral-Nemo-23B": {
+    "ifeval": 51.9,
+    "bbh": 31.9,
+    "math": 3.1,
+    "gpqa": 3.4,
+    "musr": 5.6,
+    "mmlu_pro": 23.1
+  },
+  "nbeerbower/DoublePotato-Mistral-Nemo-13B": {
+    "ifeval": 68.0,
+    "bbh": 35.2,
+    "math": 4.0,
+    "gpqa": 6.8,
+    "musr": 17.9,
+    "mmlu_pro": 28.8
+  },
+  "nbeerbower/Dumpling-Qwen2.5-1.5B": {
+    "ifeval": 37.0,
+    "bbh": 18.2,
+    "math": 11.7,
+    "gpqa": 2.5,
+    "musr": 4.7,
+    "mmlu_pro": 19.7
+  },
+  "nbeerbower/Dumpling-Qwen2.5-14B": {
+    "ifeval": 60.6,
+    "bbh": 49.7,
+    "math": 31.0,
+    "gpqa": 6.8,
+    "musr": 14.4,
+    "mmlu_pro": 46.3
+  },
+  "nbeerbower/Dumpling-Qwen2.5-7B-1k-r16": {
+    "ifeval": 48.6,
+    "bbh": 32.1,
+    "math": 23.6,
+    "gpqa": 2.7,
+    "musr": 11.9,
+    "mmlu_pro": 32.9
+  },
+  "nbeerbower/Dumpling-Qwen2.5-7B-1k-r64-2e-5": {
+    "ifeval": 41.8,
+    "bbh": 33.9,
+    "math": 21.1,
+    "gpqa": 2.7,
+    "musr": 16.1,
+    "mmlu_pro": 34.7
+  },
+  "nbeerbower/EVA-abliterated-TIES-Qwen2.5-1.5B": {
+    "ifeval": 41.1,
+    "bbh": 15.2,
+    "math": 13.7,
+    "gpqa": 2.0,
+    "musr": 1.1,
+    "mmlu_pro": 19.0
+  },
+  "nbeerbower/EVA-abliterated-TIES-Qwen2.5-14B": {
+    "ifeval": 78.4,
+    "bbh": 48.5,
+    "math": 50.5,
+    "gpqa": 14.0,
+    "musr": 14.9,
+    "mmlu_pro": 46.8
+  },
+  "nbeerbower/Flammades-Mistral-Nemo-12B": {
+    "ifeval": 38.4,
+    "bbh": 32.4,
+    "math": 7.6,
+    "gpqa": 7.2,
+    "musr": 20.3,
+    "mmlu_pro": 29.6
+  },
+  "nbeerbower/Gemma2-Gutenberg-Doppel-9B": {
+    "ifeval": 71.7,
+    "bbh": 41.1,
+    "math": 19.8,
+    "gpqa": 10.6,
+    "musr": 17.3,
+    "mmlu_pro": 34.7
+  },
+  "nbeerbower/Gutensuppe-mistral-nemo-12B": {
+    "ifeval": 29.2,
+    "bbh": 35.6,
+    "math": 13.3,
+    "gpqa": 11.6,
+    "musr": 14.3,
+    "mmlu_pro": 29.8
+  },
+  "nbeerbower/Hermes2-Gutenberg2-Mistral-7B": {
+    "ifeval": 37.2,
+    "bbh": 28.9,
+    "math": 5.7,
+    "gpqa": 5.3,
+    "musr": 16.9,
+    "mmlu_pro": 22.1
+  },
+  "nbeerbower/Kartoffel-Deepfry-12B": {
+    "ifeval": 50.2,
+    "bbh": 33.8,
+    "math": 6.0,
+    "gpqa": 6.2,
+    "musr": 20.0,
+    "mmlu_pro": 28.7
+  },
+  "nbeerbower/Llama-3.1-Nemotron-lorablated-70B": {
+    "ifeval": 72.3,
+    "bbh": 54.2,
+    "math": 33.4,
+    "gpqa": 18.8,
+    "musr": 18.4,
+    "mmlu_pro": 48.3
+  },
+  "nbeerbower/Llama3.1-Gutenberg-Doppel-70B": {
+    "ifeval": 70.9,
+    "bbh": 52.6,
+    "math": 21.2,
+    "gpqa": 12.6,
+    "musr": 22.7,
+    "mmlu_pro": 41.5
+  },
+  "nbeerbower/Lyra-Gutenberg-mistral-nemo-12B": {
+    "ifeval": 34.9,
+    "bbh": 37.0,
+    "math": 10.1,
+    "gpqa": 11.2,
+    "musr": 14.8,
+    "mmlu_pro": 29.2
+  },
+  "nbeerbower/Lyra4-Gutenberg-12B": {
+    "ifeval": 22.1,
+    "bbh": 34.2,
+    "math": 13.0,
+    "gpqa": 9.2,
+    "musr": 12.0,
+    "mmlu_pro": 28.6
+  },
+  "nbeerbower/Lyra4-Gutenberg2-12B": {
+    "ifeval": 25.9,
+    "bbh": 33.7,
+    "math": 11.7,
+    "gpqa": 8.4,
+    "musr": 11.5,
+    "mmlu_pro": 28.5
+  },
+  "nbeerbower/Mahou-1.5-mistral-nemo-12B-lorablated": {
+    "ifeval": 68.2,
+    "bbh": 36.1,
+    "math": 8.9,
+    "gpqa": 3.9,
+    "musr": 16.6,
+    "mmlu_pro": 28.6
+  },
+  "nbeerbower/Mistral-Gutenberg-Doppel-7B-FFT": {
+    "ifeval": 57.2,
+    "bbh": 17.3,
+    "math": 2.5,
+    "gpqa": 4.5,
+    "musr": 9.3,
+    "mmlu_pro": 19.2
+  },
+  "nbeerbower/Mistral-Nemo-Gutenberg-Doppel-12B": {
+    "ifeval": 35.7,
+    "bbh": 32.4,
+    "math": 12.2,
+    "gpqa": 8.8,
+    "musr": 11.5,
+    "mmlu_pro": 28.7
+  },
+  "nbeerbower/Mistral-Nemo-Gutenberg-Doppel-12B-v2": {
+    "ifeval": 65.4,
+    "bbh": 34.4,
+    "math": 11.6,
+    "gpqa": 2.8,
+    "musr": 13.0,
+    "mmlu_pro": 28.3
+  },
+  "nbeerbower/Mistral-Nemo-Moderne-12B-FFT-experimental": {
+    "ifeval": 33.5,
+    "bbh": 32.1,
+    "math": 7.7,
+    "gpqa": 4.1,
+    "musr": 4.0,
+    "mmlu_pro": 27.3
+  },
+  "nbeerbower/Mistral-Nemo-Prism-12B": {
+    "ifeval": 68.6,
+    "bbh": 35.9,
+    "math": 8.7,
+    "gpqa": 7.7,
+    "musr": 18.0,
+    "mmlu_pro": 28.7
+  },
+  "nbeerbower/Mistral-Nemo-Prism-12B-v2": {
+    "ifeval": 69.7,
+    "bbh": 36.2,
+    "math": 8.9,
+    "gpqa": 7.4,
+    "musr": 17.7,
+    "mmlu_pro": 28.5
+  },
+  "nbeerbower/Mistral-Nemo-Prism-12B-v7": {
+    "ifeval": 69.6,
+    "bbh": 36.4,
+    "math": 8.7,
+    "gpqa": 6.6,
+    "musr": 18.1,
+    "mmlu_pro": 28.8
+  },
+  "nbeerbower/Mistral-Small-Drummer-22B": {
+    "ifeval": 63.3,
+    "bbh": 40.1,
+    "math": 18.9,
+    "gpqa": 12.4,
+    "musr": 9.8,
+    "mmlu_pro": 34.4
+  },
+  "nbeerbower/Mistral-Small-Gutenberg-Doppel-22B": {
+    "ifeval": 48.9,
+    "bbh": 40.9,
+    "math": 21.8,
+    "gpqa": 12.9,
+    "musr": 8.6,
+    "mmlu_pro": 34.7
+  },
+  "nbeerbower/Nemo-Loony-12B-experimental": {
+    "ifeval": 37.3,
+    "bbh": 13.0,
+    "math": 1.5,
+    "gpqa": 2.7,
+    "musr": 1.8,
+    "mmlu_pro": 6.5
+  },
+  "nbeerbower/Nemoties-ChatML-12B": {
+    "ifeval": 63.8,
+    "bbh": 35.8,
+    "math": 7.9,
+    "gpqa": 6.3,
+    "musr": 16.6,
+    "mmlu_pro": 28.3
+  },
+  "nbeerbower/Qwen2.5-Gutenberg-Doppel-14B": {
+    "ifeval": 80.9,
+    "bbh": 48.2,
+    "math": 54.2,
+    "gpqa": 11.1,
+    "musr": 10.0,
+    "mmlu_pro": 43.6
+  },
+  "nbeerbower/SmolNemo-12B-FFT-experimental": {
+    "ifeval": 33.5,
+    "bbh": 6.5,
+    "math": 1.3,
+    "gpqa": 1.3,
+    "musr": 5.9,
+    "mmlu_pro": 2.4
+  },
+  "nbeerbower/Stella-mistral-nemo-12B-v2": {
+    "ifeval": 32.7,
+    "bbh": 35.4,
+    "math": 11.6,
+    "gpqa": 11.0,
+    "musr": 14.4,
+    "mmlu_pro": 29.8
+  },
+  "nbeerbower/gemma2-gutenberg-27B": {
+    "ifeval": 29.5,
+    "bbh": 13.1,
+    "math": 1.9,
+    "gpqa": 3.0,
+    "musr": 4.2,
+    "mmlu_pro": 10.9
+  },
+  "nbeerbower/gemma2-gutenberg-9B": {
+    "ifeval": 28.0,
+    "bbh": 42.4,
+    "math": 8.1,
+    "gpqa": 11.7,
+    "musr": 16.7,
+    "mmlu_pro": 35.5
+  },
+  "nbeerbower/llama-3-gutenberg-8B": {
+    "ifeval": 43.7,
+    "bbh": 28.0,
+    "math": 7.9,
+    "gpqa": 6.8,
+    "musr": 10.0,
+    "mmlu_pro": 31.5
+  },
+  "nbeerbower/llama3.1-cc-8B": {
+    "ifeval": 50.7,
+    "bbh": 26.5,
+    "math": 7.1,
+    "gpqa": 4.7,
+    "musr": 6.5,
+    "mmlu_pro": 26.1
+  },
+  "nbeerbower/llama3.1-kartoffeldes-70B": {
+    "ifeval": 82.3,
+    "bbh": 55.6,
+    "math": 32.2,
+    "gpqa": 13.5,
+    "musr": 18.7,
+    "mmlu_pro": 44.3
+  },
+  "nbeerbower/mistral-nemo-bophades-12B": {
+    "ifeval": 67.9,
+    "bbh": 29.5,
+    "math": 12.3,
+    "gpqa": 4.7,
+    "musr": 12.1,
+    "mmlu_pro": 27.8
+  },
+  "nbeerbower/mistral-nemo-bophades3-12B": {
+    "ifeval": 65.8,
+    "bbh": 35.2,
+    "math": 8.5,
+    "gpqa": 8.3,
+    "musr": 18.9,
+    "mmlu_pro": 26.3
+  },
+  "nbeerbower/mistral-nemo-cc-12B": {
+    "ifeval": 14.4,
+    "bbh": 34.4,
+    "math": 2.6,
+    "gpqa": 8.7,
+    "musr": 14.3,
+    "mmlu_pro": 28.9
+  },
+  "nbeerbower/mistral-nemo-gutades-12B": {
+    "ifeval": 34.3,
+    "bbh": 34.6,
+    "math": 11.8,
+    "gpqa": 8.7,
+    "musr": 8.7,
+    "mmlu_pro": 28.5
+  },
+  "nbeerbower/mistral-nemo-gutenberg-12B": {
+    "ifeval": 35.0,
+    "bbh": 32.4,
+    "math": 11.6,
+    "gpqa": 7.6,
+    "musr": 11.0,
+    "mmlu_pro": 28.5
+  },
+  "nbeerbower/mistral-nemo-gutenberg-12B-v2": {
+    "ifeval": 62.0,
+    "bbh": 34.7,
+    "math": 10.9,
+    "gpqa": 3.7,
+    "musr": 14.0,
+    "mmlu_pro": 27.8
+  },
+  "nbeerbower/mistral-nemo-gutenberg-12B-v3": {
+    "ifeval": 21.8,
+    "bbh": 35.0,
+    "math": 6.0,
+    "gpqa": 8.6,
+    "musr": 15.0,
+    "mmlu_pro": 29.4
+  },
+  "nbeerbower/mistral-nemo-gutenberg-12B-v4": {
+    "ifeval": 23.8,
+    "bbh": 32.0,
+    "math": 12.6,
+    "gpqa": 8.8,
+    "musr": 13.2,
+    "mmlu_pro": 28.6
+  },
+  "nbeerbower/mistral-nemo-gutenberg2-12B-test": {
+    "ifeval": 33.8,
+    "bbh": 32.0,
+    "math": 11.6,
+    "gpqa": 8.9,
+    "musr": 11.0,
+    "mmlu_pro": 28.4
+  },
+  "nbeerbower/mistral-nemo-kartoffel-12B": {
+    "ifeval": 70.3,
+    "bbh": 36.1,
+    "math": 8.5,
+    "gpqa": 7.3,
+    "musr": 18.4,
+    "mmlu_pro": 28.7
+  },
+  "nbeerbower/mistral-nemo-narwhal-12B": {
+    "ifeval": 55.5,
+    "bbh": 29.6,
+    "math": 5.8,
+    "gpqa": 2.8,
+    "musr": 6.2,
+    "mmlu_pro": 27.6
+  },
+  "nbeerbower/mistral-nemo-wissenschaft-12B": {
+    "ifeval": 65.2,
+    "bbh": 29.6,
+    "math": 12.2,
+    "gpqa": 5.7,
+    "musr": 12.3,
+    "mmlu_pro": 28.1
+  },
+  "nbrahme/IndusQ": {
+    "ifeval": 24.4,
+    "bbh": 3.7,
+    "math": 0.1,
+    "gpqa": 2.0,
+    "musr": 2.2,
+    "mmlu_pro": 1.3
+  },
+  "necva/IE-cont-Llama3.1-8B": {
+    "ifeval": 20.5,
+    "bbh": 2.3,
+    "gpqa": 1.3,
+    "musr": 4.5,
+    "mmlu_pro": 1.9
+  },
+  "necva/replica-IEPile": {
+    "ifeval": 46.8,
+    "bbh": 25.3,
+    "math": 12.4,
+    "gpqa": 7.5,
+    "musr": 8.9,
+    "mmlu_pro": 28.5
+  },
+  "neopolita/jessi-v0.1-bf16-falcon3-7b-instruct": {
+    "ifeval": 75.3,
+    "bbh": 36.1,
+    "math": 38.1,
+    "gpqa": 7.0,
+    "musr": 20.5,
+    "mmlu_pro": 32.5
+  },
+  "neopolita/jessi-v0.1-falcon3-10b-instruct": {
+    "ifeval": 75.5,
+    "bbh": 41.4,
+    "math": 20.0,
+    "gpqa": 9.2,
+    "musr": 12.4,
+    "mmlu_pro": 35.4
+  },
+  "neopolita/jessi-v0.1-qwen2.5-7b-instruct": {
+    "ifeval": 73.3,
+    "bbh": 33.3,
+    "math": 40.9,
+    "gpqa": 6.3,
+    "musr": 7.1,
+    "mmlu_pro": 35.9
+  },
+  "neopolita/jessi-v0.1-virtuoso-small": {
+    "ifeval": 79.6,
+    "bbh": 48.9,
+    "math": 34.0,
+    "gpqa": 10.7,
+    "musr": 14.2,
+    "mmlu_pro": 45.9
+  },
+  "neopolita/jessi-v0.2-falcon3-10b-instruct": {
+    "ifeval": 77.7,
+    "bbh": 45.0,
+    "math": 21.2,
+    "gpqa": 10.5,
+    "musr": 12.9,
+    "mmlu_pro": 37.3
+  },
+  "neopolita/jessi-v0.2-falcon3-7b-instruct": {
+    "ifeval": 57.7,
+    "bbh": 34.4,
+    "math": 25.4,
+    "gpqa": 8.9,
+    "musr": 15.6,
+    "mmlu_pro": 32.3
+  },
+  "neopolita/jessi-v0.3-falcon3-7b-instruct": {
+    "ifeval": 75.1,
+    "bbh": 34.6,
+    "math": 18.9,
+    "gpqa": 9.3,
+    "musr": 18.5,
+    "mmlu_pro": 33.0
+  },
+  "neopolita/jessi-v0.4-falcon3-7b-instruct": {
+    "ifeval": 76.0,
+    "bbh": 36.2,
+    "math": 37.7,
+    "gpqa": 7.0,
+    "musr": 23.2,
+    "mmlu_pro": 33.4
+  },
+  "neopolita/jessi-v0.5-falcon3-7b-instruct": {
+    "ifeval": 74.1,
+    "bbh": 37.2,
+    "math": 37.4,
+    "gpqa": 8.2,
+    "musr": 21.2,
+    "mmlu_pro": 33.0
   }
 }
