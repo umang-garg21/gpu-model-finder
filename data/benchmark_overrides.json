@@ -31871,5 +31871,1563 @@
     "gpqa": 2.5,
     "musr": 7.1,
     "mmlu_pro": 22.2
+  },
+  "sethuiyer/Llamaverse-3.1-8B-Instruct": {
+    "ifeval": 61.9,
+    "bbh": 34.8,
+    "math": 18.6,
+    "gpqa": 5.5,
+    "musr": 8.4,
+    "mmlu_pro": 28.0
+  },
+  "sethuiyer/Llamazing-3.1-8B-Instruct": {
+    "ifeval": 57.1,
+    "bbh": 32.9,
+    "math": 5.4,
+    "gpqa": 8.3,
+    "musr": 9.0,
+    "mmlu_pro": 29.0
+  },
+  "sethuiyer/Qwen2.5-7B-Anvita": {
+    "ifeval": 64.8,
+    "bbh": 35.5,
+    "math": 20.2,
+    "gpqa": 10.3,
+    "musr": 13.5,
+    "mmlu_pro": 35.2
+  },
+  "shadowml/BeagSake-7B": {
+    "ifeval": 52.2,
+    "bbh": 25.2,
+    "math": 5.1,
+    "gpqa": 4.1,
+    "musr": 9.8,
+    "mmlu_pro": 17.6
+  },
+  "shadowml/Mixolar-4x7b": {
+    "ifeval": 38.9,
+    "bbh": 32.7,
+    "math": 5.8,
+    "gpqa": 5.7,
+    "musr": 12.7,
+    "mmlu_pro": 25.6
+  },
+  "shastraai/Shastra-LLAMA2-Math-Commonsense-SFT": {
+    "ifeval": 30.4,
+    "bbh": 13.7,
+    "math": 1.7,
+    "gpqa": 1.2,
+    "musr": 4.8,
+    "mmlu_pro": 11.1
+  },
+  "shivam9980/NEPALI-LLM": {
+    "ifeval": 4.2,
+    "bbh": 13.1,
+    "math": 0.9,
+    "gpqa": 1.6,
+    "musr": 10.0,
+    "mmlu_pro": 11.8
+  },
+  "shivam9980/mistral-7b-news-cnn-merged": {
+    "ifeval": 46.3,
+    "bbh": 11.1,
+    "math": 1.9,
+    "gpqa": 7.8,
+    "musr": 15.7,
+    "mmlu_pro": 20.3
+  },
+  "shivank21/mistral_dpo_self": {
+    "ifeval": 34.0,
+    "bbh": 5.5,
+    "math": 2.2,
+    "musr": 3.7,
+    "mmlu_pro": 13.5
+  },
+  "shuttleai/shuttle-3": {
+    "ifeval": 81.5,
+    "bbh": 64.1,
+    "math": 46.0,
+    "gpqa": 21.6,
+    "musr": 14.6,
+    "mmlu_pro": 52.4
+  },
+  "shyamieee/Padma-v7.0": {
+    "ifeval": 38.4,
+    "bbh": 31.7,
+    "math": 7.0,
+    "gpqa": 4.8,
+    "musr": 14.1,
+    "mmlu_pro": 22.5
+  },
+  "silma-ai/SILMA-9B-Instruct-v1.0": {
+    "ifeval": 58.4,
+    "bbh": 30.7,
+    "math": 11.6,
+    "gpqa": 7.4,
+    "musr": 17.3,
+    "mmlu_pro": 32.4
+  },
+  "silma-ai/SILMA-Kashif-2B-Instruct-v1.0": {
+    "ifeval": 11.8,
+    "bbh": 12.8,
+    "math": 1.1,
+    "gpqa": 2.7,
+    "musr": 8.3,
+    "mmlu_pro": 14.0
+  },
+  "siqi00/Mistral-7B-DFT": {
+    "ifeval": 55.7,
+    "bbh": 25.4,
+    "math": 3.8,
+    "gpqa": 7.3,
+    "musr": 10.6,
+    "mmlu_pro": 21.8
+  },
+  "siqi00/Mistral-7B-DFT2": {
+    "ifeval": 58.0,
+    "bbh": 15.4,
+    "math": 4.5,
+    "gpqa": 6.6,
+    "musr": 14.1,
+    "mmlu_pro": 20.6
+  },
+  "skumar9/Llama-medx_v2": {
+    "ifeval": 44.6,
+    "bbh": 27.4,
+    "math": 9.1,
+    "gpqa": 7.4,
+    "musr": 3.4,
+    "mmlu_pro": 27.4
+  },
+  "skymizer/Llama2-7b-sft-chat-custom-template-dpo": {
+    "ifeval": 23.5,
+    "bbh": 11.2,
+    "math": 1.4,
+    "musr": 14.1,
+    "mmlu_pro": 10.5
+  },
+  "someon98/qwen-CoMa-0.5b": {
+    "ifeval": 22.8,
+    "bbh": 2.1,
+    "math": 0.5,
+    "musr": 8.7,
+    "mmlu_pro": 1.1
+  },
+  "sometimesanotion/ChocoTrio-14B-v1": {
+    "ifeval": 70.9,
+    "bbh": 50.0,
+    "math": 39.7,
+    "gpqa": 18.0,
+    "musr": 19.8,
+    "mmlu_pro": 48.6
+  },
+  "sometimesanotion/IF-reasoning-experiment-40": {
+    "ifeval": 63.3,
+    "bbh": 44.3,
+    "math": 37.2,
+    "gpqa": 17.3,
+    "musr": 25.9,
+    "mmlu_pro": 44.7
+  },
+  "sometimesanotion/IF-reasoning-experiment-80": {
+    "ifeval": 54.6,
+    "bbh": 17.5,
+    "math": 9.9,
+    "gpqa": 4.6,
+    "musr": 23.0,
+    "mmlu_pro": 26.3
+  },
+  "sometimesanotion/KytheraMix-7B-v0.2": {
+    "ifeval": 61.3,
+    "bbh": 37.5,
+    "math": 29.2,
+    "gpqa": 11.4,
+    "musr": 15.9,
+    "mmlu_pro": 38.9
+  },
+  "sometimesanotion/Lamarck-14B-v0.1-experimental": {
+    "ifeval": 53.5,
+    "bbh": 50.8,
+    "math": 35.8,
+    "gpqa": 17.6,
+    "musr": 18.6,
+    "mmlu_pro": 49.0
+  },
+  "sometimesanotion/Lamarck-14B-v0.3": {
+    "ifeval": 50.3,
+    "bbh": 51.3,
+    "math": 34.1,
+    "gpqa": 18.5,
+    "musr": 18.0,
+    "mmlu_pro": 49.0
+  },
+  "sometimesanotion/Lamarck-14B-v0.4-Qwenvergence": {
+    "ifeval": 49.1,
+    "bbh": 50.2,
+    "math": 34.0,
+    "gpqa": 17.1,
+    "musr": 20.4,
+    "mmlu_pro": 49.0
+  },
+  "sometimesanotion/Lamarck-14B-v0.6": {
+    "ifeval": 69.7,
+    "bbh": 49.3,
+    "math": 40.4,
+    "gpqa": 18.6,
+    "musr": 20.1,
+    "mmlu_pro": 48.9
+  },
+  "sometimesanotion/Lamarck-14B-v0.6-002-model_stock": {
+    "ifeval": 66.9,
+    "bbh": 45.0,
+    "math": 37.8,
+    "gpqa": 16.6,
+    "musr": 25.5,
+    "mmlu_pro": 45.0
+  },
+  "sometimesanotion/Lamarck-14B-v0.6-model_stock": {
+    "ifeval": 67.9,
+    "bbh": 46.5,
+    "math": 42.4,
+    "gpqa": 17.9,
+    "musr": 22.7,
+    "mmlu_pro": 46.6
+  },
+  "sometimesanotion/Lamarck-14B-v0.7-Fusion": {
+    "ifeval": 68.2,
+    "bbh": 50.4,
+    "math": 40.4,
+    "gpqa": 20.1,
+    "musr": 22.1,
+    "mmlu_pro": 48.8
+  },
+  "sometimesanotion/Lamarck-14B-v0.7-rc1": {
+    "ifeval": 73.1,
+    "bbh": 49.5,
+    "math": 38.5,
+    "gpqa": 18.6,
+    "musr": 18.1,
+    "mmlu_pro": 49.1
+  },
+  "sometimesanotion/Lamarck-14B-v0.7-rc4": {
+    "ifeval": 72.1,
+    "bbh": 49.9,
+    "math": 40.3,
+    "gpqa": 18.6,
+    "musr": 21.1,
+    "mmlu_pro": 48.9
+  },
+  "sometimesanotion/LamarckInfusion-14B-v1": {
+    "ifeval": 72.0,
+    "bbh": 50.3,
+    "math": 41.7,
+    "gpqa": 18.8,
+    "musr": 20.9,
+    "mmlu_pro": 48.6
+  },
+  "sometimesanotion/LamarckInfusion-14B-v2": {
+    "ifeval": 68.1,
+    "bbh": 50.8,
+    "math": 43.9,
+    "gpqa": 18.3,
+    "musr": 22.4,
+    "mmlu_pro": 49.1
+  },
+  "sometimesanotion/LamarckInfusion-14B-v2-hi": {
+    "ifeval": 68.5,
+    "bbh": 50.7,
+    "math": 42.3,
+    "gpqa": 18.5,
+    "musr": 20.2,
+    "mmlu_pro": 48.9
+  },
+  "sometimesanotion/LamarckInfusion-14B-v2-lo": {
+    "ifeval": 67.9,
+    "bbh": 50.3,
+    "math": 42.4,
+    "gpqa": 18.1,
+    "musr": 22.0,
+    "mmlu_pro": 48.9
+  },
+  "sometimesanotion/LamarckInfusion-14B-v3": {
+    "ifeval": 71.3,
+    "bbh": 50.1,
+    "math": 41.2,
+    "gpqa": 18.2,
+    "musr": 19.7,
+    "mmlu_pro": 49.0
+  },
+  "sometimesanotion/Qwen-14B-ProseStock-v4": {
+    "ifeval": 49.4,
+    "bbh": 49.5,
+    "math": 36.4,
+    "gpqa": 18.5,
+    "musr": 21.7,
+    "mmlu_pro": 48.7
+  },
+  "sometimesanotion/Qwen-2.5-14B-Virmarckeoso": {
+    "ifeval": 48.1,
+    "bbh": 50.7,
+    "math": 35.6,
+    "gpqa": 17.2,
+    "musr": 19.5,
+    "mmlu_pro": 48.6
+  },
+  "sometimesanotion/Qwen2.5-14B-Vimarckoso": {
+    "ifeval": 45.7,
+    "bbh": 49.2,
+    "math": 33.8,
+    "gpqa": 19.0,
+    "musr": 20.5,
+    "mmlu_pro": 48.1
+  },
+  "sometimesanotion/Qwen2.5-14B-Vimarckoso-v2": {
+    "ifeval": 45.1,
+    "bbh": 50.4,
+    "math": 35.8,
+    "gpqa": 17.7,
+    "musr": 19.5,
+    "mmlu_pro": 48.7
+  },
+  "sometimesanotion/Qwen2.5-14B-Vimarckoso-v3": {
+    "ifeval": 72.6,
+    "bbh": 48.6,
+    "math": 40.0,
+    "gpqa": 17.3,
+    "musr": 19.4,
+    "mmlu_pro": 48.3
+  },
+  "sometimesanotion/Qwen2.5-14B-Vimarckoso-v3-IF-Variant": {
+    "ifeval": 64.1,
+    "bbh": 35.7,
+    "math": 25.5,
+    "gpqa": 13.0,
+    "musr": 28.4,
+    "mmlu_pro": 39.9
+  },
+  "sometimesanotion/Qwen2.5-14B-Vimarckoso-v3-Prose01": {
+    "ifeval": 68.7,
+    "bbh": 47.7,
+    "math": 40.0,
+    "gpqa": 18.2,
+    "musr": 19.6,
+    "mmlu_pro": 47.5
+  },
+  "sometimesanotion/Qwen2.5-14B-Vimarckoso-v3-model_stock": {
+    "ifeval": 71.6,
+    "bbh": 48.8,
+    "math": 42.4,
+    "gpqa": 17.3,
+    "musr": 19.2,
+    "mmlu_pro": 48.0
+  },
+  "sometimesanotion/Qwen2.5-7B-Gordion-v0.1": {
+    "ifeval": 74.8,
+    "bbh": 36.0,
+    "math": 29.2,
+    "gpqa": 7.7,
+    "musr": 8.6,
+    "mmlu_pro": 36.7
+  },
+  "sometimesanotion/Qwen2.5-7B-Gordion-v0.1-Prose": {
+    "ifeval": 53.5,
+    "bbh": 37.4,
+    "math": 28.9,
+    "gpqa": 9.4,
+    "musr": 14.7,
+    "mmlu_pro": 39.2
+  },
+  "sometimesanotion/Qwen2.5-7B-Gordion-v0.1-Reason": {
+    "ifeval": 49.2,
+    "bbh": 36.3,
+    "math": 26.2,
+    "gpqa": 12.1,
+    "musr": 13.7,
+    "mmlu_pro": 36.7
+  },
+  "sometimesanotion/Qwentessential-14B-v1": {
+    "ifeval": 62.8,
+    "bbh": 50.4,
+    "math": 40.7,
+    "gpqa": 18.3,
+    "musr": 20.8,
+    "mmlu_pro": 48.7
+  },
+  "sometimesanotion/Qwentinuum-14B-v013": {
+    "ifeval": 67.1,
+    "bbh": 44.0,
+    "math": 37.1,
+    "gpqa": 14.3,
+    "musr": 25.0,
+    "mmlu_pro": 44.3
+  },
+  "sometimesanotion/Qwentinuum-14B-v1": {
+    "ifeval": 50.3,
+    "bbh": 50.7,
+    "math": 36.0,
+    "gpqa": 17.7,
+    "musr": 19.2,
+    "mmlu_pro": 49.0
+  },
+  "sometimesanotion/Qwentinuum-14B-v2": {
+    "ifeval": 53.8,
+    "bbh": 50.5,
+    "math": 37.5,
+    "gpqa": 18.5,
+    "musr": 18.2,
+    "mmlu_pro": 49.0
+  },
+  "sometimesanotion/Qwentinuum-14B-v3": {
+    "ifeval": 61.6,
+    "bbh": 50.0,
+    "math": 35.3,
+    "gpqa": 18.3,
+    "musr": 20.6,
+    "mmlu_pro": 49.0
+  },
+  "sometimesanotion/Qwentinuum-14B-v5": {
+    "ifeval": 62.9,
+    "bbh": 50.3,
+    "math": 34.4,
+    "gpqa": 18.3,
+    "musr": 21.1,
+    "mmlu_pro": 49.1
+  },
+  "sometimesanotion/Qwentinuum-14B-v6": {
+    "ifeval": 63.0,
+    "bbh": 50.2,
+    "math": 36.0,
+    "gpqa": 18.2,
+    "musr": 21.2,
+    "mmlu_pro": 48.9
+  },
+  "sometimesanotion/Qwentinuum-14B-v6-Prose": {
+    "ifeval": 56.4,
+    "bbh": 50.1,
+    "math": 37.0,
+    "gpqa": 18.5,
+    "musr": 21.3,
+    "mmlu_pro": 48.8
+  },
+  "sometimesanotion/Qwentinuum-14B-v7": {
+    "ifeval": 61.1,
+    "bbh": 50.3,
+    "math": 35.7,
+    "gpqa": 18.8,
+    "musr": 19.9,
+    "mmlu_pro": 49.0
+  },
+  "sometimesanotion/Qwentinuum-14B-v8": {
+    "ifeval": 54.1,
+    "bbh": 50.1,
+    "math": 39.1,
+    "gpqa": 17.8,
+    "musr": 20.7,
+    "mmlu_pro": 49.0
+  },
+  "sometimesanotion/Qwentinuum-14B-v9": {
+    "ifeval": 51.1,
+    "bbh": 50.8,
+    "math": 34.8,
+    "gpqa": 18.1,
+    "musr": 19.4,
+    "mmlu_pro": 49.1
+  },
+  "sometimesanotion/Qwenvergence-14B-qv256": {
+    "ifeval": 70.1,
+    "bbh": 47.1,
+    "math": 39.0,
+    "gpqa": 17.1,
+    "musr": 21.1,
+    "mmlu_pro": 46.4
+  },
+  "sometimesanotion/Qwenvergence-14B-v0.6-004-model_stock": {
+    "ifeval": 68.6,
+    "bbh": 46.4,
+    "math": 40.9,
+    "gpqa": 17.8,
+    "musr": 23.3,
+    "mmlu_pro": 46.6
+  },
+  "sometimesanotion/Qwenvergence-14B-v10": {
+    "ifeval": 67.6,
+    "bbh": 46.7,
+    "math": 47.9,
+    "gpqa": 17.2,
+    "musr": 22.3,
+    "mmlu_pro": 47.1
+  },
+  "sometimesanotion/Qwenvergence-14B-v11": {
+    "ifeval": 71.9,
+    "bbh": 47.5,
+    "math": 46.5,
+    "gpqa": 16.3,
+    "musr": 18.8,
+    "mmlu_pro": 48.1
+  },
+  "sometimesanotion/Qwenvergence-14B-v12-Prose": {
+    "ifeval": 54.1,
+    "bbh": 49.7,
+    "math": 35.3,
+    "gpqa": 18.2,
+    "musr": 22.3,
+    "mmlu_pro": 48.7
+  },
+  "sometimesanotion/Qwenvergence-14B-v12-Prose-DS": {
+    "ifeval": 61.7,
+    "bbh": 49.9,
+    "math": 43.1,
+    "gpqa": 19.2,
+    "musr": 24.8,
+    "mmlu_pro": 48.5
+  },
+  "sometimesanotion/Qwenvergence-14B-v13-Prose-DS": {
+    "ifeval": 71.8,
+    "bbh": 48.4,
+    "math": 38.6,
+    "gpqa": 17.8,
+    "musr": 21.5,
+    "mmlu_pro": 48.3
+  },
+  "sometimesanotion/Qwenvergence-14B-v15-Prose-MS": {
+    "ifeval": 50.3,
+    "bbh": 50.3,
+    "math": 36.3,
+    "gpqa": 19.4,
+    "musr": 21.2,
+    "mmlu_pro": 48.8
+  },
+  "sometimesanotion/Qwenvergence-14B-v2-Prose": {
+    "ifeval": 47.0,
+    "bbh": 49.9,
+    "math": 35.6,
+    "gpqa": 19.1,
+    "musr": 21.5,
+    "mmlu_pro": 48.6
+  },
+  "sometimesanotion/Qwenvergence-14B-v3": {
+    "ifeval": 50.4,
+    "bbh": 50.4,
+    "math": 36.9,
+    "gpqa": 17.9,
+    "musr": 20.7,
+    "mmlu_pro": 48.7
+  },
+  "sometimesanotion/Qwenvergence-14B-v3-Prose": {
+    "ifeval": 49.2,
+    "bbh": 49.8,
+    "math": 36.5,
+    "gpqa": 19.4,
+    "musr": 21.8,
+    "mmlu_pro": 48.6
+  },
+  "sometimesanotion/Qwenvergence-14B-v3-Reason": {
+    "ifeval": 52.8,
+    "bbh": 50.6,
+    "math": 31.2,
+    "gpqa": 17.9,
+    "musr": 18.9,
+    "mmlu_pro": 48.8
+  },
+  "sometimesanotion/Qwenvergence-14B-v6-Prose": {
+    "ifeval": 59.9,
+    "bbh": 50.1,
+    "math": 35.6,
+    "gpqa": 18.5,
+    "musr": 21.0,
+    "mmlu_pro": 48.6
+  },
+  "sometimesanotion/Qwenvergence-14B-v6-Prose-model_stock": {
+    "ifeval": 48.1,
+    "bbh": 49.9,
+    "math": 36.0,
+    "gpqa": 19.1,
+    "musr": 21.0,
+    "mmlu_pro": 48.7
+  },
+  "sometimesanotion/Qwenvergence-14B-v8": {
+    "ifeval": 59.1,
+    "bbh": 49.8,
+    "math": 40.5,
+    "gpqa": 17.4,
+    "musr": 19.1,
+    "mmlu_pro": 49.3
+  },
+  "sometimesanotion/Qwenvergence-14B-v9": {
+    "ifeval": 66.0,
+    "bbh": 44.8,
+    "math": 41.4,
+    "gpqa": 15.8,
+    "musr": 25.2,
+    "mmlu_pro": 45.7
+  },
+  "sometimesanotion/lamarck-14b-prose-model_stock": {
+    "ifeval": 42.8,
+    "bbh": 49.4,
+    "math": 34.1,
+    "gpqa": 19.1,
+    "musr": 20.3,
+    "mmlu_pro": 48.4
+  },
+  "sometimesanotion/lamarck-14b-reason-model_stock": {
+    "ifeval": 49.6,
+    "bbh": 50.7,
+    "math": 35.8,
+    "gpqa": 17.9,
+    "musr": 18.8,
+    "mmlu_pro": 48.9
+  },
+  "sonthenguyen/ft-unsloth-zephyr-sft-bnb-4bit-20241014-161415": {
+    "ifeval": 28.9,
+    "bbh": 12.8,
+    "math": 1.1,
+    "musr": 6.0,
+    "mmlu_pro": 4.5
+  },
+  "sonthenguyen/ft-unsloth-zephyr-sft-bnb-4bit-20241014-164205": {
+    "ifeval": 32.0,
+    "bbh": 16.7,
+    "math": 0.8,
+    "gpqa": 3.5,
+    "musr": 12.1,
+    "mmlu_pro": 12.5
+  },
+  "sonthenguyen/ft-unsloth-zephyr-sft-bnb-4bit-20241014-170522": {
+    "ifeval": 37.6,
+    "bbh": 14.1,
+    "math": 0.9,
+    "gpqa": 2.0,
+    "musr": 14.1,
+    "mmlu_pro": 11.7
+  },
+  "sonthenguyen/zephyr-sft-bnb-4bit-DPO-mtbc-213steps": {
+    "ifeval": 42.8,
+    "bbh": 19.7,
+    "math": 2.6,
+    "gpqa": 1.6,
+    "musr": 9.6,
+    "mmlu_pro": 19.0
+  },
+  "sonthenguyen/zephyr-sft-bnb-4bit-DPO-mtbo-180steps": {
+    "ifeval": 40.9,
+    "bbh": 21.4,
+    "math": 2.3,
+    "gpqa": 3.5,
+    "musr": 6.2,
+    "mmlu_pro": 19.4
+  },
+  "sonthenguyen/zephyr-sft-bnb-4bit-DPO-mtbr-180steps": {
+    "ifeval": 40.3,
+    "bbh": 21.2,
+    "math": 2.5,
+    "gpqa": 4.0,
+    "musr": 11.8,
+    "mmlu_pro": 19.0
+  },
+  "sophosympatheia/Midnight-Miqu-70B-v1.5": {
+    "ifeval": 61.2,
+    "bbh": 38.5,
+    "math": 7.0,
+    "gpqa": 6.2,
+    "musr": 11.7,
+    "mmlu_pro": 31.4
+  },
+  "speakleash/Bielik-11B-v2": {
+    "ifeval": 23.8,
+    "bbh": 27.8,
+    "math": 7.9,
+    "gpqa": 5.1,
+    "musr": 7.6,
+    "mmlu_pro": 23.7
+  },
+  "speakleash/Bielik-11B-v2.0-Instruct": {
+    "ifeval": 52.5,
+    "bbh": 33.8,
+    "math": 11.9,
+    "gpqa": 8.9,
+    "musr": 14.7,
+    "mmlu_pro": 26.1
+  },
+  "speakleash/Bielik-11B-v2.1-Instruct": {
+    "ifeval": 50.9,
+    "bbh": 36.3,
+    "math": 26.7,
+    "gpqa": 11.6,
+    "musr": 10.5,
+    "mmlu_pro": 27.2
+  },
+  "speakleash/Bielik-11B-v2.2-Instruct": {
+    "ifeval": 55.5,
+    "bbh": 37.0,
+    "math": 26.8,
+    "gpqa": 10.9,
+    "musr": 10.1,
+    "mmlu_pro": 27.6
+  },
+  "speakleash/Bielik-11B-v2.3-Instruct": {
+    "ifeval": 55.8,
+    "bbh": 38.1,
+    "math": 20.8,
+    "gpqa": 12.1,
+    "musr": 16.0,
+    "mmlu_pro": 27.2
+  },
+  "spmurrayzzz/Mistral-Syndicate-7B": {
+    "ifeval": 25.0,
+    "bbh": 20.5,
+    "math": 3.4,
+    "gpqa": 3.5,
+    "musr": 13.6,
+    "mmlu_pro": 18.1
+  },
+  "spow12/ChatWaifu_12B_v2.0": {
+    "ifeval": 47.7,
+    "bbh": 31.2,
+    "math": 7.1,
+    "gpqa": 3.6,
+    "musr": 15.8,
+    "mmlu_pro": 26.5
+  },
+  "spow12/ChatWaifu_22B_v2.0_preview": {
+    "ifeval": 67.4,
+    "bbh": 45.5,
+    "math": 18.9,
+    "gpqa": 8.7,
+    "musr": 3.5,
+    "mmlu_pro": 33.2
+  },
+  "spow12/ChatWaifu_v1.4": {
+    "ifeval": 56.9,
+    "bbh": 31.6,
+    "math": 10.6,
+    "gpqa": 7.6,
+    "musr": 20.0,
+    "mmlu_pro": 27.5
+  },
+  "spow12/ChatWaifu_v2.0_22B": {
+    "ifeval": 65.2,
+    "bbh": 42.0,
+    "math": 20.3,
+    "gpqa": 9.8,
+    "musr": 5.6,
+    "mmlu_pro": 31.2
+  },
+  "ssmits/Qwen2.5-95B-Instruct": {
+    "ifeval": 84.3,
+    "bbh": 58.5,
+    "math": 53.0,
+    "gpqa": 15.2,
+    "musr": 13.6,
+    "mmlu_pro": 46.9
+  },
+  "stabilityai/StableBeluga2": {
+    "ifeval": 37.9,
+    "bbh": 41.3,
+    "math": 4.4,
+    "gpqa": 8.8,
+    "musr": 18.7,
+    "mmlu_pro": 25.8
+  },
+  "stabilityai/stablelm-2-12b": {
+    "ifeval": 15.7,
+    "bbh": 22.7,
+    "math": 4.3,
+    "gpqa": 3.8,
+    "musr": 14.5,
+    "mmlu_pro": 23.0
+  },
+  "stabilityai/stablelm-2-12b-chat": {
+    "ifeval": 40.8,
+    "bbh": 25.3,
+    "math": 5.4,
+    "gpqa": 2.2,
+    "musr": 7.7,
+    "mmlu_pro": 19.3
+  },
+  "stabilityai/stablelm-2-1_6b": {
+    "ifeval": 11.6,
+    "bbh": 8.6,
+    "math": 0.8,
+    "musr": 5.8,
+    "mmlu_pro": 5.2
+  },
+  "stabilityai/stablelm-2-1_6b-chat": {
+    "ifeval": 30.6,
+    "bbh": 7.5,
+    "math": 2.5,
+    "musr": 5.7,
+    "mmlu_pro": 6.9
+  },
+  "stabilityai/stablelm-2-zephyr-1_6b": {
+    "ifeval": 32.8,
+    "bbh": 6.7,
+    "math": 3.3,
+    "musr": 6.0,
+    "mmlu_pro": 7.9
+  },
+  "stabilityai/stablelm-3b-4e1t": {
+    "ifeval": 22.0,
+    "bbh": 9.0,
+    "math": 1.1,
+    "musr": 4.4,
+    "mmlu_pro": 7.4
+  },
+  "stabilityai/stablelm-zephyr-3b": {
+    "ifeval": 36.8,
+    "bbh": 14.8,
+    "math": 4.3,
+    "musr": 9.8,
+    "mmlu_pro": 8.5
+  },
+  "sthenno/tempesthenno-0120": {
+    "ifeval": 53.9,
+    "bbh": 47.9,
+    "math": 33.5,
+    "gpqa": 19.2,
+    "musr": 16.5,
+    "mmlu_pro": 47.7
+  },
+  "sthenno/tempesthenno-fusion-0309": {
+    "ifeval": 76.9,
+    "bbh": 51.0,
+    "math": 47.7,
+    "gpqa": 16.0,
+    "musr": 14.0,
+    "mmlu_pro": 47.3
+  },
+  "sthenno/tempesthenno-kto-0205-ckpt80": {
+    "ifeval": 80.5,
+    "bbh": 50.6,
+    "math": 45.9,
+    "gpqa": 13.1,
+    "musr": 12.9,
+    "mmlu_pro": 47.6
+  },
+  "sthenno/tempesthenno-nuslerp-001": {
+    "ifeval": 79.3,
+    "bbh": 51.0,
+    "math": 47.6,
+    "gpqa": 16.4,
+    "musr": 13.9,
+    "mmlu_pro": 47.3
+  },
+  "sthenno/tempesthenno-nuslerp-0124": {
+    "ifeval": 70.0,
+    "bbh": 49.3,
+    "math": 41.2,
+    "gpqa": 18.7,
+    "musr": 20.2,
+    "mmlu_pro": 48.4
+  },
+  "sthenno/tempesthenno-ppo-ckpt40": {
+    "ifeval": 79.2,
+    "bbh": 50.6,
+    "math": 47.4,
+    "gpqa": 17.0,
+    "musr": 14.6,
+    "mmlu_pro": 47.7
+  },
+  "sthenno/tempesthenno-sft-0309-ckpt10": {
+    "ifeval": 77.4,
+    "bbh": 50.6,
+    "math": 47.2,
+    "gpqa": 16.2,
+    "musr": 14.4,
+    "mmlu_pro": 47.3
+  },
+  "sthenno/tempesthenno-sft-0314-stage1-ckpt50": {
+    "ifeval": 73.9,
+    "bbh": 51.3,
+    "math": 46.8,
+    "gpqa": 16.4,
+    "musr": 15.1,
+    "mmlu_pro": 47.8
+  },
+  "sthenno/tempestissimo-14b-0309": {
+    "ifeval": 75.5,
+    "bbh": 50.9,
+    "math": 48.0,
+    "gpqa": 15.5,
+    "musr": 13.8,
+    "mmlu_pro": 47.6
+  },
+  "sthenno-com/miscii-14b-0130": {
+    "ifeval": 66.5,
+    "bbh": 49.8,
+    "math": 43.2,
+    "gpqa": 17.6,
+    "musr": 21.0,
+    "mmlu_pro": 48.5
+  },
+  "sthenno-com/miscii-14b-0218": {
+    "ifeval": 76.6,
+    "bbh": 50.6,
+    "math": 51.4,
+    "gpqa": 17.8,
+    "musr": 13.2,
+    "mmlu_pro": 47.8
+  },
+  "sthenno-com/miscii-14b-1028": {
+    "ifeval": 82.4,
+    "bbh": 49.3,
+    "math": 50.3,
+    "gpqa": 14.2,
+    "musr": 12.0,
+    "mmlu_pro": 46.1
+  },
+  "sthenno-com/miscii-14b-1225": {
+    "ifeval": 78.8,
+    "bbh": 50.9,
+    "math": 45.2,
+    "gpqa": 17.0,
+    "musr": 14.8,
+    "mmlu_pro": 47.5
+  },
+  "streamerbtw1002/Nexuim-R1-7B-Instruct": {
+    "ifeval": 69.3,
+    "bbh": 31.4,
+    "math": 44.6,
+    "gpqa": 1.2,
+    "musr": 1.2,
+    "mmlu_pro": 34.9
+  },
+  "stupidity-ai/Llama-3-8B-Instruct-MultiMoose": {
+    "ifeval": 23.2,
+    "bbh": 1.2,
+    "gpqa": 0.4,
+    "musr": 2.7,
+    "mmlu_pro": 1.0
+  },
+  "suayptalha/Clarus-7B-v0.1": {
+    "ifeval": 74.5,
+    "bbh": 36.0,
+    "math": 49.2,
+    "gpqa": 7.6,
+    "musr": 15.2,
+    "mmlu_pro": 37.6
+  },
+  "suayptalha/Clarus-7B-v0.2": {
+    "ifeval": 76.8,
+    "bbh": 36.0,
+    "math": 48.6,
+    "gpqa": 6.9,
+    "musr": 15.1,
+    "mmlu_pro": 37.8
+  },
+  "suayptalha/Clarus-7B-v0.3": {
+    "ifeval": 75.1,
+    "bbh": 36.5,
+    "math": 48.8,
+    "gpqa": 8.3,
+    "musr": 14.4,
+    "mmlu_pro": 37.6
+  },
+  "suayptalha/DeepSeek-R1-Distill-Llama-3B": {
+    "ifeval": 70.9,
+    "bbh": 21.4,
+    "math": 20.9,
+    "gpqa": 1.5,
+    "musr": 2.9,
+    "mmlu_pro": 22.0
+  },
+  "suayptalha/Falcon3-Jessi-v0.4-7B-Slerp": {
+    "ifeval": 76.8,
+    "bbh": 37.3,
+    "math": 39.7,
+    "gpqa": 8.3,
+    "musr": 20.5,
+    "mmlu_pro": 34.0
+  },
+  "suayptalha/HomerCreativeAnvita-Mix-Qw7B": {
+    "ifeval": 78.1,
+    "bbh": 37.0,
+    "math": 36.1,
+    "gpqa": 8.6,
+    "musr": 14.7,
+    "mmlu_pro": 38.3
+  },
+  "suayptalha/Komodo-Llama-3.2-3B-v2-fp16": {
+    "ifeval": 63.4,
+    "bbh": 20.2,
+    "math": 10.6,
+    "gpqa": 3.7,
+    "musr": 3.4,
+    "mmlu_pro": 20.6
+  },
+  "suayptalha/Lamarckvergence-14B": {
+    "ifeval": 76.6,
+    "bbh": 50.3,
+    "math": 54.0,
+    "gpqa": 15.1,
+    "musr": 16.3,
+    "mmlu_pro": 47.6
+  },
+  "suayptalha/Lix-14B-v0.1": {
+    "ifeval": 78.1,
+    "bbh": 51.5,
+    "math": 52.9,
+    "gpqa": 16.0,
+    "musr": 13.4,
+    "mmlu_pro": 47.9
+  },
+  "suayptalha/Luminis-phi-4": {
+    "ifeval": 69.0,
+    "bbh": 55.8,
+    "math": 46.4,
+    "gpqa": 13.5,
+    "musr": 16.7,
+    "mmlu_pro": 49.2
+  },
+  "suayptalha/Maestro-10B": {
+    "ifeval": 77.7,
+    "bbh": 39.5,
+    "math": 19.1,
+    "gpqa": 11.1,
+    "musr": 13.8,
+    "mmlu_pro": 35.8
+  },
+  "suayptalha/Rombos-2.5-T.E-8.1": {
+    "ifeval": 69.3,
+    "bbh": 36.5,
+    "math": 49.2,
+    "gpqa": 8.2,
+    "musr": 11.0,
+    "mmlu_pro": 38.3
+  },
+  "sumink/Qmerft": {
+    "ifeval": 15.6,
+    "bbh": 1.9,
+    "math": 0.2,
+    "gpqa": 0.3,
+    "musr": 3.9,
+    "mmlu_pro": 1.7
+  },
+  "sumink/Qwenftmodel": {
+    "ifeval": 17.3,
+    "bbh": 14.0,
+    "math": 8.9,
+    "gpqa": 0.9,
+    "musr": 4.6,
+    "mmlu_pro": 14.9
+  },
+  "sumink/Qwenmplus": {
+    "ifeval": 20.4,
+    "bbh": 12.7,
+    "math": 2.5,
+    "gpqa": 4.7,
+    "musr": 5.0,
+    "mmlu_pro": 11.0
+  },
+  "sumink/Qwensci": {
+    "ifeval": 17.4,
+    "bbh": 6.3,
+    "math": 2.0,
+    "gpqa": 1.1,
+    "musr": 3.6,
+    "mmlu_pro": 2.9
+  },
+  "sumink/bbhqwen": {
+    "ifeval": 18.1,
+    "bbh": 6.6,
+    "math": 1.1,
+    "gpqa": 1.0,
+    "musr": 13.4,
+    "mmlu_pro": 6.9
+  },
+  "sumink/bbhqwen2": {
+    "ifeval": 15.3,
+    "bbh": 3.9,
+    "math": 0.6,
+    "gpqa": 1.7,
+    "musr": 14.4,
+    "mmlu_pro": 1.7
+  },
+  "sumink/bbhqwen3": {
+    "ifeval": 19.4,
+    "bbh": 2.2,
+    "gpqa": 1.0,
+    "musr": 5.2,
+    "mmlu_pro": 1.8
+  },
+  "sumink/bbhqwen4": {
+    "ifeval": 14.5,
+    "bbh": 4.9,
+    "math": 0.6,
+    "musr": 8.3,
+    "mmlu_pro": 5.7
+  },
+  "sumink/bbhqwen5": {
+    "ifeval": 15.2,
+    "bbh": 2.8,
+    "math": 0.2,
+    "gpqa": 1.3,
+    "musr": 10.1,
+    "mmlu_pro": 1.5
+  },
+  "sumink/bbhqwen6": {
+    "ifeval": 18.9,
+    "bbh": 2.1,
+    "math": 0.1,
+    "gpqa": 1.1,
+    "musr": 2.2,
+    "mmlu_pro": 1.7
+  },
+  "sumink/flflmillama": {
+    "ifeval": 16.8,
+    "bbh": 13.7,
+    "math": 2.0,
+    "gpqa": 5.6,
+    "musr": 4.0,
+    "mmlu_pro": 12.2
+  },
+  "sumink/ftgpt": {
+    "ifeval": 7.9,
+    "bbh": 1.9,
+    "gpqa": 1.9,
+    "musr": 10.1,
+    "mmlu_pro": 1.9
+  },
+  "sumink/llamaft": {
+    "ifeval": 16.1,
+    "bbh": 13.0,
+    "math": 1.7,
+    "gpqa": 2.8,
+    "musr": 3.1,
+    "mmlu_pro": 12.4
+  },
+  "sumink/llamamerge": {
+    "ifeval": 26.7,
+    "bbh": 24.4,
+    "math": 1.5,
+    "gpqa": 6.5,
+    "musr": 11.7,
+    "mmlu_pro": 17.7
+  },
+  "sumink/llftfl7": {
+    "ifeval": 17.1,
+    "bbh": 13.3,
+    "math": 1.1,
+    "gpqa": 4.1,
+    "musr": 3.0,
+    "mmlu_pro": 8.3
+  },
+  "sumink/llmer": {
+    "ifeval": 31.9,
+    "bbh": 26.8,
+    "math": 6.5,
+    "gpqa": 6.4,
+    "musr": 8.2,
+    "mmlu_pro": 28.1
+  },
+  "sumink/qwft": {
+    "ifeval": 12.0,
+    "bbh": 2.9,
+    "gpqa": 0.3,
+    "musr": 2.0,
+    "mmlu_pro": 1.4
+  },
+  "sumink/qwmer": {
+    "ifeval": 22.1,
+    "bbh": 20.4,
+    "math": 0.1,
+    "gpqa": 4.9,
+    "musr": 9.0,
+    "mmlu_pro": 13.5
+  },
+  "sumink/solarmer3": {
+    "ifeval": 37.4,
+    "bbh": 33.4,
+    "math": 5.8,
+    "gpqa": 5.5,
+    "musr": 15.1,
+    "mmlu_pro": 25.8
+  },
+  "sumink/somer": {
+    "ifeval": 29.9,
+    "bbh": 31.7,
+    "math": 4.2,
+    "gpqa": 6.5,
+    "musr": 18.4,
+    "mmlu_pro": 27.2
+  },
+  "sumink/somer2": {
+    "ifeval": 31.3,
+    "bbh": 31.4,
+    "math": 4.7,
+    "gpqa": 7.2,
+    "musr": 18.7,
+    "mmlu_pro": 27.0
+  },
+  "sumink/somerft": {
+    "ifeval": 14.3,
+    "bbh": 3.6,
+    "math": 1.4,
+    "musr": 9.0,
+    "mmlu_pro": 1.3
+  },
+  "sunbaby/BrainCog-8B-0.1-Instruct": {
+    "ifeval": 42.5,
+    "bbh": 24.3,
+    "math": 9.7,
+    "gpqa": 6.8,
+    "musr": 6.3,
+    "mmlu_pro": 20.6
+  },
+  "swap-uniba/LLaMAntino-3-ANITA-8B-Inst-DPO-ITA": {
+    "ifeval": 48.2,
+    "bbh": 28.0,
+    "math": 4.8,
+    "gpqa": 6.5,
+    "musr": 13.2,
+    "mmlu_pro": 30.3
+  },
+  "synergetic/FrankenQwen2.5-14B": {
+    "ifeval": 18.7,
+    "bbh": 44.3,
+    "gpqa": 2.7,
+    "musr": 5.5,
+    "mmlu_pro": 37.6
+  },
+  "talha2001/Beast-Soul-new": {
+    "ifeval": 48.5,
+    "bbh": 33.1,
+    "math": 7.4,
+    "gpqa": 4.3,
+    "musr": 14.1,
+    "mmlu_pro": 23.4
+  },
+  "tangledgroup/tangled-llama-pints-1.5b-v0.1-instruct": {
+    "ifeval": 15.1,
+    "bbh": 3.8,
+    "math": 1.2,
+    "musr": 4.9,
+    "mmlu_pro": 1.2
+  },
+  "tangledgroup/tangled-llama-pints-1.5b-v0.2-instruct": {
+    "ifeval": 17.2,
+    "bbh": 4.1,
+    "math": 1.3,
+    "musr": 4.6,
+    "mmlu_pro": 1.3
+  },
+  "tanliboy/lambda-gemma-2-9b-dpo": {
+    "ifeval": 18.3,
+    "bbh": 35.7,
+    "math": 9.4,
+    "gpqa": 8.1,
+    "musr": 8.6,
+    "mmlu_pro": 31.2
+  },
+  "tanliboy/lambda-qwen2.5-14b-dpo-test": {
+    "ifeval": 82.3,
+    "bbh": 48.5,
+    "math": 54.6,
+    "gpqa": 15.0,
+    "musr": 12.6,
+    "mmlu_pro": 42.8
+  },
+  "tanliboy/lambda-qwen2.5-32b-dpo-test": {
+    "ifeval": 80.8,
+    "bbh": 54.4,
+    "math": 61.0,
+    "gpqa": 14.2,
+    "musr": 13.3,
+    "mmlu_pro": 51.7
+  },
+  "tannedbum/Ellaria-9B": {
+    "ifeval": 78.3,
+    "bbh": 41.7,
+    "math": 20.8,
+    "gpqa": 11.1,
+    "musr": 10.9,
+    "mmlu_pro": 35.6
+  },
+  "tannedbum/L3-Nymeria-Maid-8B": {
+    "ifeval": 72.5,
+    "bbh": 31.2,
+    "math": 9.4,
+    "gpqa": 6.2,
+    "musr": 6.5,
+    "mmlu_pro": 30.5
+  },
+  "tannedbum/L3-Nymeria-v2-8B": {
+    "ifeval": 71.7,
+    "bbh": 32.3,
+    "math": 9.2,
+    "gpqa": 5.4,
+    "musr": 5.1,
+    "mmlu_pro": 30.6
+  },
+  "tannedbum/L3-Rhaenys-8B": {
+    "ifeval": 73.6,
+    "bbh": 33.1,
+    "math": 8.8,
+    "gpqa": 6.4,
+    "musr": 5.7,
+    "mmlu_pro": 31.1
+  },
+  "teknium/CollectiveCognition-v1.1-Mistral-7B": {
+    "ifeval": 27.9,
+    "bbh": 23.5,
+    "math": 3.1,
+    "gpqa": 4.9,
+    "musr": 5.7,
+    "mmlu_pro": 20.4
+  },
+  "teknium/OpenHermes-13B": {
+    "ifeval": 26.7,
+    "bbh": 18.2,
+    "math": 1.2,
+    "gpqa": 3.0,
+    "musr": 8.5,
+    "mmlu_pro": 15.4
+  },
+  "teknium/OpenHermes-2-Mistral-7B": {
+    "ifeval": 52.9,
+    "bbh": 29.3,
+    "math": 4.5,
+    "gpqa": 4.5,
+    "musr": 16.1,
+    "mmlu_pro": 21.5
+  },
+  "teknium/OpenHermes-2.5-Mistral-7B": {
+    "ifeval": 55.7,
+    "bbh": 27.8,
+    "math": 5.1,
+    "gpqa": 4.5,
+    "musr": 12.1,
+    "mmlu_pro": 22.8
+  },
+  "teknium/OpenHermes-7B": {
+    "ifeval": 18.1,
+    "bbh": 12.1,
+    "math": 1.6,
+    "gpqa": 2.6,
+    "musr": 12.7,
+    "mmlu_pro": 10.4
+  },
+  "tensopolis/falcon3-10b-tensopolis-v1": {
+    "ifeval": 78.2,
+    "bbh": 45.1,
+    "math": 27.5,
+    "gpqa": 10.6,
+    "musr": 14.2,
+    "mmlu_pro": 38.0
+  },
+  "tensopolis/falcon3-10b-tensopolis-v2": {
+    "ifeval": 77.9,
+    "bbh": 45.0,
+    "math": 26.7,
+    "gpqa": 10.3,
+    "musr": 13.2,
+    "mmlu_pro": 38.0
+  },
+  "tensopolis/lamarckvergence-14b-tensopolis-v1": {
+    "ifeval": 76.0,
+    "bbh": 51.0,
+    "math": 51.7,
+    "gpqa": 14.8,
+    "musr": 16.8,
+    "mmlu_pro": 47.2
+  },
+  "tensopolis/mistral-small-2501-tensopolis-v1": {
+    "ifeval": 77.6,
+    "bbh": 48.7,
+    "math": 44.4,
+    "gpqa": 14.3,
+    "musr": 11.9,
+    "mmlu_pro": 38.5
+  },
+  "tensopolis/mistral-small-r1-tensopolis": {
+    "ifeval": 46.2,
+    "bbh": 34.6,
+    "math": 29.1,
+    "gpqa": 4.3,
+    "musr": 7.4,
+    "mmlu_pro": 33.7
+  },
+  "tensopolis/phi-4-tensopolis-v1": {
+    "ifeval": 67.7,
+    "bbh": 55.0,
+    "math": 49.4,
+    "gpqa": 11.3,
+    "musr": 10.6,
+    "mmlu_pro": 48.7
+  },
+  "tensopolis/qwen2.5-14b-tensopolis-v1": {
+    "ifeval": 79.9,
+    "bbh": 48.0,
+    "math": 52.9,
+    "gpqa": 11.3,
+    "musr": 11.3,
+    "mmlu_pro": 43.5
+  },
+  "tensopolis/qwen2.5-3b-or1-tensopolis": {
+    "ifeval": 35.4,
+    "bbh": 22.1,
+    "math": 17.3,
+    "gpqa": 5.9,
+    "musr": 4.5,
+    "mmlu_pro": 24.4
+  },
+  "tensopolis/qwen2.5-7b-tensopolis-v1": {
+    "ifeval": 76.6,
+    "bbh": 34.8,
+    "math": 45.6,
+    "gpqa": 6.2,
+    "musr": 13.5,
+    "mmlu_pro": 36.3
+  },
+  "tensopolis/qwen2.5-7b-tensopolis-v2": {
+    "ifeval": 75.2,
+    "bbh": 35.2,
+    "math": 48.2,
+    "gpqa": 5.4,
+    "musr": 12.2,
+    "mmlu_pro": 36.0
+  },
+  "tensopolis/virtuoso-lite-tensopolis-v1": {
+    "ifeval": 80.7,
+    "bbh": 43.9,
+    "math": 25.5,
+    "gpqa": 12.6,
+    "musr": 17.4,
+    "mmlu_pro": 38.2
+  },
+  "tensopolis/virtuoso-lite-tensopolis-v2": {
+    "ifeval": 80.3,
+    "bbh": 43.9,
+    "math": 25.0,
+    "gpqa": 12.4,
+    "musr": 17.7,
+    "mmlu_pro": 38.2
+  },
+  "tensopolis/virtuoso-small-tensopolis-v1": {
+    "ifeval": 78.6,
+    "bbh": 48.2,
+    "math": 35.3,
+    "gpqa": 10.4,
+    "musr": 14.0,
+    "mmlu_pro": 44.1
+  },
+  "tensopolis/virtuoso-small-tensopolis-v2": {
+    "ifeval": 80.2,
+    "bbh": 50.2,
+    "math": 38.7,
+    "gpqa": 10.5,
+    "musr": 14.8,
+    "mmlu_pro": 46.2
+  },
+  "tensopolis/virtuoso-small-v2-tensopolis-v1": {
+    "ifeval": 84.2,
+    "bbh": 51.0,
+    "math": 45.2,
+    "gpqa": 12.9,
+    "musr": 16.5,
+    "mmlu_pro": 46.4
+  },
+  "tensoropera/Fox-1-1.6B": {
+    "ifeval": 27.7,
+    "bbh": 7.4,
+    "math": 1.7,
+    "gpqa": 1.8,
+    "musr": 3.9,
+    "mmlu_pro": 4.1
+  },
+  "tenyx/Llama3-TenyxChat-70B": {
+    "ifeval": 80.9,
+    "bbh": 49.6,
+    "math": 23.6,
+    "gpqa": 6.8,
+    "musr": 12.5,
+    "mmlu_pro": 46.8
+  },
+  "theo77186/Qwen2.5-Coder-7B-Instruct-20241106": {
+    "ifeval": 61.0,
+    "bbh": 28.9,
+    "math": 38.8,
+    "gpqa": 5.6,
+    "musr": 9.5,
+    "mmlu_pro": 26.1
+  },
+  "theprint/Boptruth-Agatha-7B": {
+    "ifeval": 31.2,
+    "bbh": 29.3,
+    "math": 5.5,
+    "gpqa": 6.6,
+    "musr": 11.8,
+    "mmlu_pro": 20.7
+  },
+  "theprint/CleverBoi-7B-v2": {
+    "ifeval": 21.7,
+    "bbh": 23.4,
+    "math": 2.6,
+    "gpqa": 5.1,
+    "musr": 18.7,
+    "mmlu_pro": 19.0
+  },
+  "theprint/CleverBoi-7B-v3": {
+    "ifeval": 23.8,
+    "bbh": 21.9,
+    "math": 4.0,
+    "gpqa": 2.1,
+    "musr": 9.5,
+    "mmlu_pro": 20.8
+  },
+  "theprint/CleverBoi-Llama-3.1-8B-Instruct": {
+    "ifeval": 16.8,
+    "bbh": 24.0,
+    "math": 4.9,
+    "gpqa": 6.7,
+    "musr": 8.3,
+    "mmlu_pro": 23.1
+  },
+  "theprint/CleverBoi-Llama-3.1-8B-v2": {
+    "ifeval": 19.6,
+    "bbh": 24.1,
+    "math": 5.3,
+    "gpqa": 4.8,
+    "musr": 6.7,
+    "mmlu_pro": 24.3
+  },
+  "theprint/CleverBoi-Nemo-12B-v2": {
+    "ifeval": 20.5,
+    "bbh": 31.7,
+    "math": 10.3,
+    "gpqa": 8.5,
+    "musr": 11.4,
+    "mmlu_pro": 24.8
+  },
+  "theprint/Code-Llama-Bagel-8B": {
+    "ifeval": 25.3,
+    "bbh": 25.3,
+    "math": 6.1,
+    "gpqa": 3.5,
+    "musr": 7.5,
+    "mmlu_pro": 20.2
+  },
+  "theprint/Conversely-Mistral-7B": {
+    "ifeval": 26.1,
+    "bbh": 25.7,
+    "math": 2.8,
+    "gpqa": 4.7,
+    "musr": 10.6,
+    "mmlu_pro": 20.3
+  },
+  "theprint/Llama-3.2-3B-VanRossum": {
+    "ifeval": 47.8,
+    "bbh": 19.4,
+    "math": 9.7,
+    "gpqa": 2.3,
+    "musr": 6.6,
+    "mmlu_pro": 19.7
+  },
+  "theprint/ReWiz-7B": {
+    "ifeval": 40.5,
+    "bbh": 23.5,
+    "math": 4.1,
+    "gpqa": 3.4,
+    "musr": 16.7,
+    "mmlu_pro": 18.6
   }
 }
